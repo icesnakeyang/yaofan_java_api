@@ -15,7 +15,7 @@ public class UserInfoService implements IUserInfoService {
 
     @Override
     public void createUserInfo(UserInfo userInfo) throws Exception {
-
+        userInfoDao.createUserInfo(userInfo);
     }
 
     @Override

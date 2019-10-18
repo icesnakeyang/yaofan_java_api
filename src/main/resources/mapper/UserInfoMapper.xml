@@ -11,9 +11,9 @@
     <insert id="createUserInfo"
             parameterType="com.gogoyang.yaofan.meta.user.entity.UserInfo">
       insert into user_info
-      (user_id, phone, password, token,token_time,created_time,status)
+      (user_id, phone, password, token, token_time, create_time, status)
       values
-      (#{userId}, #{phone}, #{password}, #{token}, #{tokenTime}, #{createdTime}, #{status})
+      (#{userId}, #{phone}, #{password}, #{token}, #{tokenTime}, #{createTime}, #{status})
     </insert>
 
     <select id="getUserInfoByPhone" parameterType="java.lang.String"

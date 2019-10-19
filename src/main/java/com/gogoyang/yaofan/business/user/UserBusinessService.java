@@ -16,12 +16,9 @@ import java.util.Map;
 @Service
 public class UserBusinessService implements IUserBusinessService {
     private final IUserInfoService iUserInfoService;
-    private final ICommonBusinessService iCommonBusinessService;
 
-    public UserBusinessService(IUserInfoService iUserInfoService,
-                               ICommonBusinessService iCommonBusinessService) {
+    public UserBusinessService(IUserInfoService iUserInfoService) {
         this.iUserInfoService = iUserInfoService;
-        this.iCommonBusinessService = iCommonBusinessService;
     }
 
     @Transactional(rollbackFor = Exception.class)

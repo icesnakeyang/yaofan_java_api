@@ -2,6 +2,7 @@ package com.gogoyang.yaofan.controller.user;
 
 import com.gogoyang.yaofan.business.user.IUserBusinessService;
 import com.gogoyang.yaofan.controller.vo.Response;
+import com.gogoyang.yaofan.utility.GogoActType;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.slf4j.Logger;
@@ -47,24 +48,38 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/login")
-    public Response login(@RequestBody UserRequest request){
-        Response response=new Response();
-        Map in=new HashMap();
-        try{
+    public Response login(@RequestBody UserRequest request) {
+        Response response = new Response();
+        Map in = new HashMap();
+        try {
             in.put("phone", request.getPhone());
             in.put("password", request.getPassword());
-            Map out=iUserBusinessService.login(in);
+            Map out = iUserBusinessService.login(in);
             response.setData(out);
-        }catch (Exception ex){
-            try{
+        } catch (Exception ex) {
+            try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
-            }catch (Exception ex2){
+            } catch (Exception ex2) {
                 response.setCode(10001);
-                iCommonBusinessService.logLogin(in, GogoStatus.FAILED, ex.getMessage());
+                Map logMap = new HashMap();
+                logMap.put("GogoActType", GogoActType.LOGIN);
+                logMap.put("memo", ex.getMessage());
+                try {
+                    iCommonBusinessService.createUserActLog(logMap);
+                } catch (Exception ex3) {
+                    logger.error(ex3.getMessage());
+                }
                 logger.error(ex.getMessage());
             }
         }
-        iCommonBusinessService.logLogin(in,GogoStatus.SUCCESS);
+        try {
+            Map logMap = new HashMap();
+            logMap.put("GogoActType", GogoActType.LOGIN);
+            logMap.put("memo", request.getPhone());
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex4) {
+            logger.error(ex4.getMessage());
+        }
         return response;
     }
 }

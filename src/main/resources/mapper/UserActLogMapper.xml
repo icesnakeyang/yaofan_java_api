@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gogoyang.yaofan.meta.userActLog.dao.UserActLogDao">
+
+    <resultMap id="userActLogMap" type="com.gogoyang.yaofan.meta.userActLog.entity.UserActLog">
+        <result property="userId" column="user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="ipAddress" column="ip_address"/>
+    </resultMap>
+
+    <!--创建一条用户行为日志-->
+    <insert id="createUserActLog"
+            parameterType="com.gogoyang.yaofan.meta.userActLog.entity.UserActLog">
+      insert into user_act_log
+      (uuid, user_id, action, create_time, memo, ip_address, device, os)
+      values
+      (#{uuid}, #{userId}, #{action}, #{createTime}, #{memo}, #{ipAddress}, #{device}, #{os})
+    </insert>
+</mapper>

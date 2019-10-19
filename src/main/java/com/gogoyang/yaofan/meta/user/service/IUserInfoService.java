@@ -8,4 +8,6 @@ public interface IUserInfoService {
     UserInfo getUserInfoByPhone(String phone) throws Exception;
 
     UserInfo getUserInfoByToken(String token) throws Exception;
+
+    UserInfo getUserInfoByUserId(String userId) throws Exception;
 }

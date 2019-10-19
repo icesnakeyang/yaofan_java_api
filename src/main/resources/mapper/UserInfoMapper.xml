@@ -29,4 +29,10 @@
         select * from user_info
         where token=#{token}
     </select>
+
+    <select id="getUserInfoByUserId" parameterType="java.lang.String"
+            resultMap="userInfoMap">
+        select * from user_info
+        where user_id=#{userId}
+    </select>
 </mapper>

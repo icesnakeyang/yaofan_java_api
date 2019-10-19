@@ -3,6 +3,7 @@ package com.gogoyang.yaofan.controller.team;
 import com.gogoyang.yaofan.business.team.ITeamBusinessService;
 import com.gogoyang.yaofan.controller.vo.Response;
 import com.gogoyang.yaofan.meta.team.entity.Team;
+import com.gogoyang.yaofan.utility.GogoActType;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,13 +38,14 @@ public class TeamController {
         Map memoMap = new HashMap();
         try {
             String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            logMap.put("token", token);
             in.put("name", request.getName());
+            memoMap.put("name", request.getName());
             in.put("description", request.getDescription());
             out = iTeamBusinessService.createTeam(in);
             Team team = (Team) out.get("team");
             response.setData(team);
-            memoMap.put("name", team.getName());
-            logMap.put("userId", team.getUserId());
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -56,6 +58,7 @@ public class TeamController {
         }
         try {
             logMap.put("memo", memoMap);
+            logMap.put("GogoActType", GogoActType.CREATE_TEAM);
             iCommonBusinessService.createUserActLog(logMap);
         } catch (Exception ex3) {
             logger.error(ex3.getMessage());

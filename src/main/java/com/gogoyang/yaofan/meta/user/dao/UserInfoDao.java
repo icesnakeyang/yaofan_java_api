@@ -10,4 +10,6 @@ public interface UserInfoDao {
     UserInfo getUserInfoByPhone(String phone);
 
     UserInfo getUserInfoByToken(String token);
+
+    UserInfo getUserInfoByUserId(String userId);
 }

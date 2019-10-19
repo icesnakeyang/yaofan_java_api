@@ -2,5 +2,6 @@ package com.gogoyang.yaofan.utility;
 
 public enum GogoActType {
     REGISTER,
-    LOGIN
+    LOGIN,
+    CREATE_TEAM
 }

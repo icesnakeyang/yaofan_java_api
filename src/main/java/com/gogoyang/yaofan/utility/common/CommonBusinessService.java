@@ -35,11 +35,23 @@ public class CommonBusinessService implements ICommonBusinessService {
         String ipAddress = (String) in.get("ipAddress");
         HashMap memoMap = (HashMap) in.get("memo");
         String os = (String) in.get("os");
+        String token = (String) in.get("token");
+
+        UserInfo userInfo = null;
+        if (userId != null) {
+            userInfo = getUserByUserId(userId);
+        } else {
+            if (token != null) {
+                userInfo = getUserByToken(token);
+            }
+        }
 
         UserActLog userActLog = new UserActLog();
         userActLog.setAction(gogoActType.toString());
         userActLog.setCreateTime(new Date());
-        userActLog.setUserId(userId);
+        if (userInfo != null) {
+            userActLog.setUserId(userInfo.getUserId());
+        }
         userActLog.setDevice(device);
         userActLog.setIpAddress(ipAddress);
         userActLog.setMemo(GogoTools.convertMapToString(memoMap));
@@ -55,5 +67,14 @@ public class CommonBusinessService implements ICommonBusinessService {
             throw new Exception("10004");
         }
         return userInfo;
+    }
+
+    private UserInfo getUserByUserId(String userId) throws Exception {
+        UserInfo userInfo = iUserInfoService.getUserInfoByUserId(userId);
+        if (userInfo == null) {
+            throw new Exception("10005");
+        }
+        return userInfo;
+
     }
 }

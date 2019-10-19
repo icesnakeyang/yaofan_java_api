@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -31,7 +32,13 @@ public class TeamBusinessService implements ITeamBusinessService {
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        Team team = new Team();
+        Team team=iTeamService.getTeamByName(name);
+
+        if(team!=null){
+            throw new Exception("10006");
+        }
+
+        team = new Team();
         team.setCreateTime(new Date());
         team.setDescription(description);
         team.setName(name);
@@ -40,6 +47,9 @@ public class TeamBusinessService implements ITeamBusinessService {
         team.setUserId(userInfo.getUserId());
         team = iTeamService.createTeam(team);
 
-        return ;
+        Map out = new HashMap();
+        out.put("team", team);
+
+        return out;
     }
 }

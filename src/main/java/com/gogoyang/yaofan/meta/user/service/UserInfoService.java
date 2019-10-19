@@ -30,4 +30,10 @@ public class UserInfoService implements IUserInfoService {
         UserInfo userInfo = userInfoDao.getUserInfoByToken(token);
         return userInfo;
     }
+
+    @Override
+    public UserInfo getUserInfoByUserId(String userId) throws Exception {
+        UserInfo userInfo = userInfoDao.getUserInfoByUserId(userId);
+        return userInfo;
+    }
 }

@@ -6,7 +6,7 @@ import java.util.Date;
 
 @Data
 public class UserInfo {
-    private String ids;
+    private Integer ids;
     private String userId;
     private String password;
     private Date createTime;

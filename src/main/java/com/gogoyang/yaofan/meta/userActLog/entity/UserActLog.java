@@ -6,7 +6,7 @@ import java.util.Date;
 
 @Data
 public class UserActLog {
-    private String ids;
+    private Integer ids;
 
     /**
      * 发生时间

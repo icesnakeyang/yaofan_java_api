@@ -9,6 +9,8 @@
     </resultMap>
 
     <insert id="createUserInfo"
+            useGeneratedKeys="true"
+            keyProperty="ids"
             parameterType="com.gogoyang.yaofan.meta.user.entity.UserInfo">
       insert into user_info
       (user_id, phone, password, token, token_time, create_time, status)
@@ -20,5 +22,11 @@
             resultMap="userInfoMap">
         select * from user_info
         where phone=#{phone}
+    </select>
+
+    <select id="getUserInfoByToken" parameterType="java.lang.String"
+            resultMap="userInfoMap">
+        select * from user_info
+        where token=#{token}
     </select>
 </mapper>

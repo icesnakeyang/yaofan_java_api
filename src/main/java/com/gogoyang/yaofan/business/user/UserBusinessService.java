@@ -23,7 +23,7 @@ public class UserBusinessService implements IUserBusinessService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void register(Map in) throws Exception {
+    public Map register(Map in) throws Exception {
         String phone = in.get("phone").toString();
         String password = in.get("password").toString();
 
@@ -47,7 +47,11 @@ public class UserBusinessService implements IUserBusinessService {
         userInfo.setToken(GogoTools.UUID().toString());
         userInfo.setTokenTime(new Date());
 
-        iUserInfoService.createUserInfo(userInfo);
+        userInfo=iUserInfoService.createUserInfo(userInfo);
+
+        Map out=new HashMap();
+        out.put("userInfo", userInfo);
+        return out;
     }
 
     @Transactional(rollbackFor = Exception.class)

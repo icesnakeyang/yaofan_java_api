@@ -30,16 +30,17 @@ public class GogoTools {
 
     /**
      * 生成一个随机字符串
+     *
      * @param length
      * @return
      * @throws Exception
      */
-    public static String generateString(int length) throws Exception{
-        String str="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        Random random=new Random();
-        StringBuffer sb=new StringBuffer();
-        for(int i=0;i<length;i++){
-            int number=random.nextInt(62);
+    public static String generateString(int length) throws Exception {
+        String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        Random random = new Random();
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < length; i++) {
+            int number = random.nextInt(62);
             sb.append(str.charAt(number));
         }
         return sb.toString();
@@ -223,5 +224,18 @@ public class GogoTools {
             return true;
         }
         return false;
+    }
+
+    public static String convertMapToString(HashMap map) throws Exception {
+        Iterator iter = map.entrySet().iterator();
+        String outStr = "";
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            Object key = entry.getKey();
+            outStr += key.toString() + ":";
+            Object val = entry.getValue();
+            outStr += val.toString() + "/";
+        }
+        return outStr;
     }
 }

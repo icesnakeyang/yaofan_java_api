@@ -5,7 +5,9 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface UserInfoDao {
-    void createUserInfo(UserInfo userInfo);
+    int createUserInfo(UserInfo userInfo);
 
     UserInfo getUserInfoByPhone(String phone);
+
+    UserInfo getUserInfoByToken(String token);
 }

@@ -14,13 +14,20 @@ public class UserInfoService implements IUserInfoService {
     }
 
     @Override
-    public void createUserInfo(UserInfo userInfo) throws Exception {
+    public UserInfo createUserInfo(UserInfo userInfo) throws Exception {
         userInfoDao.createUserInfo(userInfo);
+        return userInfo;
     }
 
     @Override
     public UserInfo getUserInfoByPhone(String phone) throws Exception {
         UserInfo userInfo = userInfoDao.getUserInfoByPhone(phone);
+        return userInfo;
+    }
+
+    @Override
+    public UserInfo getUserInfoByToken(String token) throws Exception {
+        UserInfo userInfo = userInfoDao.getUserInfoByToken(token);
         return userInfo;
     }
 }

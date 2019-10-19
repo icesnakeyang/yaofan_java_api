@@ -2,6 +2,7 @@ package com.gogoyang.yaofan.controller.user;
 
 import com.gogoyang.yaofan.business.user.IUserBusinessService;
 import com.gogoyang.yaofan.controller.vo.Response;
+import com.gogoyang.yaofan.meta.user.entity.UserInfo;
 import com.gogoyang.yaofan.utility.GogoActType;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
@@ -31,17 +32,34 @@ public class UserController {
     public Response register(@RequestBody UserRequest request) {
         Response response = new Response();
         Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        logMap.put("GogoActType", GogoActType.REGISTER);
         try {
             in.put("phone", request.getPhone());
+            memoMap.put("phone", request.getPhone());
             in.put("password", request.getPassword());
-            iUserBusinessService.register(in);
+            Map out = iUserBusinessService.register(in);
+            response.setData(out);
+            UserInfo userInfo = (UserInfo) out.get("userInfo");
+            if (userInfo != null) {
+                logMap.put("userId", userInfo.getUserId());
+            }
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
+                memoMap.put("error", ex.getMessage());
             } catch (Exception ex2) {
                 response.setCode(10001);
+                memoMap.put("error", ex.getMessage());
                 logger.error(ex.getMessage());
             }
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
         }
         return response;
     }
@@ -51,34 +69,34 @@ public class UserController {
     public Response login(@RequestBody UserRequest request) {
         Response response = new Response();
         Map in = new HashMap();
+        Map memoMap = new HashMap();
+        Map logMap = new HashMap();
+        logMap.put("GogoActType", GogoActType.LOGIN);
         try {
             in.put("phone", request.getPhone());
+            memoMap.put("phone", request.getPhone());
             in.put("password", request.getPassword());
             Map out = iUserBusinessService.login(in);
+            UserInfo userInfo = (UserInfo) out.get("userInfo");
+            if (userInfo != null) {
+                logMap.put("userId", userInfo.getUserId());
+            }
             response.setData(out);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
+                memoMap.put("error", ex.getMessage());
             } catch (Exception ex2) {
                 response.setCode(10001);
-                Map logMap = new HashMap();
-                logMap.put("GogoActType", GogoActType.LOGIN);
-                logMap.put("memo", ex.getMessage());
-                try {
-                    iCommonBusinessService.createUserActLog(logMap);
-                } catch (Exception ex3) {
-                    logger.error(ex3.getMessage());
-                }
+                memoMap.put("error", ex.getMessage());
                 logger.error(ex.getMessage());
             }
         }
         try {
-            Map logMap = new HashMap();
-            logMap.put("GogoActType", GogoActType.LOGIN);
-            logMap.put("memo", request.getPhone());
+            logMap.put("memo", memoMap);
             iCommonBusinessService.createUserActLog(logMap);
-        } catch (Exception ex4) {
-            logger.error(ex4.getMessage());
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
         }
         return response;
     }

@@ -3,7 +3,7 @@ package com.gogoyang.yaofan.business.user;
 import java.util.Map;
 
 public interface IUserBusinessService {
-    void register(Map in) throws Exception;
+    Map register(Map in) throws Exception;
 
     Map login(Map in) throws Exception;
 }

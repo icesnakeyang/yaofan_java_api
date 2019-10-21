@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -94,6 +95,39 @@ public class UserController {
         }
         try {
             logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    @ResponseBody
+    @PostMapping("/loginByToken")
+    public Response loginByToken(@RequestBody UserRequest request,
+                                 HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        logMap.put("GogoActType", GogoActType.LOGIN);
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            memoMap.put("token", token);
+            Map out = iUserBusinessService.loginByToken(in);
+            response.setData(out);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("error", ex.getMessage());
+        }
+        logMap.put("memo", memoMap);
+        try {
             iCommonBusinessService.createUserActLog(logMap);
         } catch (Exception ex3) {
             logger.error(ex3.getMessage());

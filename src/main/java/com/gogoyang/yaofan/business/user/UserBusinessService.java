@@ -47,9 +47,9 @@ public class UserBusinessService implements IUserBusinessService {
         userInfo.setToken(GogoTools.UUID().toString());
         userInfo.setTokenTime(new Date());
 
-        userInfo=iUserInfoService.createUserInfo(userInfo);
+        userInfo = iUserInfoService.createUserInfo(userInfo);
 
-        Map out=new HashMap();
+        Map out = new HashMap();
         out.put("userInfo", userInfo);
         return out;
     }
@@ -73,6 +73,17 @@ public class UserBusinessService implements IUserBusinessService {
         Map out = new HashMap();
         out.put("userInfo", userInfo);
 
+        return out;
+    }
+
+    @Override
+    public Map loginByToken(Map in) throws Exception {
+        String token = in.get("token").toString();
+
+        UserInfo userInfo = iUserInfoService.getUserInfoByToken(token);
+
+        Map out = new HashMap();
+        out.put("userInfo", userInfo);
         return out;
     }
 }

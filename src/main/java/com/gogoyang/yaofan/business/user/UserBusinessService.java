@@ -16,9 +16,12 @@ import java.util.Map;
 @Service
 public class UserBusinessService implements IUserBusinessService {
     private final IUserInfoService iUserInfoService;
+    private final ICommonBusinessService iCommonBusinessService;
 
-    public UserBusinessService(IUserInfoService iUserInfoService) {
+    public UserBusinessService(IUserInfoService iUserInfoService,
+                               ICommonBusinessService iCommonBusinessService) {
         this.iUserInfoService = iUserInfoService;
+        this.iCommonBusinessService = iCommonBusinessService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -84,6 +87,23 @@ public class UserBusinessService implements IUserBusinessService {
 
         Map out = new HashMap();
         out.put("userInfo", userInfo);
+        return out;
+    }
+
+    @Override
+    public Map updateUsername(Map in) throws Exception {
+        String token = in.get("token").toString();
+        String name = in.get("username").toString();
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        userInfo.setName(name);
+
+        iUserInfoService.updateUsername(userInfo);
+
+        Map out = new HashMap();
+        out.put("userInfo", userInfo);
+
         return out;
     }
 }

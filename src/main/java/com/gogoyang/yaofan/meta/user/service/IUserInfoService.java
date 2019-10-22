@@ -10,4 +10,6 @@ public interface IUserInfoService {
     UserInfo getUserInfoByToken(String token) throws Exception;
 
     UserInfo getUserInfoByUserId(String userId) throws Exception;
+
+    void updateUsername(UserInfo userInfo) throws Exception;
 }

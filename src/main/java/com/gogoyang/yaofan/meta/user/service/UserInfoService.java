@@ -36,4 +36,9 @@ public class UserInfoService implements IUserInfoService {
         UserInfo userInfo = userInfoDao.getUserInfoByUserId(userId);
         return userInfo;
     }
+
+    @Override
+    public void updateUsername(UserInfo userInfo) throws Exception {
+        userInfoDao.updateUsername(userInfo);
+    }
 }

@@ -3,9 +3,10 @@
 <mapper namespace="com.gogoyang.yaofan.meta.team.dao.TeamDao">
 
     <resultMap id="teamMap" type="com.gogoyang.yaofan.meta.team.entity.Team">
-        <result property="userId" column="user_id"/>
+        <result property="createUserId" column="create_user_id"/>
         <result property="createTime" column="create_time"/>
         <result property="teamId" column="team_id"/>
+        <result property="managerId" column="manager_id"/>
     </resultMap>
 
     <!--创建一个团队-->
@@ -14,9 +15,9 @@
             keyProperty="ids"
             parameterType="com.gogoyang.yaofan.meta.team.entity.Team">
       insert into team
-      (team_id, name, description, create_time, user_id, status)
+      (team_id, name, description, create_time, create_user_id, status, manager_id)
       values
-      (#{teamId}, #{name}, #{description}, #{createTime}, #{userId}, #{status})
+      (#{teamId}, #{name}, #{description}, #{createTime}, #{createUserId}, #{status}, #{managerId})
     </insert>
 
     <select id="getTeamByName" parameterType="java.lang.String"
@@ -24,4 +25,12 @@
         select * from team
         where name=#{name}
     </select>
+
+    <insert id="createMyTeam"
+            parameterType="com.gogoyang.yaofan.meta.team.entity.MyTeam">
+        insert into my_team
+        (user_id, team_id, status)
+        values
+        (#{userId}, #{teamId}, #{status})
+    </insert>
 </mapper>

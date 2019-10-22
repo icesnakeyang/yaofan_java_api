@@ -14,4 +14,5 @@ public class UserInfo {
     private Date tokenTime;
     private String status;
     private String phone;
+    private String name;
 }

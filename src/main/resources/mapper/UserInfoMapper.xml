@@ -13,9 +13,9 @@
             keyProperty="ids"
             parameterType="com.gogoyang.yaofan.meta.user.entity.UserInfo">
       insert into user_info
-      (user_id, phone, password, token, token_time, create_time, status)
+      (user_id, phone, password, token, token_time, create_time, status, name)
       values
-      (#{userId}, #{phone}, #{password}, #{token}, #{tokenTime}, #{createTime}, #{status})
+      (#{userId}, #{phone}, #{password}, #{token}, #{tokenTime}, #{createTime}, #{status}, #{name})
     </insert>
 
     <select id="getUserInfoByPhone" parameterType="java.lang.String"
@@ -35,4 +35,10 @@
         select * from user_info
         where user_id=#{userId}
     </select>
+
+    <update id="updateUsername" parameterType="com.gogoyang.yaofan.meta.user.entity.UserInfo">
+        update user_info set
+        name=#{name}
+        where user_id=#{userId}
+    </update>
 </mapper>

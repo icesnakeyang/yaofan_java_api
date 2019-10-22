@@ -12,4 +12,6 @@ public interface UserInfoDao {
     UserInfo getUserInfoByToken(String token);
 
     UserInfo getUserInfoByUserId(String userId);
+
+    void updateUsername(UserInfo userInfo);
 }

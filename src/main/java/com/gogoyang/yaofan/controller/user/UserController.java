@@ -9,6 +9,7 @@ import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.UserCredentialsDataSourceAdapter;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -116,6 +117,40 @@ public class UserController {
             in.put("token", token);
             memoMap.put("token", token);
             Map out = iUserBusinessService.loginByToken(in);
+            response.setData(out);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("error", ex.getMessage());
+        }
+        logMap.put("memo", memoMap);
+        try {
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    @ResponseBody
+    @PostMapping("/updateUsername")
+    public Response updateUsername(@RequestBody UserRequest request,
+                                   HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        logMap.put("GogoActType", GogoActType.CHANGE_USER_NAME);
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("username", request.getUsername());
+            memoMap.put("username", request.getUsername());
+            Map out=iUserBusinessService.updateUsername(in);
             response.setData(out);
         } catch (Exception ex) {
             try {

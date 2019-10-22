@@ -8,4 +8,6 @@ public interface IUserBusinessService {
     Map login(Map in) throws Exception;
 
     Map loginByToken(Map in) throws Exception;
+
+    Map updateUsername(Map in) throws Exception;
 }

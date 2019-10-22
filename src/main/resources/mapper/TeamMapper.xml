@@ -9,6 +9,16 @@
         <result property="managerId" column="manager_id"/>
     </resultMap>
 
+    <resultMap id="myTeamViewMap" type="com.gogoyang.yaofan.meta.team.entity.MyTeamView">
+        <result property="userId" column="user_id"/>
+        <result property="teamId" column="team_id"/>
+        <result property="teamName" column="team_name"/>
+        <result property="userName" column="my_name"/>
+        <result property="managerName" column="manager_name"/>
+        <result property="creatorName" column="creator_name"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
     <!--创建一个团队-->
     <insert id="createTeam"
             useGeneratedKeys="true"
@@ -33,4 +43,23 @@
         values
         (#{userId}, #{teamId}, #{status})
     </insert>
+
+    <select id="listTeam" parameterType="map"
+            resultMap="myTeamViewMap">
+        select my_team.user_id,
+        my_team.team_id,
+        team.name    as team_name,
+        me.name      as my_name,
+        manager.name as manager_name,
+        creator.name as creator_name,
+        my_team.status
+        from (((my_team
+        inner join team on my_team.team_id = team.team_id)
+        inner join user_info me on my_team.user_id = me.user_id)
+        inner join user_info manager on team.manager_id = manager.user_id)
+        inner join user_info creator on team.create_user_id = creator.user_id
+        where 1 = 1
+        and me.user_id = #{userId}
+        and my_team.status = #{status}
+    </select>
 </mapper>

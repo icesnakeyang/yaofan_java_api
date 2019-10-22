@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,10 +36,10 @@ public class TeamBusinessService implements ITeamBusinessService {
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        Team team=iTeamService.getTeamByName(name);
+        Team team = iTeamService.getTeamByName(name);
 
 
-        if(team!=null){
+        if (team != null) {
             //团队名称重复
             throw new Exception("10006");
         }
@@ -59,7 +60,7 @@ public class TeamBusinessService implements ITeamBusinessService {
         /**
          * 创建我的团队记录
          */
-        MyTeam myTeam=new MyTeam();
+        MyTeam myTeam = new MyTeam();
         myTeam.setStatus(GogoStatus.ACTIVE.toString());
         myTeam.setTeamId(team.getTeamId());
         myTeam.setUserId(userInfo.getUserId());
@@ -68,6 +69,19 @@ public class TeamBusinessService implements ITeamBusinessService {
         Map out = new HashMap();
         out.put("team", team);
 
+        return out;
+    }
+
+    @Override
+    public Map listTeam(Map in) throws Exception {
+        String token = in.get("token").toString();
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        ArrayList myTeams = iTeamService.listTeam(userInfo.getUserId(), GogoStatus.ACTIVE.toString());
+
+        Map out = new HashMap();
+        out.put("teams", myTeams);
         return out;
     }
 }

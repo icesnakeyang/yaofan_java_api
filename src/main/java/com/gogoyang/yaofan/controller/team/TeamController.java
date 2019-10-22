@@ -5,6 +5,7 @@ import com.gogoyang.yaofan.controller.vo.Response;
 import com.gogoyang.yaofan.meta.team.entity.Team;
 import com.gogoyang.yaofan.utility.GogoActType;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
+import com.sun.org.apache.regexp.internal.RE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,37 @@ public class TeamController {
         try {
             logMap.put("memo", memoMap);
             logMap.put("GogoActType", GogoActType.CREATE_TEAM);
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    @ResponseBody
+    @PostMapping("listTeam")
+    public Response listTeam(HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            logMap.put("token", token);
+            Map out = iTeamBusinessService.listTeam(in);
+            response.setData(out);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("error", ex.getMessage());
+        }
+        logMap.put("memo", memoMap);
+        try {
             iCommonBusinessService.createUserActLog(logMap);
         } catch (Exception ex3) {
             logger.error(ex3.getMessage());

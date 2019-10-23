@@ -24,4 +24,6 @@ public interface TeamDao {
      * @return
      */
     ArrayList<Team> searchTeam(Map qIn);
+
+    Team getTeamByTeamId(String name);
 }

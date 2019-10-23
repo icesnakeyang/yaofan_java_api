@@ -36,6 +36,12 @@
         where name=#{name}
     </select>
 
+    <select id="getTeamByTeamId" parameterType="java.lang.String"
+            resultMap="teamMap">
+        select * from team
+        where team_id=#{teamId}
+    </select>
+
     <insert id="createMyTeam"
             parameterType="com.gogoyang.yaofan.meta.team.entity.MyTeam">
         insert into my_team
@@ -65,8 +71,17 @@
 
     <!--根据团队名称关键字搜索团队-->
     <select id="searchTeam" parameterType="map"
-            resultMap="teamMap">
-        select * from team
-        where name like '%'+#{nameKey}+'%'
+            resultMap="myTeamViewMap">
+        select team_id, team.name as team_name, manager.name as manager_name, team.status
+        from team
+        inner join user_info manager on team.manager_id = manager.user_id
+        where 1 = 1
+        and team.name like concat('%',#{nameKey},'%')
+        and team.status=#{teamStatus}
+        <![CDATA[
+            and manager_id<>#{currentUserId}
+
+        ]]>
+
     </select>
 </mapper>

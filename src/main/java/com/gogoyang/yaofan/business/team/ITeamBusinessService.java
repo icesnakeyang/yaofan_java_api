@@ -8,4 +8,6 @@ public interface ITeamBusinessService {
     Map listTeam(Map in) throws Exception;
 
     Map searchTeam(Map in) throws Exception;
+
+    Map getTeamByTeamId(Map in) throws Exception;
 }

@@ -4,6 +4,7 @@ import com.gogoyang.yaofan.meta.team.dao.TeamDao;
 import com.gogoyang.yaofan.meta.team.entity.MyTeam;
 import com.gogoyang.yaofan.meta.team.entity.MyTeamView;
 import com.gogoyang.yaofan.meta.team.entity.Team;
+import com.gogoyang.yaofan.utility.GogoStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,14 +49,13 @@ public class TeamService implements ITeamService {
 
     /**
      * 根据团队名称关键字搜索团队
-     * @param nameKey
+     *
+     * @param qIn
      * @return
      * @throws Exception
      */
     @Override
-    public ArrayList<Team> searchTeam(String nameKey) throws Exception {
-        Map qIn = new HashMap();
-        qIn.put("nameKey", nameKey);
+    public ArrayList<Team> searchTeam(Map qIn) throws Exception {
         ArrayList<Team> teams = teamDao.searchTeam(qIn);
         return teams;
     }

@@ -18,9 +18,11 @@ public interface ITeamService {
 
     /**
      * 根据团队名称关键字搜索团队
-     * @param nameKey
+     * @param qIn
      * @return
      * @throws Exception
      */
-    ArrayList<Team> searchTeam(String nameKey) throws Exception;
+    ArrayList<Team> searchTeam(Map qIn) throws Exception;
+
+    Team getTeamByTeamId(String teamId) throws Exception;
 }

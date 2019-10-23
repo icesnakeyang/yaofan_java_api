@@ -5,5 +5,6 @@ public enum GogoActType {
     LOGIN,
     CREATE_TEAM,
     CHANGE_USER_NAME,
-    SEARCH_TEAM
+    SEARCH_TEAM,
+    GET_TEAM
 }

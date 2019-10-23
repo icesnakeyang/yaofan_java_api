@@ -17,4 +17,11 @@ public interface TeamDao {
     void createMyTeam(MyTeam myTeam);
 
     ArrayList<MyTeamView> listTeam(Map qIn);
+
+    /**
+     * 根据团队名称关键字搜索团队
+     * @param qIn
+     * @return
+     */
+    ArrayList<Team> searchTeam(Map qIn);
 }

@@ -45,4 +45,18 @@ public class TeamService implements ITeamService {
         ArrayList<MyTeamView> myTeamViewArrayList = teamDao.listTeam(qIn);
         return myTeamViewArrayList;
     }
+
+    /**
+     * 根据团队名称关键字搜索团队
+     * @param nameKey
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public ArrayList<Team> searchTeam(String nameKey) throws Exception {
+        Map qIn = new HashMap();
+        qIn.put("nameKey", nameKey);
+        ArrayList<Team> teams = teamDao.searchTeam(qIn);
+        return teams;
+    }
 }

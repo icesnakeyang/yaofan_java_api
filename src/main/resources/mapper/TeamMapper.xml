@@ -62,4 +62,11 @@
         and me.user_id = #{userId}
         and my_team.status = #{status}
     </select>
+
+    <!--根据团队名称关键字搜索团队-->
+    <select id="searchTeam" parameterType="map"
+            resultMap="teamMap">
+        select * from team
+        where name like '%'+#{nameKey}+'%'
+    </select>
 </mapper>

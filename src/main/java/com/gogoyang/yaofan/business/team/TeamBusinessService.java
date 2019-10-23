@@ -84,4 +84,18 @@ public class TeamBusinessService implements ITeamBusinessService {
         out.put("teams", myTeams);
         return out;
     }
+
+    @Override
+    public Map searchTeam(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String name=in.get("name").toString();
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+
+        ArrayList<Team> teams=iTeamService.searchTeam(name);
+
+        Map out=new HashMap();
+        out.put("teams", teams);
+        return out;
+    }
 }

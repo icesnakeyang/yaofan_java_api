@@ -87,30 +87,34 @@ public class TeamBusinessService implements ITeamBusinessService {
 
     @Override
     public Map searchTeam(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String name=in.get("name").toString();
+        String token = in.get("token").toString();
+        String name = in.get("name").toString();
 
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        Map qIn=new HashMap();
+        Map qIn = new HashMap();
         qIn.put("nameKey", name);
         qIn.put("teamStatus", GogoStatus.ACTIVE.toString());
         qIn.put("currentUserId", userInfo.getUserId());
-        ArrayList<Team> teams=iTeamService.searchTeam(qIn);
+        ArrayList<Team> teams = iTeamService.searchTeam(qIn);
 
-        Map out=new HashMap();
+        Map out = new HashMap();
         out.put("teams", teams);
         return out;
     }
 
     @Override
     public Map getTeamByTeamId(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String teamId=in.get("teamId").toString();
+        String token = in.get("token").toString();
+        String teamId = in.get("teamId").toString();
 
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
+        Team team = iTeamService.getTeamByTeamId(teamId);
 
-        iTeamService.gete()
+        Map out = new HashMap();
+        out.put("team", team);
+
+        return out;
     }
 }

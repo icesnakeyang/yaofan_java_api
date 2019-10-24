@@ -80,7 +80,6 @@
         and team.status=#{teamStatus}
         <![CDATA[
             and manager_id<>#{currentUserId}
-
         ]]>
 
     </select>

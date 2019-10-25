@@ -27,6 +27,19 @@
         <result property="managerId" column="manager_id"/>
     </resultMap>
 
+    <resultMap id="applyTeamMap" type="com.gogoyang.yaofan.meta.team.entity.ApplyTeam">
+        <result property="applyTeamId" column="team_id"/>
+        <result property="applyUserId" column="apply_user_id"/>
+        <result property="applyRemark" column="apply_remark"/>
+        <result property="createTime" column="create_time"/>
+        <result property="processUserId" column="process_user_id"/>
+        <result property="readTime" column="read_time"/>
+        <result property="processResult" column="process_result"/>
+        <result property="processRemark" column="process_remark"/>
+        <result property="processTime" column="process_time"/>
+        <result property="processReadTime" column="process_read_time"/>
+    </resultMap>
+
     <!--创建一个团队-->
     <insert id="createTeam"
             useGeneratedKeys="true"
@@ -94,7 +107,18 @@
 
 
 
+
+
+
         ]]>
 
     </select>
+
+    <!--创建一个加入团队的申请-->
+    <insert id="createApplyTeam" parameterType="com.gogoyang.yaofan.meta.team.entity.ApplyTeam">
+        insert into apply_team
+        (apply_team_id, apply_user_id, apply_remark, create_time)
+        values
+        (#{applyTeamId},#{applyUserId}, #{applyRemark}, #{createTime})
+    </insert>
 </mapper>

@@ -1,9 +1,6 @@
 package com.gogoyang.yaofan.business.team;
 
-import com.gogoyang.yaofan.meta.team.entity.MyTeam;
-import com.gogoyang.yaofan.meta.team.entity.MyTeamView;
-import com.gogoyang.yaofan.meta.team.entity.Team;
-import com.gogoyang.yaofan.meta.team.entity.TeamView;
+import com.gogoyang.yaofan.meta.team.entity.*;
 import com.gogoyang.yaofan.meta.team.service.ITeamService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
 import com.gogoyang.yaofan.utility.GogoStatus;
@@ -118,5 +115,22 @@ public class TeamBusinessService implements ITeamBusinessService {
         out.put("team", team);
 
         return out;
+    }
+
+    @Override
+    public void applyTeam(Map in) throws Exception {
+        String token = in.get("token").toString();
+        String remark = (String) in.get("remark");
+        String teamId = in.get("teamId").toString();
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        ApplyTeam applyTeam = new ApplyTeam();
+        applyTeam.setApplyRemark(remark);
+        applyTeam.setApplyTeamId(teamId);
+        applyTeam.setApplyUserId(userInfo.getUserId());
+        applyTeam.setCreateTime(new Date());
+
+        iTeamService.createApplyTeam(applyTeam);
     }
 }

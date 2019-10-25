@@ -1,9 +1,6 @@
 package com.gogoyang.yaofan.meta.team.dao;
 
-import com.gogoyang.yaofan.meta.team.entity.MyTeam;
-import com.gogoyang.yaofan.meta.team.entity.MyTeamView;
-import com.gogoyang.yaofan.meta.team.entity.Team;
-import com.gogoyang.yaofan.meta.team.entity.TeamView;
+import com.gogoyang.yaofan.meta.team.entity.*;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.ArrayList;
@@ -27,4 +24,6 @@ public interface TeamDao {
     ArrayList<Team> searchTeam(Map qIn);
 
     TeamView getTeamByTeamId(String name);
+
+    void createApplyTeam(ApplyTeam applyTeam);
 }

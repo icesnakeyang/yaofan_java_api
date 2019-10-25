@@ -3,6 +3,7 @@ package com.gogoyang.yaofan.meta.team.service;
 import com.gogoyang.yaofan.meta.team.entity.MyTeam;
 import com.gogoyang.yaofan.meta.team.entity.MyTeamView;
 import com.gogoyang.yaofan.meta.team.entity.Team;
+import com.gogoyang.yaofan.meta.team.entity.TeamView;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -24,5 +25,5 @@ public interface ITeamService {
      */
     ArrayList<Team> searchTeam(Map qIn) throws Exception;
 
-    Team getTeamByTeamId(String teamId) throws Exception;
+    TeamView getTeamByTeamId(String teamId) throws Exception;
 }

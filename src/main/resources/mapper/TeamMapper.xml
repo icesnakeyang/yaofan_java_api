@@ -19,6 +19,14 @@
         <result property="status" column="status"/>
     </resultMap>
 
+    <resultMap id="teamViewMap" type="com.gogoyang.yaofan.meta.team.entity.TeamView">
+        <result property="teamId" column="team_id"/>
+        <result property="teamName" column="team_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="managerName" column="manager_name"/>
+        <result property="managerId" column="manager_id"/>
+    </resultMap>
+
     <!--创建一个团队-->
     <insert id="createTeam"
             useGeneratedKeys="true"
@@ -37,9 +45,12 @@
     </select>
 
     <select id="getTeamByTeamId" parameterType="java.lang.String"
-            resultMap="teamMap">
-        select * from team
-        where team_id=#{teamId}
+            resultMap="teamViewMap">
+        select team_id, team.name as team_name, manager.name as manager_name, team.status, team.create_time,
+        manager_id, description
+        from team
+        inner join user_info manager on team.manager_id = manager.user_id
+        where team.team_id=#{teamId}
     </select>
 
     <insert id="createMyTeam"
@@ -80,6 +91,9 @@
         and team.status=#{teamStatus}
         <![CDATA[
             and manager_id<>#{currentUserId}
+
+
+
         ]]>
 
     </select>

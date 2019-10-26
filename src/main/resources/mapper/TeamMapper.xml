@@ -40,6 +40,18 @@
         <result property="processReadTime" column="process_read_time"/>
     </resultMap>
 
+    <resultMap id="applyTeamViewMap" type="com.gogoyang.yaofan.meta.team.entity.ApplyTeamView">
+        <result property="applyTeamId" column="apply_team_id"/>
+        <result property="applyTeamName" column="apply_team_name"/>
+        <result property="applyUserId" column="apply_user_id"/>
+        <result property="applyUserName" column="apply_user_name"/>
+        <result property="applyTime" column="create_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="create_user_name"/>
+        <result property="managerId" column="manager_id"/>
+        <result property="managerName" column="manager_user_name"/>
+    </resultMap>
+
     <!--创建一个团队-->
     <insert id="createTeam"
             useGeneratedKeys="true"
@@ -104,12 +116,6 @@
         and team.status=#{teamStatus}
         <![CDATA[
             and manager_id<>#{currentUserId}
-
-
-
-
-
-
         ]]>
 
     </select>
@@ -121,4 +127,24 @@
         values
         (#{applyTeamId},#{applyUserId}, #{applyRemark}, #{createTime})
     </insert>
+
+    <select id="listApplyTeam" parameterType="map"
+            resultMap="applyTeamViewMap">
+        select apply_team_id,
+        apply_user_id,
+        apply_user.name   as apply_user_name,
+        create_user_id,
+        manager_id,
+        create_user.name  as create_user_name,
+        manager_user.name as manager_user_name,
+        apply_team.create_time,
+        team.name as apply_team_name
+        from ((((apply_team
+        inner join team on team_id = apply_team_id)
+        inner join user_info apply_user on apply_user_id = user_id)
+        inner join user_info create_user on create_user_id = create_user.user_id)
+        inner join user_info manager_user on manager_user.user_id = manager_id)
+        where 1=1
+        and apply_user_id=#{userId}
+    </select>
 </mapper>

@@ -2,6 +2,7 @@ package com.gogoyang.yaofan.meta.team.dao;
 
 import com.gogoyang.yaofan.meta.team.entity.*;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.jdbc.object.MappingSqlQueryWithParameters;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -18,6 +19,7 @@ public interface TeamDao {
 
     /**
      * 根据团队名称关键字搜索团队
+     *
      * @param qIn
      * @return
      */
@@ -26,4 +28,6 @@ public interface TeamDao {
     TeamView getTeamByTeamId(String name);
 
     void createApplyTeam(ApplyTeam applyTeam);
+
+    ArrayList<ApplyTeam> listApplyTeam(Map qIn);
 }

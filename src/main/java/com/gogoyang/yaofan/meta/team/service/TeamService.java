@@ -66,4 +66,10 @@ public class TeamService implements ITeamService {
     public void createApplyTeam(ApplyTeam applyTeam) throws Exception {
         teamDao.createApplyTeam(applyTeam);
     }
+
+    @Override
+    public ArrayList<ApplyTeam> listApplyTeam(Map qIn) throws Exception {
+        ArrayList<ApplyTeam> applyTeams = teamDao.listApplyTeam(qIn);
+        return applyTeams;
+    }
 }

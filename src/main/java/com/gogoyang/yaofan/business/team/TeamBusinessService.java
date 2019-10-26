@@ -133,4 +133,18 @@ public class TeamBusinessService implements ITeamBusinessService {
 
         iTeamService.createApplyTeam(applyTeam);
     }
+
+    @Override
+    public Map listApplyTeam(Map in) throws Exception {
+        String token = in.get("token").toString();
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        Map qIn = new HashMap();
+        qIn.put("userId", userInfo.getUserId());
+        ArrayList<ApplyTeam> applyTeams = iTeamService.listApplyTeam(qIn);
+        Map out = new HashMap();
+        out.put("applyTeams", applyTeams);
+        return out;
+    }
 }

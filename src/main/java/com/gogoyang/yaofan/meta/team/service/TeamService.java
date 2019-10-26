@@ -72,4 +72,10 @@ public class TeamService implements ITeamService {
         ArrayList<ApplyTeam> applyTeams = teamDao.listApplyTeam(qIn);
         return applyTeams;
     }
+
+    @Override
+    public ApplyTeamView getApplyTeam(String teamId) throws Exception {
+        ApplyTeamView applyTeamView = teamDao.getApplyTeam(teamId);
+        return applyTeamView;
+    }
 }

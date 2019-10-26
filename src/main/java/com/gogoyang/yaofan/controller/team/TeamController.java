@@ -233,5 +233,38 @@ public class TeamController {
         return response;
     }
 
-
+    @ResponseBody
+    @PostMapping("getApplyTeam")
+    public Response getApplyTeam(@RequestBody TeamRequest request,
+                                 HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map logMap = new HashMap();
+        Map in = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.GET_APPLY_TEAM);
+            in.put("teamId", request.getTeamId());
+            memoMap.put("teamId", request.getTeamId());
+            Map out = iTeamBusinessService.getApplyTeam(in);
+            response.setData(out);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
 }

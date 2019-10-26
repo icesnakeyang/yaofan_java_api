@@ -147,4 +147,19 @@ public class TeamBusinessService implements ITeamBusinessService {
         out.put("applyTeams", applyTeams);
         return out;
     }
+
+    @Override
+    public Map getApplyTeam(Map in) throws Exception {
+        String token = in.get("token").toString();
+        String teamId = in.get("teamId").toString();
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        ApplyTeamView applyTeamView = iTeamService.getApplyTeam(teamId);
+
+        Map out = new HashMap();
+        out.put("applyTeamView", applyTeamView);
+
+        return out;
+    }
 }

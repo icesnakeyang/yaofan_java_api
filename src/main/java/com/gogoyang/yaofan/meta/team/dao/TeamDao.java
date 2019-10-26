@@ -30,4 +30,6 @@ public interface TeamDao {
     void createApplyTeam(ApplyTeam applyTeam);
 
     ArrayList<ApplyTeam> listApplyTeam(Map qIn);
+
+    ApplyTeamView getApplyTeam(String teamId);
 }

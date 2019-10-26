@@ -8,5 +8,6 @@ public enum GogoActType {
     SEARCH_TEAM,
     GET_TEAM,
     APPLY_TEAM,
-    LIST_APPLY_TEAM
+    LIST_APPLY_TEAM,
+    GET_APPLY_TEAM,
 }

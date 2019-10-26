@@ -27,4 +27,6 @@ public interface ITeamService {
     void createApplyTeam(ApplyTeam applyTeam) throws Exception;
 
     ArrayList<ApplyTeam> listApplyTeam(Map qIn) throws Exception;
+
+    ApplyTeamView getApplyTeam(String teamId) throws Exception;
 }

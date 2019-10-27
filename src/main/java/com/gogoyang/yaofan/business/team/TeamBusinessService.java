@@ -166,11 +166,11 @@ public class TeamBusinessService implements ITeamBusinessService {
     @Override
     public Map getApplyTeam(Map in) throws Exception {
         String token = in.get("token").toString();
-        String teamId = in.get("teamId").toString();
+        String applyId = in.get("applyId").toString();
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        ApplyTeamView applyTeamView = iTeamService.getApplyTeam(teamId);
+        ApplyTeamView applyTeamView = iTeamService.getApplyTeam(applyId);
 
         Map out = new HashMap();
         out.put("applyTeamView", applyTeamView);

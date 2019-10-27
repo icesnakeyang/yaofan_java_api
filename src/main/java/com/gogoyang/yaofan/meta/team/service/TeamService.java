@@ -74,8 +74,8 @@ public class TeamService implements ITeamService {
     }
 
     @Override
-    public ApplyTeamView getApplyTeam(String teamId) throws Exception {
-        ApplyTeamView applyTeamView = teamDao.getApplyTeam(teamId);
+    public ApplyTeamView getApplyTeam(String applyId) throws Exception {
+        ApplyTeamView applyTeamView = teamDao.getApplyTeam(applyId);
         return applyTeamView;
     }
 

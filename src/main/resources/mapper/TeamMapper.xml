@@ -133,7 +133,8 @@
 
     <select id="listApplyTeam" parameterType="map"
             resultMap="applyTeamViewMap">
-        select apply_team_id,
+        select apply_team_log_id,
+        apply_team_id,
         apply_user_id,
         apply_user.name as apply_user_name,
         create_user_id,
@@ -173,7 +174,7 @@ from ((((apply_team
     inner join user_info create_user on create_user_id = create_user.user_id)
          inner join user_info manager_user on manager_user.user_id = manager_id)
 where 1 = 1
-and apply_team_id=#{teamId}
+and apply_team_log_id=#{applyId}
     </select>
 
     <!--统计团队或者某个用户未处理的申请数-->

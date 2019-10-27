@@ -8,4 +8,8 @@ public class TeamRequest {
     private String description;
     private String teamId;
     private String remark;
+    /**
+     * 申请加入团队的id
+     */
+    private String applyId;
 }

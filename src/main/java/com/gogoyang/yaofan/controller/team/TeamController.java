@@ -246,8 +246,8 @@ public class TeamController {
             in.put("token", token);
             logMap.put("token", token);
             logMap.put("GogoActType", GogoActType.GET_APPLY_TEAM);
-            in.put("teamId", request.getTeamId());
-            memoMap.put("teamId", request.getTeamId());
+            in.put("applyId", request.getApplyId());
+            memoMap.put("applyId", request.getApplyId());
             Map out = iTeamBusinessService.getApplyTeam(in);
             response.setData(out);
         } catch (Exception ex) {

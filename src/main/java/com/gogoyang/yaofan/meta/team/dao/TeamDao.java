@@ -31,7 +31,7 @@ public interface TeamDao {
 
     ArrayList<ApplyTeam> listApplyTeam(Map qIn);
 
-    ApplyTeamView getApplyTeam(String teamId);
+    ApplyTeamView getApplyTeam(String applyId);
 
     /**
      * 统计团队或者某个用户未处理的申请数

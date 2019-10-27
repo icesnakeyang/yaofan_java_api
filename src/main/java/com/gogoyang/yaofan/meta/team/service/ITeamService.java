@@ -28,7 +28,7 @@ public interface ITeamService {
 
     ArrayList<ApplyTeam> listApplyTeam(Map qIn) throws Exception;
 
-    ApplyTeamView getApplyTeam(String teamId) throws Exception;
+    ApplyTeamView getApplyTeam(String applyId) throws Exception;
 
     /**
      * 统计团队或者某个用户未处理的申请数

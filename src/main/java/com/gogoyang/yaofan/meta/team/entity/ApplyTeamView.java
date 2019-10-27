@@ -7,6 +7,7 @@ import java.util.Date;
 @Data
 public class ApplyTeamView {
     private Integer ids;
+    private String applyTeamLogId;
     /**
      * 申请的团队id
      */

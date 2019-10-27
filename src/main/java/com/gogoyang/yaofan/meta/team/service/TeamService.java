@@ -81,6 +81,7 @@ public class TeamService implements ITeamService {
 
     /**
      * 统计团队或者某个用户未处理的申请数
+     *
      * @param qIn
      * @return
      * @throws Exception
@@ -89,5 +90,15 @@ public class TeamService implements ITeamService {
     public int totalApplyTeamUnProcess(Map qIn) throws Exception {
         int total = teamDao.totalApplyTeamUnProcess(qIn);
         return total;
+    }
+
+    @Override
+    public void setApplyTeamReadTime(ApplyTeamView applyTeamView) throws Exception {
+        teamDao.setApplyTeamReadTime(applyTeamView);
+    }
+
+    @Override
+    public void processApplyTeam(ApplyTeam applyTeam) throws Exception {
+        teamDao.processApplyTeam(applyTeam);
     }
 }

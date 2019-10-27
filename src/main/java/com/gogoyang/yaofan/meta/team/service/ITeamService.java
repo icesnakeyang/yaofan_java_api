@@ -37,4 +37,8 @@ public interface ITeamService {
      * @throws Exception
      */
     int totalApplyTeamUnProcess(Map qIn) throws Exception;
+
+    void setApplyTeamReadTime(ApplyTeamView applyTeamView) throws Exception;
+
+    void processApplyTeam(ApplyTeam applyTeam) throws Exception;
 }

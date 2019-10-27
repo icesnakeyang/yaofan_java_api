@@ -120,6 +120,11 @@
         and team.status=#{teamStatus}
         <![CDATA[
             and manager_id<>#{currentUserId}
+
+
+
+
+
         ]]>
 
     </select>
@@ -158,7 +163,9 @@
 
     <select id="getApplyTeam" parameterType="java.lang.String"
             resultMap="applyTeamViewMap">
-        select apply_team_id,
+        select
+        apply_team_log_id,
+        apply_team_id,
        apply_user_id,
        apply_user.name   as apply_user_name,
        create_user_id,
@@ -190,4 +197,21 @@ and apply_team_log_id=#{applyId}
         </if>
         and process_result is null
     </select>
+
+    <!--设置阅读时间-->
+    <update id="setApplyTeamReadTime" parameterType="com.gogoyang.yaofan.meta.team.entity.ApplyTeamView">
+        update apply_team set
+        read_time=#{readTime}
+        where apply_team_log_id=#{applyTeamLogId}
+    </update>
+
+    <!--处理团队申请结果-->
+    <update id="processApplyTeam" parameterType="com.gogoyang.yaofan.meta.team.entity.ApplyTeam">
+        update apply_team set
+        process_result=#{processResult},
+        process_remark=#{processRemark},
+        process_time=#{processTime},
+        process_user_id=#{processUserId}
+        where apply_team_log_id=#{applyTeamLogId}
+    </update>
 </mapper>

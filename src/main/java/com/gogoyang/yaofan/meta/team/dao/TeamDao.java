@@ -39,4 +39,8 @@ public interface TeamDao {
      * @return
      */
     int totalApplyTeamUnProcess(Map qIn);
+
+    void setApplyTeamReadTime(ApplyTeamView applyTeamView);
+
+    void processApplyTeam(ApplyTeam applyTeam);
 }

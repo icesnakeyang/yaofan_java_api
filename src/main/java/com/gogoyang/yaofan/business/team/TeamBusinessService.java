@@ -3,6 +3,7 @@ package com.gogoyang.yaofan.business.team;
 import com.gogoyang.yaofan.meta.team.entity.*;
 import com.gogoyang.yaofan.meta.team.service.ITeamService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
+import com.gogoyang.yaofan.utility.GogoActType;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
@@ -130,11 +131,11 @@ public class TeamBusinessService implements ITeamBusinessService {
          * 用户不能重复提交，只有处理后才能再次提交。
          * 如果用户已经加入了该团队，也不能再提交申请
          */
-        Map qIn=new HashMap();
+        Map qIn = new HashMap();
         qIn.put("userId", userInfo.getUserId());
         qIn.put("teamId", teamId);
-        int total=iTeamService.totalApplyTeamUnProcess(qIn);
-        if(total>0){
+        int total = iTeamService.totalApplyTeamUnProcess(qIn);
+        if (total > 0) {
             //已经申请过了，等待处理中
             throw new Exception("10007");
         }
@@ -163,18 +164,68 @@ public class TeamBusinessService implements ITeamBusinessService {
         return out;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Map getApplyTeam(Map in) throws Exception {
         String token = in.get("token").toString();
         String applyId = in.get("applyId").toString();
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
-
         ApplyTeamView applyTeamView = iTeamService.getApplyTeam(applyId);
+
+        /**
+         * 如果当前用户是管理员，就写入readTime
+         */
+        boolean checkUser = false;
+        if (applyTeamView.getManagerId().equals(userInfo.getUserId())) {
+            //管理员，写入readTime
+            applyTeamView.setReadTime(new Date());
+            iTeamService.setApplyTeamReadTime(applyTeamView);
+            checkUser = true;
+        } else {
+            if (applyTeamView.getApplyUserId().equals(userInfo.getUserId())) {
+                //申请人
+                checkUser = true;
+            }
+        }
+
+        /**
+         * 如果当前用户既不是管理员，又不是申请人，就退出
+         */
+        if (!checkUser) {
+            throw new Exception("10008");
+        }
 
         Map out = new HashMap();
         out.put("applyTeamView", applyTeamView);
 
         return out;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void rejectApplyTeam(Map in) throws Exception {
+        String token = in.get("token").toString();
+        String applyId = in.get("applyId").toString();
+        String processRemark = in.get("remark").toString();
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+        ApplyTeamView applyTeamView = iTeamService.getApplyTeam(applyId);
+
+        /**
+         * 必须是该团队的管理员才能拒绝申请
+         */
+        if (!applyTeamView.getManagerId().equals(userInfo.getUserId())) {
+            //不是管理员
+            throw new Exception("10009");
+        }
+
+        ApplyTeam applyTeam = new ApplyTeam();
+        applyTeam.setApplyTeamLogId(applyTeamView.getApplyTeamLogId());
+        applyTeam.setProcessRemark(processRemark);
+        applyTeam.setProcessResult(GogoActType.REJECT_APPLY_TEAM.toString());
+        applyTeam.setProcessTime(new Date());
+        applyTeam.setProcessUserId(userInfo.getUserId());
+        iTeamService.processApplyTeam(applyTeam);
     }
 }

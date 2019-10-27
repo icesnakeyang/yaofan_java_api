@@ -173,6 +173,9 @@ public class TeamBusinessService implements ITeamBusinessService {
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
         ApplyTeamView applyTeamView = iTeamService.getApplyTeam(applyId);
 
+        if(applyTeamView==null){
+            throw new Exception("10010");
+        }
         /**
          * 如果当前用户是管理员，就写入readTime
          */
@@ -212,6 +215,14 @@ public class TeamBusinessService implements ITeamBusinessService {
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
         ApplyTeamView applyTeamView = iTeamService.getApplyTeam(applyId);
 
+        if(applyTeamView==null){
+            throw new Exception("10010");
+        }
+
+        if(applyTeamView.getProcessResult()!=null){
+            throw new Exception("10011");
+        }
+
         /**
          * 必须是该团队的管理员才能拒绝申请
          */
@@ -223,7 +234,42 @@ public class TeamBusinessService implements ITeamBusinessService {
         ApplyTeam applyTeam = new ApplyTeam();
         applyTeam.setApplyTeamLogId(applyTeamView.getApplyTeamLogId());
         applyTeam.setProcessRemark(processRemark);
-        applyTeam.setProcessResult(GogoActType.REJECT_APPLY_TEAM.toString());
+        applyTeam.setProcessResult(GogoStatus.REJECT.toString());
+        applyTeam.setProcessTime(new Date());
+        applyTeam.setProcessUserId(userInfo.getUserId());
+        iTeamService.processApplyTeam(applyTeam);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void agreeApplyTeam(Map in) throws Exception {
+        String token = in.get("token").toString();
+        String applyId = in.get("applyId").toString();
+        String processRemark = in.get("remark").toString();
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+        ApplyTeamView applyTeamView = iTeamService.getApplyTeam(applyId);
+
+        if(applyTeamView==null){
+            throw new Exception("10010");
+        }
+
+        if(applyTeamView.getProcessResult()!=null){
+            throw new Exception("10011");
+        }
+
+        /**
+         * 必须是该团队的管理员才能处理
+         */
+        if (!applyTeamView.getManagerId().equals(userInfo.getUserId())) {
+            //不是管理员
+            throw new Exception("10009");
+        }
+
+        ApplyTeam applyTeam = new ApplyTeam();
+        applyTeam.setApplyTeamLogId(applyTeamView.getApplyTeamLogId());
+        applyTeam.setProcessRemark(processRemark);
+        applyTeam.setProcessResult(GogoStatus.AGREE.toString());
         applyTeam.setProcessTime(new Date());
         applyTeam.setProcessUserId(userInfo.getUserId());
         iTeamService.processApplyTeam(applyTeam);

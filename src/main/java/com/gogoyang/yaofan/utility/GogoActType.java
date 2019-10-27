@@ -7,6 +7,7 @@ public enum GogoActType {
     CHANGE_USER_NAME,
     SEARCH_TEAM,
     GET_TEAM,
+    LIST_TEAM,
     APPLY_TEAM,
     LIST_APPLY_TEAM,
     GET_APPLY_TEAM,

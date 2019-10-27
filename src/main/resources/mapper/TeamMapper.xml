@@ -53,6 +53,12 @@
         <result property="managerId" column="manager_id"/>
         <result property="managerName" column="manager_user_name"/>
         <result property="applyRemark" column="apply_remark"/>
+        <result property="processResult" column="process_result"/>
+        <result property="processRemark" column="process_remark"/>
+        <result property="processTime" column="process_time"/>
+        <result property="processUserId" column="process_user_id"/>
+        <result property="processUserName" column="process_user_name"/>
+        <result property="processReadTime" column="process_read_time"/>
     </resultMap>
 
     <!--创建一个团队-->
@@ -125,6 +131,7 @@
 
 
 
+
         ]]>
 
     </select>
@@ -147,7 +154,8 @@
         create_user.name as create_user_name,
         manager_user.name as manager_user_name,
         apply_team.create_time,
-        team.name as apply_team_name
+        team.name as apply_team_name,
+        process_result
         from ((((apply_team
         inner join team on team_id = apply_team_id)
         inner join user_info apply_user on apply_user_id = user_id)
@@ -174,12 +182,19 @@
        manager_user.name as manager_user_name,
        apply_team.create_time,
        team.name         as apply_team_name,
-       apply_remark
-from ((((apply_team
+       apply_remark,
+       process_result,
+       process_remark,
+       process_time,
+       process_user_id,
+       process_user.name as process_user_name,
+       process_read_time
+from (((((apply_team
     inner join team on team_id = apply_team_id)
     inner join user_info apply_user on apply_user_id = user_id)
     inner join user_info create_user on create_user_id = create_user.user_id)
          inner join user_info manager_user on manager_user.user_id = manager_id)
+         left outer join user_info process_user on process_user.user_id=process_user_id)
 where 1 = 1
 and apply_team_log_id=#{applyId}
     </select>

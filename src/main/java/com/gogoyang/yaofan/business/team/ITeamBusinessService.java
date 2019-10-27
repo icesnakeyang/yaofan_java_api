@@ -18,4 +18,6 @@ public interface ITeamBusinessService {
     Map getApplyTeam(Map in) throws Exception;
 
     void rejectApplyTeam(Map in) throws Exception;
+
+    void agreeApplyTeam(Map in) throws Exception;
 }

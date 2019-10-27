@@ -8,6 +8,10 @@ import java.util.Date;
 public class ApplyTeam {
     private Integer ids;
     /**
+     * 申请事件Id
+     */
+    private String applyTeamLogId;
+    /**
      * 申请的团队id
      */
     private String applyTeamId;

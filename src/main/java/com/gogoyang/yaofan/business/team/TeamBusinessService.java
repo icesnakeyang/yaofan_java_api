@@ -125,7 +125,22 @@ public class TeamBusinessService implements ITeamBusinessService {
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
+        /**
+         * 检查该用户是否已经提交过加入该团队的申请，且未被处理
+         * 用户不能重复提交，只有处理后才能再次提交。
+         * 如果用户已经加入了该团队，也不能再提交申请
+         */
+        Map qIn=new HashMap();
+        qIn.put("userId", userInfo.getUserId());
+        qIn.put("teamId", teamId);
+        int total=iTeamService.totalApplyTeamUnProcess(qIn);
+        if(total>0){
+            //已经申请过了，等待处理中
+            throw new Exception("10007");
+        }
+
         ApplyTeam applyTeam = new ApplyTeam();
+        applyTeam.setApplyTeamLogId(GogoTools.UUID().toString());
         applyTeam.setApplyRemark(remark);
         applyTeam.setApplyTeamId(teamId);
         applyTeam.setApplyUserId(userInfo.getUserId());

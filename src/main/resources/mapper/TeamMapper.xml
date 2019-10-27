@@ -28,7 +28,8 @@
     </resultMap>
 
     <resultMap id="applyTeamMap" type="com.gogoyang.yaofan.meta.team.entity.ApplyTeam">
-        <result property="applyTeamId" column="team_id"/>
+        <result property="applyTeamLogId" column="apply_team_log_id"/>
+        <result property="applyTeamId" column="apply_team_id"/>
         <result property="applyUserId" column="apply_user_id"/>
         <result property="applyRemark" column="apply_remark"/>
         <result property="createTime" column="create_time"/>
@@ -41,6 +42,7 @@
     </resultMap>
 
     <resultMap id="applyTeamViewMap" type="com.gogoyang.yaofan.meta.team.entity.ApplyTeamView">
+        <result property="applyTeamLogId" column="apply_team_log_id"/>
         <result property="applyTeamId" column="apply_team_id"/>
         <result property="applyTeamName" column="apply_team_name"/>
         <result property="applyUserId" column="apply_user_id"/>
@@ -87,6 +89,7 @@
         (#{userId}, #{teamId}, #{status})
     </insert>
 
+    <!--根据团队名称关键字搜索团队-->
     <select id="listTeam" parameterType="map"
             resultMap="myTeamViewMap">
         select my_team.user_id,
@@ -106,7 +109,7 @@
         and my_team.status = #{status}
     </select>
 
-    <!--根据团队名称关键字搜索团队-->
+    <!--创建一个加入团队的申请-->
     <select id="searchTeam" parameterType="map"
             resultMap="myTeamViewMap">
         select team_id, team.name as team_name, manager.name as manager_name, team.status
@@ -117,27 +120,25 @@
         and team.status=#{teamStatus}
         <![CDATA[
             and manager_id<>#{currentUserId}
-
         ]]>
 
     </select>
 
-    <!--创建一个加入团队的申请-->
     <insert id="createApplyTeam" parameterType="com.gogoyang.yaofan.meta.team.entity.ApplyTeam">
         insert into apply_team
-        (apply_team_id, apply_user_id, apply_remark, create_time)
+        (apply_team_log_id, apply_team_id, apply_user_id, apply_remark, create_time)
         values
-        (#{applyTeamId},#{applyUserId}, #{applyRemark}, #{createTime})
+        (#{applyTeamLogId}, #{applyTeamId},#{applyUserId}, #{applyRemark}, #{createTime})
     </insert>
 
     <select id="listApplyTeam" parameterType="map"
             resultMap="applyTeamViewMap">
         select apply_team_id,
         apply_user_id,
-        apply_user.name   as apply_user_name,
+        apply_user.name as apply_user_name,
         create_user_id,
         manager_id,
-        create_user.name  as create_user_name,
+        create_user.name as create_user_name,
         manager_user.name as manager_user_name,
         apply_team.create_time,
         team.name as apply_team_name
@@ -147,7 +148,11 @@
         inner join user_info create_user on create_user_id = create_user.user_id)
         inner join user_info manager_user on manager_user.user_id = manager_id)
         where 1=1
-        and apply_user_id=#{userId}
+        and (
+            manager_id=#{userId}
+            or apply_user_id=#{userId}
+        )
+        order by apply_team.create_time desc
     </select>
 
     <select id="getApplyTeam" parameterType="java.lang.String"
@@ -171,4 +176,17 @@ where 1 = 1
 and apply_team_id=#{teamId}
     </select>
 
+    <!--统计团队或者某个用户未处理的申请数-->
+    <select id="totalApplyTeamUnProcess" parameterType="map" resultType="int">
+        select count(*) as totalUnProcess
+        from apply_team
+        where 1=1
+        <if test="userId!=null">
+            and apply_user_id = #{userId}
+        </if>
+        <if test="teamId!=null">
+            and apply_team_id=#{teamId}
+        </if>
+        and process_result is null
+    </select>
 </mapper>

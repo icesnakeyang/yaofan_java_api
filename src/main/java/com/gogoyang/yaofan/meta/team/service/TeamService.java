@@ -78,4 +78,16 @@ public class TeamService implements ITeamService {
         ApplyTeamView applyTeamView = teamDao.getApplyTeam(teamId);
         return applyTeamView;
     }
+
+    /**
+     * 统计团队或者某个用户未处理的申请数
+     * @param qIn
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public int totalApplyTeamUnProcess(Map qIn) throws Exception {
+        int total = teamDao.totalApplyTeamUnProcess(qIn);
+        return total;
+    }
 }

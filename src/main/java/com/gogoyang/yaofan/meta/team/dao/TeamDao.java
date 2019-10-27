@@ -32,4 +32,11 @@ public interface TeamDao {
     ArrayList<ApplyTeam> listApplyTeam(Map qIn);
 
     ApplyTeamView getApplyTeam(String teamId);
+
+    /**
+     * 统计团队或者某个用户未处理的申请数
+     * @param qIn
+     * @return
+     */
+    int totalApplyTeamUnProcess(Map qIn);
 }

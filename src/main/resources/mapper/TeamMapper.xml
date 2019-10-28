@@ -59,6 +59,7 @@
         <result property="processUserId" column="process_user_id"/>
         <result property="processUserName" column="process_user_name"/>
         <result property="processReadTime" column="process_read_time"/>
+        <result property="readTime" column="read_time"/>
     </resultMap>
 
     <!--创建一个团队-->
@@ -188,7 +189,8 @@
        process_time,
        process_user_id,
        process_user.name as process_user_name,
-       process_read_time
+       process_read_time,
+       read_time
 from (((((apply_team
     inner join team on team_id = apply_team_id)
     inner join user_info apply_user on apply_user_id = user_id)

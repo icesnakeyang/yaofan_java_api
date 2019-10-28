@@ -140,6 +140,12 @@ public class TeamBusinessService implements ITeamBusinessService {
             throw new Exception("10007");
         }
 
+        ArrayList<MyTeamView> myTeamViews=iTeamService.listTeam(userInfo.getUserId(),GogoStatus.ACTIVE.toString());
+        if(myTeamViews.size()>0){
+            //已经是该团队成员了，不用申请了
+            throw new Exception("10012");
+        }
+
         ApplyTeam applyTeam = new ApplyTeam();
         applyTeam.setApplyTeamLogId(GogoTools.UUID().toString());
         applyTeam.setApplyRemark(remark);

@@ -12,5 +12,6 @@ public enum GogoActType {
     LIST_APPLY_TEAM,
     GET_APPLY_TEAM,
     REJECT_APPLY_TEAM,
-    AGREE_APPLY_TEAM
+    AGREE_APPLY_TEAM,
+    CREATE_TASK
 }

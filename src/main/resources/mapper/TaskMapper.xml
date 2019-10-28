@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gogoyang.yaofan.meta.task.dao.TaskDao">
+
+    <resultMap id="taskMap" type="com.gogoyang.yaofan.meta.task.entity.Task">
+        <result property="taskId" column="task_id"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="endTime" column="end_time"/>
+    </resultMap>
+
+    <!--创建一个任务-->
+    <insert id="createTask"
+            useGeneratedKeys="true"
+            keyProperty="ids"
+            parameterType="com.gogoyang.yaofan.meta.task.entity.Task">
+      insert into task
+      (task_id, create_user_id, point, title, detail, create_time, end_time)
+      values
+      (#{taskId}, #{createUserId}, #{point}, #{title}, #{createTime}, #{endTime})
+    </insert>
+</mapper>

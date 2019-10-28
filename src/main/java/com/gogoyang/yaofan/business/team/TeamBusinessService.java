@@ -273,5 +273,14 @@ public class TeamBusinessService implements ITeamBusinessService {
         applyTeam.setProcessTime(new Date());
         applyTeam.setProcessUserId(userInfo.getUserId());
         iTeamService.processApplyTeam(applyTeam);
+
+        /**
+         * 增加my_team记录
+         */
+        MyTeam myTeam=new MyTeam();
+        myTeam.setStatus(GogoStatus.ACTIVE.toString());
+        myTeam.setTeamId(applyTeamView.getApplyTeamId());
+        myTeam.setUserId(applyTeamView.getApplyUserId());
+        iTeamService.createMyTeam(myTeam);
     }
 }

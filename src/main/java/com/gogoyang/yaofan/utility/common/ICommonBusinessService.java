@@ -1,6 +1,8 @@
 package com.gogoyang.yaofan.utility.common;
 
 import com.gogoyang.yaofan.meta.task.entity.Task;
+import com.gogoyang.yaofan.meta.team.entity.Team;
+import com.gogoyang.yaofan.meta.team.entity.TeamView;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
 
 import java.util.Map;
@@ -16,4 +18,6 @@ public interface ICommonBusinessService {
      * false：不重复
      */
     boolean isDuplicateTask(Task task) throws Exception;
+
+    TeamView getTeamById(String teamId) throws Exception;
 }

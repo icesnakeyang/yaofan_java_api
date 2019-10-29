@@ -2,6 +2,8 @@ package com.gogoyang.yaofan.business.task;
 
 import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.task.service.ITaskService;
+import com.gogoyang.yaofan.meta.team.entity.Team;
+import com.gogoyang.yaofan.meta.team.entity.TeamView;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
 import com.gogoyang.yaofan.meta.user.service.IUserInfoService;
 import com.gogoyang.yaofan.utility.GogoStatus;
@@ -41,8 +43,14 @@ public class TaskBusinessService implements ITaskBusinessService {
         String title = in.get("title").toString();
         String endTimeStr = (String) in.get("endTime");
         String pointStr = (String) in.get("point");
+        String teamId = (String) in.get("teamId");
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        TeamView teamView = null;
+        if (teamId != null) {
+            teamView = iCommonBusinessService.getTeamById(teamId);
+        }
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         ParsePosition pos = new ParsePosition(0);
@@ -59,11 +67,14 @@ public class TaskBusinessService implements ITaskBusinessService {
         task.setTaskId(GogoTools.UUID().toString());
         task.setTitle(title);
         task.setStatus(GogoStatus.BIDDING.toString());
+        if (teamView != null) {
+            task.setTeamId(teamView.getTeamId());
+        }
 
         /**
          * 保存前先检查是否重复
          */
-        if(iCommonBusinessService.isDuplicateTask(task)){
+        if (iCommonBusinessService.isDuplicateTask(task)) {
             //重复了
             throw new Exception("10013");
         }
@@ -76,7 +87,7 @@ public class TaskBusinessService implements ITaskBusinessService {
 
         UserInfo userInfo = iUserInfoService.getUserInfoByToken(token);
 
-        Map qIn=new HashMap();
+        Map qIn = new HashMap();
 
         ArrayList<Task> tasks = iTaskService.listTasks(qIn);
 

@@ -2,6 +2,9 @@ package com.gogoyang.yaofan.utility.common;
 
 import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.task.service.ITaskService;
+import com.gogoyang.yaofan.meta.team.entity.Team;
+import com.gogoyang.yaofan.meta.team.entity.TeamView;
+import com.gogoyang.yaofan.meta.team.service.ITeamService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
 import com.gogoyang.yaofan.meta.user.service.IUserInfoService;
 import com.gogoyang.yaofan.meta.userActLog.entity.UserActLog;
@@ -22,13 +25,16 @@ public class CommonBusinessService implements ICommonBusinessService {
     private final IUserActLogService iUserActLogService;
     private final IUserInfoService iUserInfoService;
     private final ITaskService iTaskService;
+    private final ITeamService iTeamService;
 
     public CommonBusinessService(IUserActLogService iUserActLogService,
                                  IUserInfoService iUserInfoService,
-                                 ITaskService iTaskService) {
+                                 ITaskService iTaskService,
+                                 ITeamService iTeamService) {
         this.iUserActLogService = iUserActLogService;
         this.iUserInfoService = iUserInfoService;
         this.iTaskService = iTaskService;
+        this.iTeamService = iTeamService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -95,6 +101,21 @@ public class CommonBusinessService implements ICommonBusinessService {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 根据teamId查找团队
+     * @param teamId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public TeamView getTeamById(String teamId) throws Exception {
+        TeamView teamView = iTeamService.getTeamByTeamId(teamId);
+        if(teamView==null){
+            throw new Exception("10014");
+        }
+        return teamView;
     }
 
     private UserInfo getUserByUserId(String userId) throws Exception {

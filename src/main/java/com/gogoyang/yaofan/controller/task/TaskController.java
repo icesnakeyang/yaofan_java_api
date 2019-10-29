@@ -45,6 +45,7 @@ public class TaskController {
             in.put("title", request.getTitle());
             in.put("endTime", request.getEndTime());
             in.put("point", request.getPoint());
+            in.put("teamId", request.getTeamId());
             iTaskBusinessService.createTask(in);
         } catch (Exception ex) {
             try {

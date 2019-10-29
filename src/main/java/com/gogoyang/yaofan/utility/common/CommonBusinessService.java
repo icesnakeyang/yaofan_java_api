@@ -1,5 +1,7 @@
 package com.gogoyang.yaofan.utility.common;
 
+import com.gogoyang.yaofan.meta.task.entity.Task;
+import com.gogoyang.yaofan.meta.task.service.ITaskService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
 import com.gogoyang.yaofan.meta.user.service.IUserInfoService;
 import com.gogoyang.yaofan.meta.userActLog.entity.UserActLog;
@@ -19,11 +21,14 @@ import java.util.Map;
 public class CommonBusinessService implements ICommonBusinessService {
     private final IUserActLogService iUserActLogService;
     private final IUserInfoService iUserInfoService;
+    private final ITaskService iTaskService;
 
     public CommonBusinessService(IUserActLogService iUserActLogService,
-                                 IUserInfoService iUserInfoService) {
+                                 IUserInfoService iUserInfoService,
+                                 ITaskService iTaskService) {
         this.iUserActLogService = iUserActLogService;
         this.iUserInfoService = iUserInfoService;
+        this.iTaskService = iTaskService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -67,6 +72,29 @@ public class CommonBusinessService implements ICommonBusinessService {
             throw new Exception("10004");
         }
         return userInfo;
+    }
+
+    /**
+     * 检查task是否有重复任务
+     */
+    @Override
+    public boolean isDuplicateTask(Task task) throws Exception {
+        /**
+         * 如果createUserId相同，title相同，detail相同，status=bidding，teamId相同，即可判断为重复
+         */
+
+        Map qIn = new HashMap();
+        qIn.put("title", task.getTitle());
+        qIn.put("detail", task.getDetail());
+        qIn.put("createUserId", task.getCreateUserId());
+        qIn.put("status", GogoStatus.BIDDING);
+
+        Integer cc = iTaskService.totalTaskDuplicate(qIn);
+        if (cc > 0) {
+            //有内容相同的的记录
+            return true;
+        }
+        return false;
     }
 
     private UserInfo getUserByUserId(String userId) throws Exception {

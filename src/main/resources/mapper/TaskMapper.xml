@@ -5,8 +5,14 @@
     <resultMap id="taskMap" type="com.gogoyang.yaofan.meta.task.entity.Task">
         <result property="taskId" column="task_id"/>
         <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="party_a_name"/>
         <result property="createTime" column="create_time"/>
         <result property="endTime" column="end_time"/>
+        <result property="partyBId" column="party_b_id"/>
+        <result property="partyBName" column="party_b_name"/>
+        <result property="contractTime" column="contract_time"/>
+        <result property="status" column="task_status"/>
+        <result property="teamId" column="team_id"/>
     </resultMap>
 
     <!--创建一个任务-->
@@ -15,8 +21,42 @@
             keyProperty="ids"
             parameterType="com.gogoyang.yaofan.meta.task.entity.Task">
       insert into task
-      (task_id, create_user_id, point, title, detail, create_time, end_time, status)
+      (task_id, create_user_id, point, title, detail, create_time, end_time, status, team_id)
       values
-      (#{taskId}, #{createUserId}, #{point}, #{title}, #{detail}, #{createTime}, #{endTime},#{status})
+      (#{taskId}, #{createUserId}, #{point}, #{title}, #{detail}, #{createTime}, #{endTime},#{status}, #{teamId})
     </insert>
+
+    <select id="listTasks" parameterType="map" resultMap="taskMap">
+        select task.ids,
+       task_id,
+       create_user_id,
+       create_user.name as party_a_name,
+       point,
+       title,
+       task.create_time,
+       end_time,
+       party_b_id,
+       party_b.name     as party_b_name,
+       contract_time,
+       task.status      as task_status
+        from (task
+        left join user_info create_user on create_user_id = user_id)
+         left join user_info party_b on party_b_id = party_b.user_id
+    </select>
+
+    <select id="getTaskByTaskId" parameterType="java.lang.String" resultMap="taskMap">
+        select * from task
+        where task_id=#{taskId}
+    </select>
+
+    <!--统计重复的任务数量-->
+    <select id="totalTaskDuplicate" parameterType="map" resultType="java.lang.Integer">
+        select count(*) as total
+        from task
+        where 1 = 1
+        and title =#{title}
+        and detail = #{detail}
+        and create_user_id = #{createUserId}
+        and status = #{status}
+    </select>
 </mapper>

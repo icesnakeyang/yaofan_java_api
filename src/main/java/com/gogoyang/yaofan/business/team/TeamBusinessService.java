@@ -140,10 +140,14 @@ public class TeamBusinessService implements ITeamBusinessService {
             throw new Exception("10007");
         }
 
-        ArrayList<MyTeamView> myTeamViews=iTeamService.listTeam(userInfo.getUserId(),GogoStatus.ACTIVE.toString());
-        if(myTeamViews.size()>0){
-            //已经是该团队成员了，不用申请了
-            throw new Exception("10012");
+        ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(userInfo.getUserId(), GogoStatus.ACTIVE.toString());
+        if (myTeamViews.size() > 0) {
+            for (int i = 0; i < myTeamViews.size(); i++) {
+                if (teamId.equals(myTeamViews.get(i).getTeamId())) {
+                    //已经是该团队成员了，不用申请了
+                    throw new Exception("10012");
+                }
+            }
         }
 
         ApplyTeam applyTeam = new ApplyTeam();
@@ -179,7 +183,7 @@ public class TeamBusinessService implements ITeamBusinessService {
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
         ApplyTeamView applyTeamView = iTeamService.getApplyTeam(applyId);
 
-        if(applyTeamView==null){
+        if (applyTeamView == null) {
             throw new Exception("10010");
         }
         /**
@@ -221,11 +225,11 @@ public class TeamBusinessService implements ITeamBusinessService {
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
         ApplyTeamView applyTeamView = iTeamService.getApplyTeam(applyId);
 
-        if(applyTeamView==null){
+        if (applyTeamView == null) {
             throw new Exception("10010");
         }
 
-        if(applyTeamView.getProcessResult()!=null){
+        if (applyTeamView.getProcessResult() != null) {
             throw new Exception("10011");
         }
 
@@ -256,11 +260,11 @@ public class TeamBusinessService implements ITeamBusinessService {
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
         ApplyTeamView applyTeamView = iTeamService.getApplyTeam(applyId);
 
-        if(applyTeamView==null){
+        if (applyTeamView == null) {
             throw new Exception("10010");
         }
 
-        if(applyTeamView.getProcessResult()!=null){
+        if (applyTeamView.getProcessResult() != null) {
             throw new Exception("10011");
         }
 
@@ -283,7 +287,7 @@ public class TeamBusinessService implements ITeamBusinessService {
         /**
          * 增加my_team记录
          */
-        MyTeam myTeam=new MyTeam();
+        MyTeam myTeam = new MyTeam();
         myTeam.setStatus(GogoStatus.ACTIVE.toString());
         myTeam.setTeamId(applyTeamView.getApplyTeamId());
         myTeam.setUserId(applyTeamView.getApplyUserId());

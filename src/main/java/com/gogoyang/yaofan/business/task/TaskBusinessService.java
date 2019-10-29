@@ -2,8 +2,10 @@ package com.gogoyang.yaofan.business.task;
 
 import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.task.service.ITaskService;
+import com.gogoyang.yaofan.meta.team.entity.MyTeamView;
 import com.gogoyang.yaofan.meta.team.entity.Team;
 import com.gogoyang.yaofan.meta.team.entity.TeamView;
+import com.gogoyang.yaofan.meta.team.service.ITeamService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
 import com.gogoyang.yaofan.meta.user.service.IUserInfoService;
 import com.gogoyang.yaofan.utility.GogoStatus;
@@ -16,23 +18,23 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.DateFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class TaskBusinessService implements ITaskBusinessService {
     private final ICommonBusinessService iCommonBusinessService;
     private final IUserInfoService iUserInfoService;
     private final ITaskService iTaskService;
+    private final ITeamService iTeamService;
 
     public TaskBusinessService(ICommonBusinessService iCommonBusinessService,
                                ITaskService iTaskService,
-                               IUserInfoService iUserInfoService) {
+                               IUserInfoService iUserInfoService,
+                               ITeamService iTeamService) {
         this.iCommonBusinessService = iCommonBusinessService;
         this.iTaskService = iTaskService;
         this.iUserInfoService = iUserInfoService;
+        this.iTeamService = iTeamService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -82,17 +84,50 @@ public class TaskBusinessService implements ITaskBusinessService {
     }
 
     @Override
-    public Map listTasks(Map in) throws Exception {
+    public Map listBiddingTasks(Map in) throws Exception {
         String token = in.get("token").toString();
 
         UserInfo userInfo = iUserInfoService.getUserInfoByToken(token);
 
+        ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(userInfo.getUserId(), GogoStatus.ACTIVE.toString());
+
         Map qIn = new HashMap();
+        qIn.put("userId", userInfo.getUserId());
+        qIn.put("status", GogoStatus.BIDDING);
+        if (myTeamViews.size() > 0) {
+            ArrayList<String> teams = new ArrayList<>();
+            for (int i = 0; i < myTeamViews.size(); i++) {
+                teams.add(myTeamViews.get(i).getTeamId());
+            }
+            qIn.put("teams", teams);
+        }
 
         ArrayList<Task> tasks = iTaskService.listTasks(qIn);
 
         Map out = new HashMap();
         out.put("tasks", tasks);
         return out;
+    }
+
+    @Override
+    public Map getTaskByTaskId(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String taskId=in.get("taskId").toString();
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        ArrayList<MyTeamView> myTeamViews=iTeamService.listTeam(userInfo.getUserId(),GogoStatus.ACTIVE.toString());
+        if(myTeamViews.size()==0){
+            //没有加入团队
+            throw new Exception("10015");
+        }
+
+        Task task=iTaskService.getTaskByTaskId(taskId);
+        if(task==null){
+            throw new Exception("10016");
+        }
+        for(int i=0;i<myTeamViews.size();i++){
+            if(myTeamViews.get(i).getTeamId().equals())
+        }
+
     }
 }

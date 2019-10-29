@@ -9,4 +9,5 @@ public class TaskRequest {
     private String endTime;
     private String point;
     private String teamId;
+    private String taskId;
 }

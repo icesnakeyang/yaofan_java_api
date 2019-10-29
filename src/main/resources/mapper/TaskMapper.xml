@@ -28,20 +28,38 @@
 
     <select id="listTasks" parameterType="map" resultMap="taskMap">
         select task.ids,
-       task_id,
-       create_user_id,
-       create_user.name as party_a_name,
-       point,
-       title,
-       task.create_time,
-       end_time,
-       party_b_id,
-       party_b.name     as party_b_name,
-       contract_time,
-       task.status      as task_status
+        task_id,
+        create_user_id,
+        create_user.name as party_a_name,
+        point,
+        title,
+        task.create_time,
+        end_time,
+        party_b_id,
+        party_b.name as party_b_name,
+        contract_time,
+        task.status as task_status,
+        team_id
         from (task
         left join user_info create_user on create_user_id = user_id)
-         left join user_info party_b on party_b_id = party_b.user_id
+        left join user_info party_b on party_b_id = party_b.user_id
+        where 1=1
+        <if test="userId!=null">
+            <![CDATA[
+                and create_user_id<>#{userId}
+            ]]>
+        </if>
+        <if test="status!=null">
+            and task.status=#{status}
+        </if>
+<!--        <if test="teams!=null">-->
+--             and team_id in
+<!--            <foreach collection="teams" item="team"-->
+<!--                     index="index" open="(" close=")" separator=",">-->
+<!--                #{team}-->
+<!--            </foreach>-->
+        and team_id='5fad3631-5b18-4cc8-8727-03705d51cc70'
+<!--        </if>-->
     </select>
 
     <select id="getTaskByTaskId" parameterType="java.lang.String" resultMap="taskMap">

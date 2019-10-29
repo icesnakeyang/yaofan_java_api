@@ -5,6 +5,9 @@ public enum  GogoStatus {
     SUCCESS,
     FAILED,
     REJECT,
-    AGREE
+    AGREE,
+    PENDING,
+    PROGRESS,
+    COMPLETE
 
 }

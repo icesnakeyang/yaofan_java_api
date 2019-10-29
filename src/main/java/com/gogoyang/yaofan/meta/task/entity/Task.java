@@ -8,10 +8,13 @@ import java.util.Date;
 public class Task {
     private Integer ids;
     private String taskId;
-    private String creatUserId;
+    private String createUserId;
     private Date createTime;
     private String title;
     private String detail;
     private Double point;
     private Date endTime;
+    private String partyBId;
+    private Date contractTime;
+    private String status;
 }

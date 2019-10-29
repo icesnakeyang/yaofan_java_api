@@ -15,8 +15,8 @@
             keyProperty="ids"
             parameterType="com.gogoyang.yaofan.meta.task.entity.Task">
       insert into task
-      (task_id, create_user_id, point, title, detail, create_time, end_time)
+      (task_id, create_user_id, point, title, detail, create_time, end_time, status)
       values
-      (#{taskId}, #{createUserId}, #{point}, #{title}, #{createTime}, #{endTime})
+      (#{taskId}, #{createUserId}, #{point}, #{title}, #{detail}, #{createTime}, #{endTime},#{status})
     </insert>
 </mapper>

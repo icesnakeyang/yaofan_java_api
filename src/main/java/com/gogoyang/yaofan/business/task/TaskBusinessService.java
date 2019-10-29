@@ -3,6 +3,7 @@ package com.gogoyang.yaofan.business.task;
 import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.task.service.ITaskService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
+import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,12 +38,6 @@ public class TaskBusinessService implements ITaskBusinessService {
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        //把string转化为date
-//        Date theDate=new Date();
-//        DateFormat fmt =new SimpleDateFormat("yyyy-MM-dd");
-//        Date date = fmt.parse(endTimeStr);
-//        theDate.setStartTime(date);
-
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         ParsePosition pos = new ParsePosition(0);
         Date strtodate = formatter.parse(endTimeStr, pos);
@@ -51,12 +46,13 @@ public class TaskBusinessService implements ITaskBusinessService {
 
         Task task = new Task();
         task.setCreateTime(new Date());
-        task.setCreatUserId(userInfo.getUserId());
+        task.setCreateUserId(userInfo.getUserId());
         task.setDetail(detail);
         task.setEndTime(strtodate);
         task.setPoint(point);
         task.setTaskId(GogoTools.UUID().toString());
         task.setTitle(title);
+        task.setStatus(GogoStatus.PENDING.toString());
         iTaskService.createTask(task);
     }
 }

@@ -127,7 +127,7 @@ public class TaskBusinessService implements ITaskBusinessService {
         }
         int cc = 0;
         for (int i = 0; i < myTeamViews.size(); i++) {
-            if (myTeamViews.get(i).getTeamId().equals(task.getTaskId())) {
+            if (myTeamViews.get(i).getTeamId().equals(task.getTeamId())) {
                 cc++;
             }
         }

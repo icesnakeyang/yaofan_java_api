@@ -83,8 +83,20 @@ public class TaskBusinessService implements ITaskBusinessService {
         iTaskService.createTask(task);
     }
 
+    /**
+     * 查询正在抢单的任务
+     * @param in
+     * @return
+     * @throws Exception
+     */
     @Override
     public Map listBiddingTasks(Map in) throws Exception {
+        /**
+         * 查询条件：
+         *  1、排除我创建的任务，userId
+         *  2、状态为bidding
+         *  3、属于我的团队
+         */
         String token = in.get("token").toString();
 
         UserInfo userInfo = iUserInfoService.getUserInfoByToken(token);
@@ -139,5 +151,26 @@ public class TaskBusinessService implements ITaskBusinessService {
         Map out = new HashMap();
         out.put("task", task);
         return out;
+    }
+
+    /**
+     * 查询我的任务
+     * @param in
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map listMyTasks(Map in) throws Exception {
+        /**
+         * 1、进行中的任务，status=progress
+         * 2、我是乙方，partyBId
+         * 3、我是甲方，createUserId
+         */
+        String token=in.get("token").toString();
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+
+
+        return null;
     }
 }

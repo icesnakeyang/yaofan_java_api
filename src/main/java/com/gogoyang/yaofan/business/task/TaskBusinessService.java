@@ -85,6 +85,7 @@ public class TaskBusinessService implements ITaskBusinessService {
 
     /**
      * 查询正在抢单的任务
+     *
      * @param in
      * @return
      * @throws Exception
@@ -155,6 +156,7 @@ public class TaskBusinessService implements ITaskBusinessService {
 
     /**
      * 查询我的任务
+     *
      * @param in
      * @return
      * @throws Exception
@@ -166,11 +168,19 @@ public class TaskBusinessService implements ITaskBusinessService {
          * 2、我是乙方，partyBId
          * 3、我是甲方，createUserId
          */
-        String token=in.get("token").toString();
+        String token = in.get("token").toString();
 
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
+        Map qIn = new HashMap();
+        qIn.put("partyBId", userInfo.getUserId());
 
-        return null;
+        qIn.put("partyAId", userInfo.getUserId());
+
+        ArrayList<Task> tasks = iTaskService.listTasks(qIn);
+
+        Map out = new HashMap();
+        out.put("tasks", tasks);
+        return out;
     }
 }

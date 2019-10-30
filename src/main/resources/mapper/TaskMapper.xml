@@ -49,17 +49,22 @@
                 and create_user_id<>#{userId}
             ]]>
         </if>
+        <if test="partyAId!=null">
+            <![CDATA[
+                and create_user_id=#{partyAId}
+            ]]>
+        </if>
+
         <if test="status!=null">
             and task.status=#{status}
         </if>
-        <!--        <if test="teams!=null">-->
-        -- and team_id in
-        <!--            <foreach collection="teams" item="team"-->
-        <!--                     index="index" open="(" close=")" separator=",">-->
-        <!--                #{team}-->
-        <!--            </foreach>-->
-        and team_id='5fad3631-5b18-4cc8-8727-03705d51cc70'
-        <!--        </if>-->
+        <if test="teams!=null">
+            and team_id in
+            <foreach collection="teams" item="team"
+                index="index" open="(" close=")" separator=",">
+                #{team}
+            </foreach>
+        </if>
     </select>
 
     <select id="getTaskByTaskId" parameterType="java.lang.String" resultMap="taskMap">

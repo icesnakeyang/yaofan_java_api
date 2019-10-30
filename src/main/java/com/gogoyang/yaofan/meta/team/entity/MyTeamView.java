@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class MyTeamView {
+    private String ids;
     private String userId;
     private String teamId;
     private String teamName;

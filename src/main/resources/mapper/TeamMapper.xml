@@ -99,7 +99,9 @@
     <!--根据团队名称关键字搜索团队-->
     <select id="listTeam" parameterType="map"
             resultMap="myTeamViewMap">
-        select my_team.user_id,
+        select
+        my_team.ids,
+        my_team.user_id,
         my_team.team_id,
         team.name    as team_name,
         me.name      as my_name,

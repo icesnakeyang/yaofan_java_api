@@ -111,23 +111,33 @@ public class TaskBusinessService implements ITaskBusinessService {
 
     @Override
     public Map getTaskByTaskId(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String taskId=in.get("taskId").toString();
+        String token = in.get("token").toString();
+        String taskId = in.get("taskId").toString();
 
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
-        ArrayList<MyTeamView> myTeamViews=iTeamService.listTeam(userInfo.getUserId(),GogoStatus.ACTIVE.toString());
-        if(myTeamViews.size()==0){
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+        ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(userInfo.getUserId(), GogoStatus.ACTIVE.toString());
+        if (myTeamViews.size() == 0) {
             //没有加入团队
             throw new Exception("10015");
         }
 
-        Task task=iTaskService.getTaskByTaskId(taskId);
-        if(task==null){
+        Task task = iTaskService.getTaskByTaskId(taskId);
+        if (task == null) {
             throw new Exception("10016");
         }
-        for(int i=0;i<myTeamViews.size();i++){
-            if(myTeamViews.get(i).getTeamId().equals())
+        int cc = 0;
+        for (int i = 0; i < myTeamViews.size(); i++) {
+            if (myTeamViews.get(i).getTeamId().equals(task.getTaskId())) {
+                cc++;
+            }
+        }
+        if (cc == 0) {
+            //用户不是团队成员
+            throw new Exception("10017");
         }
 
+        Map out = new HashMap();
+        out.put("task", task);
+        return out;
     }
 }

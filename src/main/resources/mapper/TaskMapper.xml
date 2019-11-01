@@ -61,7 +61,7 @@
         <if test="teams!=null">
             and team_id in
             <foreach collection="teams" item="team"
-                index="index" open="(" close=")" separator=",">
+                     index="index" open="(" close=")" separator=",">
                 #{team}
             </foreach>
         </if>
@@ -98,4 +98,13 @@
         and create_user_id = #{createUserId}
         and status = #{status}
     </select>
+
+    <!--修改任务为抢单成功-->
+    <update id="updateTaskDeal" parameterType="map">
+        update task set
+        party_b_id=#{partyBId},
+        contract_time=#{contractTime},
+        status=#{status}
+        where task_id=#{taskId}
+    </update>
 </mapper>

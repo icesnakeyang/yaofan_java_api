@@ -16,4 +16,10 @@ public interface TaskDao {
     Task getTaskByTaskId(String taskId);
 
     Integer totalTaskDuplicate(Map qIn);
+
+    /**
+     * 修改任务为抢单成功
+     * @param qIn
+     */
+    void updateTaskDeal(Map qIn);
 }

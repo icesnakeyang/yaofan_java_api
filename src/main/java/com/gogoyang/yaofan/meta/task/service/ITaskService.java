@@ -13,4 +13,12 @@ public interface ITaskService {
     Task getTaskByTaskId(String taskAId) throws Exception;
 
     Integer totalTaskDuplicate(Map qIn) throws Exception;
+
+    /**
+     * 修改任务为抢单成功
+     * @param taskId
+     * @param userId
+     * @throws Exception
+     */
+    void updateTaskDeal(String taskId, String userId) throws Exception;
 }

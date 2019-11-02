@@ -41,6 +41,12 @@ public class TaskService implements ITaskService {
         return total;
     }
 
+    /**
+     * 修改任务为抢单成功
+     * @param taskId
+     * @param userId
+     * @throws Exception
+     */
     @Override
     public void updateTaskDeal(String taskId, String userId) throws Exception {
         Map qIn=new HashMap();

@@ -68,7 +68,7 @@ public class TaskController {
     @ResponseBody
     @PostMapping("/listBiddingTasks")
     public Response listBiddingTasks(@RequestBody TaskRequest request,
-                              HttpServletRequest httpServletRequest) {
+                                     HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
         Map logMap = new HashMap();
@@ -101,7 +101,7 @@ public class TaskController {
     @ResponseBody
     @PostMapping("/getTaskByTaskId")
     public Response getTaskByTaskId(@RequestBody TaskRequest request,
-                              HttpServletRequest httpServletRequest) {
+                                    HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
         Map logMap = new HashMap();
@@ -136,7 +136,7 @@ public class TaskController {
     @ResponseBody
     @PostMapping("/listMyTasks")
     public Response listMyTasks(@RequestBody TaskRequest request,
-                              HttpServletRequest httpServletRequest) {
+                                HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
         Map logMap = new HashMap();
@@ -159,6 +159,38 @@ public class TaskController {
         }
         try {
             logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    @ResponseBody
+    @PostMapping("/grab")
+    public Response grab(@RequestBody TaskRequest request,
+                         HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.GRAB);
+            iTaskBusinessService.grab(in);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memeo", memoMap);
             iCommonBusinessService.createUserActLog(logMap);
         } catch (Exception ex3) {
             logger.error(ex3.getMessage());

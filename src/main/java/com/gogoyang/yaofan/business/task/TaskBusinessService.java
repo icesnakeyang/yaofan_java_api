@@ -183,4 +183,15 @@ public class TaskBusinessService implements ITaskBusinessService {
         out.put("tasks", tasks);
         return out;
     }
+
+    @Override
+    public void grab(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String taskId=in.get("taskId").toString();
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        Task task=iCommonBusinessService.getTaskByTaskId(taskId);
+
+        if()
+    }
 }

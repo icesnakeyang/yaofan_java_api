@@ -118,6 +118,15 @@ public class CommonBusinessService implements ICommonBusinessService {
         return teamView;
     }
 
+    @Override
+    public Task getTaskByTaskId(String taskId) throws Exception {
+        Task task=iTaskService.getTaskByTaskId(taskId);
+        if(task==null){
+            throw new Exception("10016");
+        }
+        return task;
+    }
+
     private UserInfo getUserByUserId(String userId) throws Exception {
         UserInfo userInfo = iUserInfoService.getUserInfoByUserId(userId);
         if (userInfo == null) {

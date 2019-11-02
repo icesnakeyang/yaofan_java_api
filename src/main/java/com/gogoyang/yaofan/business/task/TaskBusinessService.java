@@ -2,6 +2,7 @@ package com.gogoyang.yaofan.business.task;
 
 import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.task.service.ITaskService;
+import com.gogoyang.yaofan.meta.team.entity.MyTeam;
 import com.gogoyang.yaofan.meta.team.entity.MyTeamView;
 import com.gogoyang.yaofan.meta.team.entity.Team;
 import com.gogoyang.yaofan.meta.team.entity.TeamView;
@@ -192,8 +193,27 @@ public class TaskBusinessService implements ITaskBusinessService {
         UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
         Task task=iCommonBusinessService.getTaskByTaskId(taskId);
 
-        if(!task.getStatus().equals(GogoStatus.PENDING.toString())){
+        /**
+         * 任务必须是bidding状态
+         */
+        if(!task.getStatus().equals(GogoStatus.BIDDING.toString())){
             throw new Exception("10018");
         }
+
+        /**
+         * 不能接自己创建的任务
+         */
+        if(task.getCreateUserId().equals(userInfo.getUserId())){
+            throw new Exception("10019");
+        }
+
+        /**
+         * 任务必须是自己的团队的任务
+         */
+        iCommonBusinessService.checkUserTeam(userInfo.getUserId(),task.getTeamId());
+
+        iTaskService.
+
+
     }
 }

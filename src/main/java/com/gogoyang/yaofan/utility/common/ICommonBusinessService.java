@@ -21,4 +21,6 @@ public interface ICommonBusinessService {
     TeamView getTeamById(String teamId) throws Exception;
 
     Task getTaskByTaskId(String taskId) throws Exception;
+
+    void checkUserTeam(String userId, String taskId) throws Exception;
 }

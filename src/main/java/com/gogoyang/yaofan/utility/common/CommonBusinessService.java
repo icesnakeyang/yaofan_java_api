@@ -2,6 +2,7 @@ package com.gogoyang.yaofan.utility.common;
 
 import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.task.service.ITaskService;
+import com.gogoyang.yaofan.meta.team.entity.MyTeamView;
 import com.gogoyang.yaofan.meta.team.entity.Team;
 import com.gogoyang.yaofan.meta.team.entity.TeamView;
 import com.gogoyang.yaofan.meta.team.service.ITeamService;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -125,6 +127,27 @@ public class CommonBusinessService implements ICommonBusinessService {
             throw new Exception("10016");
         }
         return task;
+    }
+
+    /**
+     * 检查用户是否是该团队成员
+     * @param userId
+     * @param teamId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public void checkUserTeam(String userId, String teamId) throws Exception {
+        ArrayList<MyTeamView> myTeamViews=iTeamService.listTeam(userId, GogoStatus.ACTIVE.toString());
+        int cc=0;
+        for(int i=0;i<myTeamViews.size();i++){
+            if(myTeamViews.get(i).getTeamId().equals(teamId)){
+                cc++;
+            }
+        }
+        if(cc==0){
+            throw new Exception("10017");
+        }
     }
 
     private UserInfo getUserByUserId(String userId) throws Exception {

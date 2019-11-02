@@ -192,6 +192,8 @@ public class TaskBusinessService implements ITaskBusinessService {
         UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
         Task task=iCommonBusinessService.getTaskByTaskId(taskId);
 
-        if()
+        if(!task.getStatus().equals(GogoStatus.PENDING.toString())){
+            throw new Exception("10018");
+        }
     }
 }

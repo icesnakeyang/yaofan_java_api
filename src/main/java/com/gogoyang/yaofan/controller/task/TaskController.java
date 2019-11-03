@@ -192,7 +192,7 @@ public class TaskController {
             memoMap.put("error", ex.getMessage());
         }
         try {
-            logMap.put("memeo", memoMap);
+            logMap.put("memo", memoMap);
             iCommonBusinessService.createUserActLog(logMap);
         } catch (Exception ex3) {
             logger.error(ex3.getMessage());

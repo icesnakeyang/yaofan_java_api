@@ -212,8 +212,7 @@ public class TaskBusinessService implements ITaskBusinessService {
          */
         iCommonBusinessService.checkUserTeam(userInfo.getUserId(),task.getTeamId());
 
-        iTaskService.
-
+        iTaskService.updateTaskDeal(taskId,userInfo.getUserId());
 
     }
 }

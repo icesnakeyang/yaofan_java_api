@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gogoyang.yaofan.meta.pointLedger.dao.PointDao">
+
+    <resultMap id="pointMap" type="com.gogoyang.yaofan.meta.pointLedger.entity.PointLedger">
+        <result property="taskId" column="task_id"/>
+        <result property="pointIn" column="point_in"/>
+        <result property="pointOut" column="point_out"/>
+        <result property="createTime" column="create_time"/>
+        <result property="userId" column="user_id"/>
+        <result property="processUserId" column="process_user_id"/>
+        <result property="actType" column="act_type"/>
+    </resultMap>
+
+    <!--创建一个point ledger-->
+    <insert id="createPointLedger"
+            useGeneratedKeys="true"
+            keyProperty="ids"
+            parameterType="com.gogoyang.yaofan.meta.pointLedger.entity.PointLedger">
+      insert into point_ledger
+      (task_id, point_in, point_out, user_id, process_user_id, create_time, remark, act_type)
+      values
+      (#{taskId}, #{pointIn}, #{pointOut}, #{userId}, #{processUserId}, #{createTime}, #{remark},#{actType})
+    </insert>
+</mapper>

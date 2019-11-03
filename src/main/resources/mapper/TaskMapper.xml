@@ -21,9 +21,9 @@
             keyProperty="ids"
             parameterType="com.gogoyang.yaofan.meta.task.entity.Task">
       insert into task
-      (task_id, create_user_id, pointLedger, title, detail, create_time, end_time, status, team_id)
+      (task_id, create_user_id, point, title, detail, create_time, end_time, status, team_id)
       values
-      (#{taskId}, #{createUserId}, #{pointLedger}, #{title}, #{detail}, #{createTime}, #{endTime},#{status}, #{teamId})
+      (#{taskId}, #{createUserId}, #{point}, #{title}, #{detail}, #{createTime}, #{endTime},#{status}, #{teamId})
     </insert>
 
     <select id="listTasks" parameterType="map" resultMap="taskMap">
@@ -31,7 +31,7 @@
         task_id,
         create_user_id,
         create_user.name as party_a_name,
-        pointLedger,
+        point,
         title,
         task.create_time,
         end_time,
@@ -72,7 +72,7 @@
        task_id,
        create_user_id,
        create_user.name as create_user_name,
-       pointLedger,
+       point,
        title,
        detail,
        task.create_time,

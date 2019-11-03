@@ -1,5 +1,7 @@
 package com.gogoyang.yaofan.business.task;
 
+import com.gogoyang.yaofan.meta.point.entity.PointLedger;
+import com.gogoyang.yaofan.meta.point.service.IPointService;
 import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.task.service.ITaskService;
 import com.gogoyang.yaofan.meta.team.entity.MyTeam;
@@ -9,6 +11,7 @@ import com.gogoyang.yaofan.meta.team.entity.TeamView;
 import com.gogoyang.yaofan.meta.team.service.ITeamService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
 import com.gogoyang.yaofan.meta.user.service.IUserInfoService;
+import com.gogoyang.yaofan.utility.GogoActType;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
@@ -27,15 +30,18 @@ public class TaskBusinessService implements ITaskBusinessService {
     private final IUserInfoService iUserInfoService;
     private final ITaskService iTaskService;
     private final ITeamService iTeamService;
+    private final IPointService iPointService;
 
     public TaskBusinessService(ICommonBusinessService iCommonBusinessService,
                                ITaskService iTaskService,
                                IUserInfoService iUserInfoService,
-                               ITeamService iTeamService) {
+                               ITeamService iTeamService,
+                               IPointService iPointService) {
         this.iCommonBusinessService = iCommonBusinessService;
         this.iTaskService = iTaskService;
         this.iUserInfoService = iUserInfoService;
         this.iTeamService = iTeamService;
+        this.iPointService = iPointService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -185,6 +191,7 @@ public class TaskBusinessService implements ITaskBusinessService {
         return out;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void grab(Map in) throws Exception {
         String token=in.get("token").toString();
@@ -212,7 +219,20 @@ public class TaskBusinessService implements ITaskBusinessService {
          */
         iCommonBusinessService.checkUserTeam(userInfo.getUserId(),task.getTeamId());
 
+        /**
+         * 修改任务状态
+         */
         iTaskService.updateTaskDeal(taskId,userInfo.getUserId());
 
+        /**
+         * 记录积分账
+         */
+        PointLedger pointLedger=new PointLedger();
+        pointLedger.setActType(GogoActType.GRAB.toString());
+        pointLedger.setCreateTime(new Date());
+        pointLedger.setPointIn(task.getPoint());
+        pointLedger.setTaskId(task.getTaskId());
+        pointLedger.setUserId(userInfo.getUserId());
+        iPointService.createPointLedger(pointLedger);
     }
 }

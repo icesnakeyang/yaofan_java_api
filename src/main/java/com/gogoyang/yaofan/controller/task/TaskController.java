@@ -179,6 +179,8 @@ public class TaskController {
             in.put("token", token);
             logMap.put("token", token);
             logMap.put("GogoActType", GogoActType.GRAB);
+            in.put("taskId", request.getTaskId());
+            memoMap.put("taskId", request.getTaskId());
             iTaskBusinessService.grab(in);
         } catch (Exception ex) {
             try {

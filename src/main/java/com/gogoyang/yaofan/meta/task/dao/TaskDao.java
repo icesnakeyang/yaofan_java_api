@@ -11,7 +11,7 @@ public interface TaskDao {
 
     void createTask(Task task);
 
-    ArrayList<Task> listTasks(Map qIn);
+    ArrayList<Task> listBiddingTasks(Map qIn);
 
     Task getTaskByTaskId(String taskId);
 
@@ -19,7 +19,10 @@ public interface TaskDao {
 
     /**
      * 修改任务为抢单成功
+     *
      * @param qIn
      */
     void updateTaskDeal(Map qIn);
+
+    ArrayList<Task> listMyTasks(Map qIn);
 }

@@ -8,7 +8,7 @@ import java.util.Map;
 public interface ITaskService {
     void createTask(Task task) throws Exception;
 
-    ArrayList<Task> listTasks(Map qIn) throws Exception;
+    ArrayList<Task> listBiddingTasks(Map qIn) throws Exception;
 
     Task getTaskByTaskId(String taskAId) throws Exception;
 
@@ -21,4 +21,6 @@ public interface ITaskService {
      * @throws Exception
      */
     void updateTaskDeal(String taskId, String userId) throws Exception;
+
+    ArrayList<Task> listMyTasks(Map qIn) throws Exception;
 }

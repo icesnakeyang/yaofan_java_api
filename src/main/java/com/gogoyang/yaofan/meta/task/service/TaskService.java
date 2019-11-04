@@ -24,8 +24,8 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public ArrayList<Task> listTasks(Map qIn) throws Exception {
-        ArrayList<Task> tasks = taskDao.listTasks(qIn);
+    public ArrayList<Task> listBiddingTasks(Map qIn) throws Exception {
+        ArrayList<Task> tasks = taskDao.listBiddingTasks(qIn);
         return tasks;
     }
 
@@ -43,17 +43,24 @@ public class TaskService implements ITaskService {
 
     /**
      * 修改任务为抢单成功
+     *
      * @param taskId
      * @param userId
      * @throws Exception
      */
     @Override
     public void updateTaskDeal(String taskId, String userId) throws Exception {
-        Map qIn=new HashMap();
+        Map qIn = new HashMap();
         qIn.put("partyBId", userId);
         qIn.put("contractTime", new Date());
         qIn.put("status", GogoStatus.PROGRESS);
         qIn.put("taskId", taskId);
         taskDao.updateTaskDeal(qIn);
+    }
+
+    @Override
+    public ArrayList<Task> listMyTasks(Map qIn) throws Exception {
+        ArrayList<Task> tasks = taskDao.listMyTasks(qIn);
+        return tasks;
     }
 }

@@ -122,7 +122,7 @@ public class TaskBusinessService implements ITaskBusinessService {
             qIn.put("teams", teams);
         }
 
-        ArrayList<Task> tasks = iTaskService.listTasks(qIn);
+        ArrayList<Task> tasks = iTaskService.listBiddingTasks(qIn);
 
         Map out = new HashMap();
         out.put("tasks", tasks);
@@ -180,11 +180,9 @@ public class TaskBusinessService implements ITaskBusinessService {
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
         Map qIn = new HashMap();
-        qIn.put("partyBId", userInfo.getUserId());
+        qIn.put("userId", userInfo.getUserId());
 
-        qIn.put("partyAId", userInfo.getUserId());
-
-        ArrayList<Task> tasks = iTaskService.listTasks(qIn);
+        ArrayList<Task> tasks = iTaskService.listMyTasks(qIn);
 
         Map out = new HashMap();
         out.put("tasks", tasks);

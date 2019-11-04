@@ -26,7 +26,7 @@
       (#{taskId}, #{createUserId}, #{point}, #{title}, #{detail}, #{createTime}, #{endTime},#{status}, #{teamId})
     </insert>
 
-    <select id="listTasks" parameterType="map" resultMap="taskMap">
+    <select id="listBiddingTasks" parameterType="map" resultMap="taskMap">
         select task.ids,
         task_id,
         create_user_id,
@@ -49,15 +49,7 @@
                 and create_user_id<>#{userId}
             ]]>
         </if>
-        <if test="partyAId!=null">
-            <![CDATA[
-                and create_user_id=#{partyAId}
-            ]]>
-        </if>
-
-        <if test="status!=null">
-            and task.status=#{status}
-        </if>
+        and task.status='BIDDING'
         <if test="teams!=null">
             and team_id in
             <foreach collection="teams" item="team"
@@ -107,4 +99,28 @@
         status=#{status}
         where task_id=#{taskId}
     </update>
+
+    <select id="listMyTasks" parameterType="map"
+            resultMap="taskMap">
+        select task.ids,
+       task_id,
+       create_user_id,
+       create_user.name as party_a_name,
+       point,
+       title,
+       task.create_time,
+       end_time,
+       party_b_id,
+       party_b.name     as party_b_name,
+       contract_time,
+       task.status      as task_status,
+       team_id
+from (task
+    left join user_info create_user on create_user_id = user_id)
+         left join user_info party_b on party_b_id = party_b.user_id
+where 1 = 1
+  and (create_user_id = #{userId}
+    or party_b_id = #{userId})
+    order by end_time
+    </select>
 </mapper>

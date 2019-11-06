@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gogoyang.yaofan.meta.taskLog.dao.TaskLogDao">
+
+    <resultMap id="taskLogMap" type="com.gogoyang.yaofan.meta.taskLog.entity.TaskLog">
+        <result property="taskLogId" column="task_log_id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="readTime" column="read_time"/>
+        <result property="processUserId" column="process_user_id"/>
+        <result property="processRemark" column="process_remark"/>
+        <result property="processTime" column="process_time"/>
+        <result property="processReadTime" column="process_read_time"/>
+    </resultMap>
+
+    <!--创建一条任务日志-->
+    <insert id="createTaskLog"
+            useGeneratedKeys="true"
+            keyProperty="ids"
+            parameterType="com.gogoyang.yaofan.meta.taskLog.entity.TaskLog">
+      insert into task_log
+      (task_log_id, task_id, create_user_id, content, create_time)
+      values
+      (#{taskLogId}, #{taskId}, #{create_user_id}, #{content}, #{createTime})
+    </insert>
+</mapper>

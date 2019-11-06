@@ -17,5 +17,6 @@ public enum GogoActType {
     LIST_BIDDING_TASKS,
     GET_TASK,
     LIST_MY_TASKS,
-    GRAB
+    GRAB,
+    CREATE_TASK_LOG
 }

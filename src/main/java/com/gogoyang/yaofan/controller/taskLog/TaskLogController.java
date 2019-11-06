@@ -38,8 +38,9 @@ public class TaskLogController {
         try {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
+            in.put("taskId", request.getTaskId());
+            in.put("content", request.getContent());
             logMap.put("token", token);
-            logMap.put("taskId", request.getTaskId());
             memoMap.put("taskId", request.getTaskId());
             logMap.put("GogoActType", GogoActType.CREATE_TASK_LOG);
             iTaskLogBusinessService.createTaskLog(in);
@@ -53,7 +54,7 @@ public class TaskLogController {
             memoMap.put("error", ex.getMessage());
         }
         try {
-            logMap.put("memeo", memoMap);
+            logMap.put("memo", memoMap);
             iCommonBusinessService.createUserActLog(logMap);
         } catch (Exception ex3) {
             logger.error(ex3.getMessage());

@@ -3,7 +3,6 @@ package com.gogoyang.yaofan.utility.common;
 import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.task.service.ITaskService;
 import com.gogoyang.yaofan.meta.team.entity.MyTeamView;
-import com.gogoyang.yaofan.meta.team.entity.Team;
 import com.gogoyang.yaofan.meta.team.entity.TeamView;
 import com.gogoyang.yaofan.meta.team.service.ITeamService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
@@ -13,7 +12,6 @@ import com.gogoyang.yaofan.meta.userActLog.service.IUserActLogService;
 import com.gogoyang.yaofan.utility.GogoActType;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -107,6 +105,7 @@ public class CommonBusinessService implements ICommonBusinessService {
 
     /**
      * 根据teamId查找团队
+     *
      * @param teamId
      * @return
      * @throws Exception
@@ -114,7 +113,7 @@ public class CommonBusinessService implements ICommonBusinessService {
     @Override
     public TeamView getTeamById(String teamId) throws Exception {
         TeamView teamView = iTeamService.getTeamByTeamId(teamId);
-        if(teamView==null){
+        if (teamView == null) {
             throw new Exception("10014");
         }
         return teamView;
@@ -122,8 +121,8 @@ public class CommonBusinessService implements ICommonBusinessService {
 
     @Override
     public Task getTaskByTaskId(String taskId) throws Exception {
-        Task task=iTaskService.getTaskByTaskId(taskId);
-        if(task==null){
+        Task task = iTaskService.getTaskByTaskId(taskId);
+        if (task == null) {
             throw new Exception("10016");
         }
         return task;
@@ -131,6 +130,7 @@ public class CommonBusinessService implements ICommonBusinessService {
 
     /**
      * 检查用户是否是该团队成员
+     *
      * @param userId
      * @param teamId
      * @return
@@ -138,15 +138,29 @@ public class CommonBusinessService implements ICommonBusinessService {
      */
     @Override
     public void checkUserTeam(String userId, String teamId) throws Exception {
-        ArrayList<MyTeamView> myTeamViews=iTeamService.listTeam(userId, GogoStatus.ACTIVE.toString());
-        int cc=0;
-        for(int i=0;i<myTeamViews.size();i++){
-            if(myTeamViews.get(i).getTeamId().equals(teamId)){
+        ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(userId, GogoStatus.ACTIVE.toString());
+        int cc = 0;
+        for (int i = 0; i < myTeamViews.size(); i++) {
+            if (myTeamViews.get(i).getTeamId().equals(teamId)) {
                 cc++;
             }
         }
-        if(cc==0){
+        if (cc == 0) {
             throw new Exception("10017");
+        }
+    }
+
+    @Override
+    public void checkTaskMember(UserInfo user, Task task) throws Exception {
+        int cc = 0;
+        if (user.getUserId().equals(task.getCreateUserId())) {
+            cc++;
+        }
+        if (user.getUserId().equals(task.getPartyBId())) {
+            cc++;
+        }
+        if(cc==0){
+            throw new Exception("10020");
         }
     }
 

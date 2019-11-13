@@ -6,12 +6,11 @@
         <result property="taskLogId" column="task_log_id"/>
         <result property="taskId" column="task_id"/>
         <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="create_user_name"/>
         <result property="createTime" column="create_time"/>
         <result property="readTime" column="read_time"/>
-        <result property="processUserId" column="process_user_id"/>
-        <result property="processRemark" column="process_remark"/>
-        <result property="processTime" column="process_time"/>
-        <result property="processReadTime" column="process_read_time"/>
+        <result property="readUserId" column="read_user_id"/>
+        <result property="readUserName" column="read_user_name"/>
     </resultMap>
 
     <!--创建一条任务日志-->
@@ -22,6 +21,28 @@
       insert into task_log
       (task_log_id, task_id, create_user_id, content, create_time)
       values
-      (#{taskLogId}, #{taskId}, #{create_user_id}, #{content}, #{createTime})
+      (#{taskLogId}, #{taskId}, #{createUserId}, #{content}, #{createTime})
     </insert>
+
+    <select id="listTaskLog" parameterType="map"
+            resultMap="taskLogMap">
+        select task_log.ids, task_log_id,task_id,create_user_id,create_user.name as create_user_name,content,
+        task_log.create_time, read_time, read_user_id, read_user.name as read_user_name from (task_log
+        left join user_info create_user on create_user_id=user_id)
+        left join user_info read_user on read_user_id=read_user.user_id
+        where 1=1
+        and task_id=#{taskId}
+        order by ids desc
+    </select>
+
+    <update id="setTaskLogReadTime" parameterType="map">
+        update task_log set
+        read_time=#{readTime},
+        read_user_id=#{readUserId}
+        where task_id = #{taskId}
+        and read_time is null
+        <![CDATA[
+            and create_user_id <> #{readUserId}
+        ]]>
+    </update>
 </mapper>

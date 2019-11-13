@@ -10,11 +10,10 @@ public class TaskLog {
     private String taskLogId;
     private String taskId;
     private String createUserId;
+    private String createUserName;
     private String content;
     private Date createTime;
     private Date readTime;
-    private String processUserId;
-    private String processRemark;
-    private String processTime;
-    private String processReadTime;
+    private String readUserId;
+    private String readUserName;
 }

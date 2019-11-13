@@ -23,4 +23,12 @@ public interface ICommonBusinessService {
     Task getTaskByTaskId(String taskId) throws Exception;
 
     void checkUserTeam(String userId, String taskId) throws Exception;
+
+    /**
+     * 检查用户是否甲方或者乙方
+     * @param user
+     * @param task
+     * @throws Exception
+     */
+    void checkTaskMember(UserInfo user, Task task) throws Exception;
 }

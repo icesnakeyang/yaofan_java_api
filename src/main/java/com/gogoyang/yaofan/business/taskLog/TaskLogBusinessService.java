@@ -9,7 +9,9 @@ import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -33,12 +35,7 @@ public class TaskLogBusinessService implements ITaskLogBusinessService {
 
         Task task = iCommonBusinessService.getTaskByTaskId(taskId);
 
-        if (!userInfo.getUserId().equals(task.getCreateUserId())) {
-            if (!userInfo.getUserId().equals(task.getPartyBId())) {
-                //当前用户既不是甲方，也不是乙方，不能创建日志
-                throw new Exception("10020");
-            }
-        }
+        iCommonBusinessService.checkTaskMember(userInfo, task);
 
         TaskLog taskLog = new TaskLog();
         taskLog.setContent(content);
@@ -48,5 +45,34 @@ public class TaskLogBusinessService implements ITaskLogBusinessService {
         taskLog.setTaskLogId(GogoTools.UUID().toString());
 
         iTaskLogService.createTaskLog(taskLog);
+    }
+
+    @Override
+    public Map listTaskLog(Map in) throws Exception {
+        String token = in.get("token").toString();
+        String taskId = in.get("taskId").toString();
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        Task task = iCommonBusinessService.getTaskByTaskId(taskId);
+
+        iCommonBusinessService.checkTaskMember(userInfo, task);
+
+        Map qIn = new HashMap();
+        qIn.put("taskId", taskId);
+        ArrayList<TaskLog> taskLogs = iTaskLogService.listTaskLog(qIn);
+        Map out = new HashMap();
+        out.put("taskLogs", taskLogs);
+
+        /**
+         * 设置日志的阅读时间
+         */
+        Map qIn2 = new HashMap();
+        qIn2.put("readTime", new Date());
+        qIn2.put("taskId", taskId);
+        qIn2.put("readUserId", userInfo.getUserId());
+        iTaskLogService.setTaskLogReadTime(qIn2);
+
+        return out;
     }
 }

@@ -9,4 +9,7 @@ public interface ITaskLogService {
     void createTaskLog(TaskLog taskLog) throws Exception;
     ArrayList<TaskLog> listTaskLog(Map qIn) throws Exception;
     void setTaskLogReadTime(Map qIn) throws Exception;
+
+    Integer totalTaskLog(String taskId) throws Exception;
+    Integer totalTaskLogUnread(String taskId, String readUserId) throws Exception;
 }

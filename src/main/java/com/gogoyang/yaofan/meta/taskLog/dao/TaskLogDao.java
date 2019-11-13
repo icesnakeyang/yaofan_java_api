@@ -13,4 +13,18 @@ public interface TaskLogDao {
     ArrayList<TaskLog> listTaskLog(Map qIn);
 
     void setTaskLogReadTime(Map qIn);
+
+    /**
+     * 统计任务的日志总数
+     * @param qIn
+     * @return
+     */
+    Integer totalTaskLog(Map qIn);
+
+    /**
+     * 统计当前用户未阅读的日志总数
+     * @param qIn
+     * @return
+     */
+    Integer totalTaskLogUnread(Map qIn);
 }

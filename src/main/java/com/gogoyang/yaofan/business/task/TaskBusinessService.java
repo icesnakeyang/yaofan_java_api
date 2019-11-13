@@ -4,6 +4,7 @@ import com.gogoyang.yaofan.meta.point.entity.PointLedger;
 import com.gogoyang.yaofan.meta.point.service.IPointService;
 import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.task.service.ITaskService;
+import com.gogoyang.yaofan.meta.taskLog.service.ITaskLogService;
 import com.gogoyang.yaofan.meta.team.entity.MyTeamView;
 import com.gogoyang.yaofan.meta.team.entity.TeamView;
 import com.gogoyang.yaofan.meta.team.service.ITeamService;
@@ -13,6 +14,7 @@ import com.gogoyang.yaofan.utility.GogoActType;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,17 +29,20 @@ public class TaskBusinessService implements ITaskBusinessService {
     private final ITaskService iTaskService;
     private final ITeamService iTeamService;
     private final IPointService iPointService;
+    private final ITaskLogService iTaskLogService;
 
     public TaskBusinessService(ICommonBusinessService iCommonBusinessService,
                                ITaskService iTaskService,
                                IUserInfoService iUserInfoService,
                                ITeamService iTeamService,
-                               IPointService iPointService) {
+                               IPointService iPointService,
+                               ITaskLogService iTaskLogService) {
         this.iCommonBusinessService = iCommonBusinessService;
         this.iTaskService = iTaskService;
         this.iUserInfoService = iUserInfoService;
         this.iTeamService = iTeamService;
         this.iPointService = iPointService;
+        this.iTaskLogService = iTaskLogService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -154,6 +159,17 @@ public class TaskBusinessService implements ITaskBusinessService {
 
         Map out = new HashMap();
         out.put("task", task);
+
+        /**
+         * 读取task的统计信息
+         */
+        //日志总数
+        Integer totalTaskLog = iTaskLogService.totalTaskLog(task.getTaskId());
+        out.put("totalTaskLog", totalTaskLog);
+
+        //未阅读的日志总数
+        Integer totalUnreadTaskLog = iTaskLogService.totalTaskLogUnread(task.getTaskId(), userInfo.getUserId());
+        out.put("totalUnreadTaskLog", totalUnreadTaskLog);
         return out;
     }
 
@@ -188,40 +204,40 @@ public class TaskBusinessService implements ITaskBusinessService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void grab(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String taskId=in.get("taskId").toString();
+        String token = in.get("token").toString();
+        String taskId = in.get("taskId").toString();
 
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
-        Task task=iCommonBusinessService.getTaskByTaskId(taskId);
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+        Task task = iCommonBusinessService.getTaskByTaskId(taskId);
 
         /**
          * 任务必须是bidding状态
          */
-        if(!task.getStatus().equals(GogoStatus.BIDDING.toString())){
+        if (!task.getStatus().equals(GogoStatus.BIDDING.toString())) {
             throw new Exception("10018");
         }
 
         /**
          * 不能接自己创建的任务
          */
-        if(task.getCreateUserId().equals(userInfo.getUserId())){
+        if (task.getCreateUserId().equals(userInfo.getUserId())) {
             throw new Exception("10019");
         }
 
         /**
          * 任务必须是自己的团队的任务
          */
-        iCommonBusinessService.checkUserTeam(userInfo.getUserId(),task.getTeamId());
+        iCommonBusinessService.checkUserTeam(userInfo.getUserId(), task.getTeamId());
 
         /**
          * 修改任务状态
          */
-        iTaskService.updateTaskDeal(taskId,userInfo.getUserId());
+        iTaskService.updateTaskDeal(taskId, userInfo.getUserId());
 
         /**
          * 记录积分账
          */
-        PointLedger pointLedger=new PointLedger();
+        PointLedger pointLedger = new PointLedger();
         pointLedger.setActType(GogoActType.GRAB.toString());
         pointLedger.setCreateTime(new Date());
         pointLedger.setPointIn(task.getPoint());

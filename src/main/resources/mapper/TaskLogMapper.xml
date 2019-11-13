@@ -43,6 +43,29 @@
         and read_time is null
         <![CDATA[
             and create_user_id <> #{readUserId}
+
+
         ]]>
     </update>
+
+    <!--统计当前用户未阅读的日志总数-->
+    <select id="totalTaskLogUnread" parameterType="map" resultType="java.lang.Integer">
+        select count(*) as total_unread
+        from task_log
+        where 1 = 1
+        and task_id = #{taskId}
+        and read_time is null
+        <![CDATA[
+        and create_user_id <> #{readUserId}
+
+
+        ]]>
+    </select>
+
+    <!--统计任务的日志总数-->
+    <select id="totalTaskLog" parameterType="map" resultType="java.lang.Integer">
+        select count(*) as total_log
+        from task_log
+        where task_id = #{taskId}
+    </select>
 </mapper>

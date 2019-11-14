@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gogoyang.yaofan.meta.complete.dao.TaskCompleteDao">
+
+    <resultMap id="taskCompleteMap" type="com.gogoyang.yaofan.meta.complete.entity.TaskComplete">
+        <result property="taskCompleteId" column="task_complete_id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="readTime" column="read_time"/>
+        <result property="processUserId" column="process_user_id"/>
+        <result property="processResult" column="process_result"/>
+        <result property="processRemark" column="process_remark"/>
+        <result property="processTime" column="process_time"/>
+        <result property="processReadTime" column="process_read_time"/>
+    </resultMap>
+
+    <!--创建一个完成日志-->
+    <insert id="createTaskComplete"
+            useGeneratedKeys="true"
+            keyProperty="ids"
+            parameterType="com.gogoyang.yaofan.meta.complete.entity.TaskComplete">
+      insert into complete
+      (task_complete_id,task_id, create_user_id, create_time, content)
+      values
+      (#{taskCompleteId}, #{taskId}, #{createUserId}, #{createTime}, #{content})
+    </insert>
+</mapper>

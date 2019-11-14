@@ -23,4 +23,6 @@ public interface ITaskService {
     void updateTaskDeal(String taskId, String userId) throws Exception;
 
     ArrayList<Task> listMyTasks(Map qIn) throws Exception;
+
+    void updateTaskStatus(Task task) throws Exception;
 }

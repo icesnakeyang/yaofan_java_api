@@ -25,4 +25,6 @@ public interface TaskDao {
     void updateTaskDeal(Map qIn);
 
     ArrayList<Task> listMyTasks(Map qIn);
+
+    void updateTaskStatus(Task task);
 }

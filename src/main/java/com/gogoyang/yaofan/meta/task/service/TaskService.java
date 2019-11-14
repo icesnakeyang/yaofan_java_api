@@ -63,4 +63,9 @@ public class TaskService implements ITaskService {
         ArrayList<Task> tasks = taskDao.listMyTasks(qIn);
         return tasks;
     }
+
+    @Override
+    public void updateTaskStatus(Task task) throws Exception {
+        taskDao.updateTaskStatus(task);
+    }
 }

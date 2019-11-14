@@ -1,5 +1,6 @@
 package com.gogoyang.yaofan.business.task;
 
+import com.gogoyang.yaofan.meta.complete.service.ITaskCompleteService;
 import com.gogoyang.yaofan.meta.point.entity.PointLedger;
 import com.gogoyang.yaofan.meta.point.service.IPointService;
 import com.gogoyang.yaofan.meta.task.entity.Task;
@@ -30,19 +31,22 @@ public class TaskBusinessService implements ITaskBusinessService {
     private final ITeamService iTeamService;
     private final IPointService iPointService;
     private final ITaskLogService iTaskLogService;
+    private final ITaskCompleteService iTaskCompleteService;
 
     public TaskBusinessService(ICommonBusinessService iCommonBusinessService,
                                ITaskService iTaskService,
                                IUserInfoService iUserInfoService,
                                ITeamService iTeamService,
                                IPointService iPointService,
-                               ITaskLogService iTaskLogService) {
+                               ITaskLogService iTaskLogService,
+                               ITaskCompleteService iTaskCompleteService) {
         this.iCommonBusinessService = iCommonBusinessService;
         this.iTaskService = iTaskService;
         this.iUserInfoService = iUserInfoService;
         this.iTeamService = iTeamService;
         this.iPointService = iPointService;
         this.iTaskLogService = iTaskLogService;
+        this.iTaskCompleteService = iTaskCompleteService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -170,6 +174,13 @@ public class TaskBusinessService implements ITaskBusinessService {
         //未阅读的日志总数
         Integer totalUnreadTaskLog = iTaskLogService.totalTaskLogUnread(task.getTaskId(), userInfo.getUserId());
         out.put("totalUnreadTaskLog", totalUnreadTaskLog);
+
+        //完成日志总数
+        Integer totalTaskComplete=iTaskCompleteService.totalTaskComplete(task.getTaskId());
+        out.put("totalTaskComplete", totalTaskComplete);
+
+        Integer totalUnreadComplete = iTaskCompleteService.totalCompleteUnread(task.getTaskId(), userInfo.getUserId());
+        out.put("totalUnreadTaskComplete", totalUnreadComplete);
         return out;
     }
 
@@ -210,6 +221,11 @@ public class TaskBusinessService implements ITaskBusinessService {
             //未阅读的日志总数
             Integer totalUnreadTaskLog = iTaskLogService.totalTaskLogUnread(tasks.get(i).getTaskId(), userInfo.getUserId());
             map.put("totalUnreadTaskLog", totalUnreadTaskLog);
+
+            //未阅读的完成日志
+            Integer totalUnreadComplete = iTaskCompleteService.totalCompleteUnread(tasks.get(i).getTaskId(), userInfo.getUserId());
+            map.put("totalUnreadTaskComplete", totalUnreadComplete);
+
             list.add(map);
         }
         Map out = new HashMap();

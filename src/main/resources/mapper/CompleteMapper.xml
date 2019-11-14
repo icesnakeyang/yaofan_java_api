@@ -6,9 +6,11 @@
         <result property="taskCompleteId" column="task_complete_id"/>
         <result property="taskId" column="task_id"/>
         <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="create_user_name"/>
         <result property="createTime" column="create_time"/>
         <result property="readTime" column="read_time"/>
         <result property="processUserId" column="process_user_id"/>
+        <result property="processUserName" column="process_user_name"/>
         <result property="processResult" column="process_result"/>
         <result property="processRemark" column="process_remark"/>
         <result property="processTime" column="process_time"/>
@@ -25,4 +27,55 @@
       values
       (#{taskCompleteId}, #{taskId}, #{createUserId}, #{createTime}, #{content})
     </insert>
+
+    <select id="listTaskComplete" parameterType="map" resultMap="taskCompleteMap">
+        select complete.ids,
+           task_complete_id,
+           task_id,
+           create_user_id,
+           create_user.name as create_user_name,
+           complete.create_time,
+           content,
+           read_time,
+           process_user_id,
+           process_user.name as process_user_name,
+           process_result,
+           process_remark,
+           process_time,
+           process_read_time
+        from (complete
+          left join user_info create_user on create_user_id = user_id)
+               left join user_info process_user on process_user_id = process_user.user_id
+        where 1 = 1
+          and task_id = #{taskId}
+    </select>
+
+    <select id="totalCompleteUnread" parameterType="map" resultType="java.lang.Integer">
+        select count(*) as total_unread
+        from complete
+        where task_id = #{taskId}
+        and read_time is null
+        <![CDATA[
+        and create_user_id <> #{userId}
+
+        ]]>
+    </select>
+
+    <update id="setTaskCompleteReadTime" parameterType="map">
+        update complete set
+        read_time=#{readTime},
+        process_user_id=#{readUserId}
+        where task_id = #{taskId}
+        and read_time is null
+        <![CDATA[
+            and create_user_id <> #{readUserId}
+        ]]>
+    </update>
+
+    <!--统计任务的完成日志总数-->
+    <select id="totalTaskComplete" parameterType="map" resultType="java.lang.Integer">
+        select count(*) as total_complete
+        from complete
+        where task_id = #{taskId}
+    </select>
 </mapper>

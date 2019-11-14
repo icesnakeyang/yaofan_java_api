@@ -196,8 +196,24 @@ public class TaskBusinessService implements ITaskBusinessService {
 
         ArrayList<Task> tasks = iTaskService.listMyTasks(qIn);
 
+        /**
+         * 读取task的统计信息
+         */
+        ArrayList list = new ArrayList();
+        for (int i = 0; i < tasks.size(); i++) {
+            Map map = new HashMap();
+            map.put("task", tasks.get(i));
+            //日志总数
+            Integer totalTaskLog = iTaskLogService.totalTaskLog(tasks.get(i).getTaskId());
+            map.put("totalTaskLog", totalTaskLog);
+
+            //未阅读的日志总数
+            Integer totalUnreadTaskLog = iTaskLogService.totalTaskLogUnread(tasks.get(i).getTaskId(), userInfo.getUserId());
+            map.put("totalUnreadTaskLog", totalUnreadTaskLog);
+            list.add(map);
+        }
         Map out = new HashMap();
-        out.put("tasks", tasks);
+        out.put("tasks", list);
         return out;
     }
 

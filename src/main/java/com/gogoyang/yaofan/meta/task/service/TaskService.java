@@ -74,4 +74,41 @@ public class TaskService implements ITaskService {
         Map out = taskDao.countUserTask(qIn);
         return out;
     }
+
+    /**
+     * 统计用户已完成的任务总数
+     *
+     * @param qIn
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map countUserTaskComplete(Map qIn) throws Exception {
+        Map out = taskDao.countUserTaskComplete(qIn);
+        return out;
+    }
+
+    /**
+     * 统计用户进行中的任务总数
+     *
+     * @param qIn
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map countUserTaskProgress(Map qIn) throws Exception {
+        Map out = taskDao.countUserTaskProgress(qIn);
+        return out;
+    }
+
+    /**
+     * 统计一个用户指定时间段内的积分收入和积分支出
+     * @param qIn
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map totalPointIn(Map qIn) throws Exception {
+        return taskDao.totalPointIn(qIn);
+    }
 }

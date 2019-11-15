@@ -33,4 +33,28 @@ public interface ITaskService {
      * @throws Exception
      */
     Map countUserTask(Map qIn) throws Exception;
+
+    /**
+     * 统计用户已完成的任务总数
+     * @param qIn
+     * @return
+     * @throws Exception
+     */
+    Map countUserTaskComplete(Map qIn) throws Exception;
+
+    /**
+     * 统计用户进行中的任务总数
+     * @param qIn
+     * @return
+     * @throws Exception
+     */
+    Map countUserTaskProgress(Map qIn) throws Exception;
+
+    /**
+     * 统计一个用户指定时间段内的积分收入和积分支出
+     * @param qIn
+     * @return
+     * @throws Exception
+     */
+    Map totalPointIn(Map qIn) throws Exception;
 }

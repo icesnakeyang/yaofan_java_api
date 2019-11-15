@@ -34,4 +34,25 @@ public interface TaskDao {
      * @return
      */
     Map countUserTask(Map qIn);
+
+    /**
+     * 统计用户已完成的任务总数
+     * @param qIn
+     * @return
+     */
+    Map countUserTaskComplete(Map qIn);
+
+    /**
+     * 统计用户进行中的任务总数
+     * @param qIn
+     * @return
+     */
+    Map countUserTaskProgress(Map qIn);
+
+    /**
+     * 统计一个用户指定时间段内的积分收入和积分支出
+     * @param qIn
+     * @return
+     */
+    Map totalPointIn(Map qIn);
 }

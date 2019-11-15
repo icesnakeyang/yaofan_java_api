@@ -238,4 +238,46 @@ public class GogoTools {
         }
         return outStr;
     }
+
+    /**
+     * 获取当前月份的1号12点0分的date日期
+     * 主要用于查询本月数据的起始时间
+     *
+     * @return
+     * @throws Exception
+     */
+    public static Date dateStartOfThisMonth() throws Exception {
+        Calendar c1 = Calendar.getInstance();
+        c1.set(Calendar.DAY_OF_MONTH, 1);   //设置为本月1号
+        c1.set(Calendar.HOUR, 0);
+        c1.set(Calendar.MINUTE, 0);
+        c1.set(Calendar.SECOND, 0);
+        c1.set(Calendar.MILLISECOND, 0);
+
+        Date dateStart = c1.getTime();
+
+        return dateStart;
+    }
+
+    /**
+     * 获取下个月1日0点的时间
+     * 主要用户查询本月数据的终止时间
+     *
+     * @return
+     * @throws Exception
+     */
+    public static Date dateEndOfThisMonth() throws Exception {
+        Calendar c1 = Calendar.getInstance();
+        c1 = Calendar.getInstance();
+        c1.add(Calendar.MONTH, 1);  //增加1个月，如果是12月，则自动变成第二年1月
+        c1.set(Calendar.DAY_OF_MONTH, 1);
+        c1.set(Calendar.HOUR, 0);
+        c1.set(Calendar.MINUTE, 0);
+        c1.set(Calendar.SECOND, 0);
+        c1.set(Calendar.MILLISECOND, 0);
+
+        Date dateEnd = c1.getTime();
+
+        return dateEnd;
+    }
 }

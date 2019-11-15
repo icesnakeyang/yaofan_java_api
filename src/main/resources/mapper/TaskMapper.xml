@@ -140,4 +140,39 @@ where 1 = 1
             or party_b_id = #{userId}
         )
     </select>
+
+    <!--统计用户已完成的任务总数-->
+    <select id="countUserTaskComplete" parameterType="map" resultType="map">
+        select count(*) as total_complete from task
+        where 1=1
+        and(
+            create_user_id=#{userId}
+            or party_b_id=#{userId}
+            )
+        and status='COMPLETE'
+    </select>
+
+    <!--统计用户进行中的任务总数-->
+    <select id="countUserTaskProgress" parameterType="map" resultType="map">
+        select count(*) as total_progress from task
+        where 1=1
+        and(
+            create_user_id=#{userId}
+            or party_b_id=#{userId}
+            )
+        and status='PROGRESS'
+    </select>
+
+    <!--统计一个用户指定时间段内的积分收入和积分支出-->
+    <select id="totalPointIn" parameterType="map" resultType="map">
+        select sum(point_in) as total_in, sum(point_out) as total_out
+        from point_ledger
+        where 1 = 1
+        and user_id = #{userId}
+        <![CDATA[
+        and create_time >= cast(#{dateStart} as datetime)
+        and create_time < cast(#{dateEnd} as datetime)
+
+        ]]>
+    </select>
 </mapper>

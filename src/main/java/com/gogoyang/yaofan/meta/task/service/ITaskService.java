@@ -25,4 +25,12 @@ public interface ITaskService {
     ArrayList<Task> listMyTasks(Map qIn) throws Exception;
 
     void updateTaskStatus(Task task) throws Exception;
+
+    /**
+     * 统计用户的任务总数
+     * @param qIn
+     * @return
+     * @throws Exception
+     */
+    Map countUserTask(Map qIn) throws Exception;
 }

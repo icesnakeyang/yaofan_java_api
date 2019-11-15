@@ -129,4 +129,15 @@ where 1 = 1
         status=#{status}
         where task_id=#{taskId}
     </update>
+
+    <!--统计用户的任务总数-->
+    <select id="countUserTask" parameterType="map" resultType="map">
+        select count(*) as total_task
+        from task
+        where 1 = 1
+        and (
+            create_user_id = #{userId}
+            or party_b_id = #{userId}
+        )
+    </select>
 </mapper>

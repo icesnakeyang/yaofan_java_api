@@ -22,4 +22,10 @@
       values
       (#{taskId}, #{pointIn}, #{pointOut}, #{userId}, #{processUserId}, #{createTime}, #{remark},#{actType})
     </insert>
+
+    <select id="totalUserPoint" parameterType="map" resultType="map">
+        select sum(point_in) as total_point_in, sum(point_out) as total_point_out from point_ledger
+        where 1=1
+        and user_id=#{userId}
+    </select>
 </mapper>

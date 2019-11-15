@@ -21,5 +21,6 @@ public enum GogoActType {
     CREATE_TASK_LOG,
     LIST_TASK_LOG,
     CREATE_COMPLETE,
-    LIST_COMPLETE
+    LIST_COMPLETE,
+    DASHBOARD
 }

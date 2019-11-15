@@ -68,4 +68,10 @@ public class TaskService implements ITaskService {
     public void updateTaskStatus(Task task) throws Exception {
         taskDao.updateTaskStatus(task);
     }
+
+    @Override
+    public Map countUserTask(Map qIn) throws Exception {
+        Map out = taskDao.countUserTask(qIn);
+        return out;
+    }
 }

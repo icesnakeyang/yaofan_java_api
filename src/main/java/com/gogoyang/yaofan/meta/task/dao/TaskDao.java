@@ -27,4 +27,11 @@ public interface TaskDao {
     ArrayList<Task> listMyTasks(Map qIn);
 
     void updateTaskStatus(Task task);
+
+    /**
+     * 统计用户的任务总数
+     * @param qIn
+     * @return
+     */
+    Map countUserTask(Map qIn);
 }

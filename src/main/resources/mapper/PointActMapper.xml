@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gogoyang.yaofan.meta.point.dao.PointActDao">
+
+    <resultMap id="pointActMap" type="com.gogoyang.yaofan.meta.point.entity.PointActLedger">
+        <result property="pointActLedgerId" column="point_act_ledger_id"/>
+        <result property="actType" column="act_type"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="readTime" column="read_time"/>
+        <result property="processUserId" column="process_user_id"/>
+        <result property="actType" column="act_type"/>
+    </resultMap>
+
+    <!--创建一个point ledger-->
+    <insert id="createPointLedger"
+            useGeneratedKeys="true"
+            keyProperty="ids"
+            parameterType="com.gogoyang.yaofan.meta.point.entity.PointLedger">
+      insert into point_ledger
+      (task_id, point_in, point_out, user_id, process_user_id, create_time, remark, act_type)
+      values
+      (#{taskId}, #{pointIn}, #{pointOut}, #{userId}, #{processUserId}, #{createTime}, #{remark},#{actType})
+    </insert>
+
+    <select id="totalUserPoint" parameterType="map" resultType="map">
+        select sum(point_in) as total_point_in, sum(point_out) as total_point_out from point_ledger
+        where 1=1
+        and user_id=#{userId}
+    </select>
+</mapper>

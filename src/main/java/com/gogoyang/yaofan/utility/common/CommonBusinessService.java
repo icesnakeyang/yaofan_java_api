@@ -159,12 +159,12 @@ public class CommonBusinessService implements ICommonBusinessService {
         if (user.getUserId().equals(task.getPartyBId())) {
             cc++;
         }
-        if(cc==0){
+        if (cc == 0) {
             throw new Exception("10020");
         }
     }
 
-    private UserInfo getUserByUserId(String userId) throws Exception {
+    public UserInfo getUserByUserId(String userId) throws Exception {
         UserInfo userInfo = iUserInfoService.getUserInfoByUserId(userId);
         if (userInfo == null) {
             throw new Exception("10005");

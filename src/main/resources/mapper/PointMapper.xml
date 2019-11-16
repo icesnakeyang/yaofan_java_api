@@ -8,8 +8,16 @@
         <result property="pointOut" column="point_out"/>
         <result property="createTime" column="create_time"/>
         <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
         <result property="processUserId" column="process_user_id"/>
+        <result property="processUserName" column="process_user_name"/>
         <result property="actType" column="act_type"/>
+        <result property="readTime" column="read_time"/>
+        <result property="processResult" column="process_result"/>
+        <result property="processRemark" column="process_remark"/>
+        <result property="processTime" column="process_time"/>
+        <result property="processReadTime" column="process_read_time"/>
+        <result property="pointLedgerId" column="point_ledger_id"/>
     </resultMap>
 
     <!--创建一个point ledger-->

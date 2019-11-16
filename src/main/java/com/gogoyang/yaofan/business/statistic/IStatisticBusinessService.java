@@ -4,4 +4,5 @@ import java.util.Map;
 
 public interface IStatisticBusinessService {
     Map dashboard(Map in) throws Exception;
+    Double calPointBalance(String userId) throws Exception;
 }

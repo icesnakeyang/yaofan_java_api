@@ -11,6 +11,8 @@ public interface ICommonBusinessService {
 
     UserInfo getUserByToken(String token) throws Exception;
 
+    UserInfo getUserByUserId(String userId) throws Exception;
+
     /**
      * 检查task是否有重复任务
      * true：重复

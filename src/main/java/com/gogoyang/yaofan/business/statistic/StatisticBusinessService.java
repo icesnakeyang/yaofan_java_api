@@ -34,29 +34,13 @@ public class StatisticBusinessService implements IStatisticBusinessService {
         /**
          * 当前积分余额，总积分收入，总积分支出
          */
-        Map qIn = new HashMap();
-        qIn.put("userId", userInfo.getUserId());
-        Map data = iPointService.totalUserPoint(qIn);
 
-        Double pointIn = (Double) data.get("total_point_in");
-        if (pointIn == null) {
-            pointIn = 0.0;
-        }
-        Double pointOut = (Double) data.get("total_point_out");
-        if (pointOut == null) {
-            pointOut = 0.0;
-        }
-        Double point = pointIn - pointOut;
-
-        Map out = new HashMap();
-        out.put("currentPoint", point);
-        out.put("pointIn", pointIn);
-        out.put("pointOut", pointOut);
+        Map out = calPoint(userInfo.getUserId());
 
         /**
          * 用户的任务总数
          */
-        qIn = new HashMap();
+        Map qIn = new HashMap();
         qIn.put("userId", userInfo.getUserId());
         Map taskMap = iTaskService.countUserTask(qIn);
         Long countTask = (Long) taskMap.get("total_task");
@@ -115,6 +99,60 @@ public class StatisticBusinessService implements IStatisticBusinessService {
         }
         out.put("totalOutMonth", totalOut);
 
+
+        return out;
+    }
+
+    /**
+     * 查询返回用户当前的积分余额
+     *
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Double calPointBalance(String userId) throws Exception {
+        Map out = calPoint(userId);
+        Double point = (Double) out.get("currentPoint");
+        if (point == null) {
+            point = 0.0;
+        }
+        return point;
+    }
+
+    /**
+     * 查询计算用户当前的积分余额，积分收入，积分支出
+     *
+     * @param userId
+     * @return currentPoint
+     * pointIn
+     * pointIn
+     * @throws Exception
+     */
+    private Map calPoint(String userId) throws Exception {
+        UserInfo userInfo = iCommonBusinessService.getUserByUserId(userId);
+
+        /**
+         * 当前积分余额，总积分收入，总积分支出
+         */
+        Map qIn = new HashMap();
+        qIn.put("userId", userInfo.getUserId());
+        Map data = iPointService.totalUserPoint(qIn);
+
+        Double pointIn = (Double) data.get("total_point_in");
+        if (pointIn == null) {
+            pointIn = 0.0;
+        }
+        Double pointOut = (Double) data.get("total_point_out");
+        if (pointOut == null) {
+            pointOut = 0.0;
+        }
+        Double point = pointIn - pointOut;
+
+        Map out = new HashMap();
+        out.put("currentPoint", point);
+        out.put("pointIn", pointIn);
+        out.put("pointOut", pointOut);
 
         return out;
     }

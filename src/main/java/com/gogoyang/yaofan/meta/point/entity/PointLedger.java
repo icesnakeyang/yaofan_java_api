@@ -11,8 +11,16 @@ public class PointLedger {
     private Double pointIn;
     private Double pointOut;
     private String userId;
+    private String userName;
     private String processUserId;
+    private String processUserName;
     private Date createTime;
     private String remark;
     private String actType;
+    private Date readTime;
+    private String processResult;
+    private String processRemark;
+    private Date processTime;
+    private Date processReadTime;
+    private String pointLedgerId;
 }

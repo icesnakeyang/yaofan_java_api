@@ -31,9 +31,30 @@
       (#{taskId}, #{pointIn}, #{pointOut}, #{userId}, #{processUserId}, #{createTime}, #{remark},#{actType})
     </insert>
 
+    <!--统计用户的总积分收入和总积分支出-->
     <select id="totalUserPoint" parameterType="map" resultType="map">
         select sum(point_in) as total_point_in, sum(point_out) as total_point_out from point_ledger
         where 1=1
         and user_id=#{userId}
+    </select>
+
+    <!--查询所有用户申请兑换积分且未处理的申请-->
+    <select id="listUnProcessWithdraw" parameterType="map" resultType="map">
+        select point_ledger.ids,
+           point_out,
+           create_user.user_id as create_user_id,
+           create_user.name    as create_user_name,
+           create_user.phone   as create_user_phone,
+           point_ledger.create_time,
+           process_user_id,
+           process_user.name   as process_user_name,
+           act_type,
+           point_ledger.read_time,
+           point_ledger.process_result
+        from (point_ledger
+        left join user_info create_user on point_ledger.user_id = create_user.user_id)
+             left join user_info process_user on process_user_id = process_user.user_id
+        where act_type = 'POINT_WITHDRAW'
+        and process_result is null
     </select>
 </mapper>

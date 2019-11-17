@@ -62,4 +62,26 @@ public class PointController {
         }
         return response;
     }
+
+    @ResponseBody
+    @PostMapping("listUnProcessWithdraw")
+    public Response listUnProcessWithdraw(@RequestBody PointRequest request,
+                                          HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            Map out = iPointBusinessService.listPointWithdrawApply(in);
+            response.setData(out);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+        }
+        return response;
+    }
 }

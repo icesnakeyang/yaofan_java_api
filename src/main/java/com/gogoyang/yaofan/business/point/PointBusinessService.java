@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -76,5 +78,36 @@ public class PointBusinessService implements IPointBusinessService {
         pointLedger.setPointLedgerId(GogoTools.UUID().toString());
 
         iPointService.createPointLedger(pointLedger);
+    }
+
+    @Override
+    public Map listPointWithdrawApply(Map in) throws Exception {
+        String token = in.get("token").toString();
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        /**
+         * 用户必须是管理员，且具备批准积分兑换的权限
+         */
+
+        Map qIn = new HashMap();
+
+        List<Map> pointMap = iPointService.listUnProcessWithdraw(qIn);
+
+        Map out = new HashMap();
+        out.put("pointWithdrawApplyList", pointMap);
+        return out;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void approvePointWithdraw(Map in) throws Exception {
+        String token = in.get("token").toString();
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        /**
+         * 用户必须是管理员，且具备批准积分兑换的权限
+         */
     }
 }

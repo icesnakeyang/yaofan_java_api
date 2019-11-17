@@ -29,6 +29,7 @@ public class UserBusinessService implements IUserBusinessService {
     public Map register(Map in) throws Exception {
         String phone = in.get("phone").toString();
         String password = in.get("password").toString();
+        String name = (String) in.get("realName");
 
         /**
          * 1、查询phone是否已注册
@@ -46,6 +47,7 @@ public class UserBusinessService implements IUserBusinessService {
         password = GogoTools.encoderByMd5(password);
         userInfo.setPassword(password);
         userInfo.setPhone(phone);
+        userInfo.setName(name);
         userInfo.setStatus(GogoStatus.ACTIVE.toString());
         userInfo.setToken(GogoTools.UUID().toString());
         userInfo.setTokenTime(new Date());

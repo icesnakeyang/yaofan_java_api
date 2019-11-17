@@ -41,6 +41,7 @@ public class UserController {
             in.put("phone", request.getPhone());
             memoMap.put("phone", request.getPhone());
             in.put("password", request.getPassword());
+            in.put("realName",request.getUsername());
             Map out = iUserBusinessService.register(in);
             response.setData(out);
             UserInfo userInfo = (UserInfo) out.get("userInfo");

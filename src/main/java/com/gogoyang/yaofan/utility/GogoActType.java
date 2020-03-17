@@ -24,5 +24,4 @@ public enum GogoActType {
     LIST_COMPLETE,
     DASHBOARD,
     POINT_WITHDRAW
-
 }

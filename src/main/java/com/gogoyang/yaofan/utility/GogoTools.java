@@ -280,4 +280,12 @@ public class GogoTools {
 
         return dateEnd;
     }
+
+    public static Date strToDatetime2(String dateStr) throws Exception {
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");//注意月份是MM
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");//注意月份是MM
+//        Date date = simpleDateFormat.parse("2019-09-02");
+        Date date = simpleDateFormat.parse(dateStr);
+        return date;
+    }
 }

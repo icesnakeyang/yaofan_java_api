@@ -3,6 +3,7 @@ package com.gogoyang.yaofan.controller.task;
 import com.gogoyang.yaofan.business.task.ITaskBusinessService;
 import com.gogoyang.yaofan.controller.vo.Response;
 import com.gogoyang.yaofan.utility.GogoActType;
+import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,12 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 
 @RestController
-@RequestMapping("/task")
+@RequestMapping("/api/task")
 public class TaskController {
     private final ITaskBusinessService iTaskBusinessService;
     private final ICommonBusinessService iCommonBusinessService;
@@ -43,6 +45,12 @@ public class TaskController {
             in.put("detail", request.getDetail());
             logMap.put("title", request.getTitle());
             in.put("title", request.getTitle());
+            String endDateStr = (String) request.getEndDateWx();
+            String endTimeStr = (String) request.getEndTimeWx();
+            if(endDateStr!=null && endTimeStr!=null) {
+                Date endTime = GogoTools.strToDatetime2(endDateStr + " " + endTimeStr);
+                in.put("endTimeDate", endTime);
+            }
             in.put("endTime", request.getEndTime());
             in.put("point", request.getPoint());
             in.put("teamId", request.getTeamId());

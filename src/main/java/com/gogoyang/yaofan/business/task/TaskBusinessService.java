@@ -56,6 +56,7 @@ public class TaskBusinessService implements ITaskBusinessService {
         String detail = (String) in.get("detail");
         String title = in.get("title").toString();
         String endTimeStr = (String) in.get("endTime");
+        Date endTimeDate = (Date) in.get("endTimeDate");
         String pointStr = (String) in.get("point");
         String teamId = (String) in.get("teamId");
 
@@ -66,11 +67,24 @@ public class TaskBusinessService implements ITaskBusinessService {
             teamView = iCommonBusinessService.getTeamById(teamId);
         }
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        ParsePosition pos = new ParsePosition(0);
-        Date strtodate = formatter.parse(endTimeStr, pos);
+        Date strtodate=null;
 
-        Double point = Double.parseDouble(pointStr);
+        if(endTimeStr!=null) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            ParsePosition pos = new ParsePosition(0);
+            strtodate = formatter.parse(endTimeStr, pos);
+        }else{
+            if(endTimeDate!=null){
+                strtodate=endTimeDate;
+            }
+        }
+
+        Double point=null;
+        try {
+            point = Double.parseDouble(pointStr);
+        }catch (Exception ex){
+            throw new Exception("20002");
+        }
 
         Task task = new Task();
         task.setCreateTime(new Date());

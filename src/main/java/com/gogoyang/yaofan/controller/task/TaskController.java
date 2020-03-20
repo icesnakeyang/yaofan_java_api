@@ -141,6 +141,12 @@ public class TaskController {
         return response;
     }
 
+    /**
+     * 读取我的任务列表，不包括任务详情
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
     @ResponseBody
     @PostMapping("/listMyTasks")
     public Response listMyTasks(@RequestBody TaskRequest request,
@@ -155,6 +161,47 @@ public class TaskController {
             logMap.put("token", token);
             logMap.put("GogoActType", GogoActType.LIST_MY_TASKS);
             Map out = iTaskBusinessService.listMyTasks(in);
+            response.setData(out);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * 读取我的任务列表，包括任务详情
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/listMyTasksDetail")
+    public Response listMyTasksDetail(@RequestBody TaskRequest request,
+                                HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("pageIndex", request.getPageIndex());
+            in.put("pageSize", request.getPageSize());
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.LIST_MY_TASKS);
+            Map out = iTaskBusinessService.listMyTasksDetail(in);
             response.setData(out);
         } catch (Exception ex) {
             try {

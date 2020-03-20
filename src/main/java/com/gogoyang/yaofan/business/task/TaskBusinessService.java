@@ -67,22 +67,22 @@ public class TaskBusinessService implements ITaskBusinessService {
             teamView = iCommonBusinessService.getTeamById(teamId);
         }
 
-        Date strtodate=null;
+        Date strtodate = null;
 
-        if(endTimeStr!=null) {
+        if (endTimeStr != null) {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             ParsePosition pos = new ParsePosition(0);
             strtodate = formatter.parse(endTimeStr, pos);
-        }else{
-            if(endTimeDate!=null){
-                strtodate=endTimeDate;
+        } else {
+            if (endTimeDate != null) {
+                strtodate = endTimeDate;
             }
         }
 
-        Double point=null;
+        Double point = null;
         try {
             point = Double.parseDouble(pointStr);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             throw new Exception("20002");
         }
 
@@ -153,26 +153,43 @@ public class TaskBusinessService implements ITaskBusinessService {
         String token = in.get("token").toString();
         String taskId = in.get("taskId").toString();
 
+        /**
+         * 用户读取任务详情的要求
+         * 1、用户必须是已注册且登录的状态
+         * 2、检查任务是否属于某个团队
+         * 3、如果是团队任务，则当前用户必须是该团队成员才可访问
+         * 4、非团队任务，则可直接访问
+         */
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
-        ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(userInfo.getUserId(), GogoStatus.ACTIVE.toString());
-        if (myTeamViews.size() == 0) {
-            //没有加入团队
-            throw new Exception("10015");
-        }
 
+        //读取任务
         Task task = iTaskService.getTaskByTaskId(taskId);
         if (task == null) {
+            //没有找到任务
             throw new Exception("10016");
         }
-        int cc = 0;
-        for (int i = 0; i < myTeamViews.size(); i++) {
-            if (myTeamViews.get(i).getTeamId().equals(task.getTeamId())) {
-                cc++;
+
+        if(task.getTeamId()==null){
+            //非团队任务
+        }else{
+            //团队任务，只有团队成员可见
+            //读取用户的团队
+            ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(userInfo.getUserId(), GogoStatus.ACTIVE.toString());
+            if (myTeamViews.size() == 0) {
+                //没有加入团队
+                throw new Exception("10015");
             }
-        }
-        if (cc == 0) {
-            //用户不是团队成员
-            throw new Exception("10017");
+            //检查用户是否属于该任务的团队
+            int cc = 0;
+            for (int i = 0; i < myTeamViews.size(); i++) {
+                if (myTeamViews.get(i).getTeamId().equals(task.getTeamId())) {
+                    cc++;
+                }
+            }
+            if (cc == 0) {
+                //用户不是团队成员
+                throw new Exception("10017");
+            }
         }
 
         Map out = new HashMap();
@@ -190,7 +207,7 @@ public class TaskBusinessService implements ITaskBusinessService {
         out.put("totalUnreadTaskLog", totalUnreadTaskLog);
 
         //完成日志总数
-        Integer totalTaskComplete=iTaskCompleteService.totalTaskComplete(task.getTaskId());
+        Integer totalTaskComplete = iTaskCompleteService.totalTaskComplete(task.getTaskId());
         out.put("totalTaskComplete", totalTaskComplete);
 
         Integer totalUnreadComplete = iTaskCompleteService.totalCompleteUnread(task.getTaskId(), userInfo.getUserId());
@@ -290,5 +307,59 @@ public class TaskBusinessService implements ITaskBusinessService {
         pointLedger.setTaskId(task.getTaskId());
         pointLedger.setUserId(userInfo.getUserId());
         iPointService.createPointLedger(pointLedger);
+    }
+
+    /**
+     * 读取我的任务列表，包括详情
+     *
+     * @param in
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map listMyTasksDetail(Map in) throws Exception {
+        /**
+         * 1、进行中的任务，status=progress
+         * 2、我是乙方，partyBId
+         * 3、我是甲方，createUserId
+         */
+        String token = in.get("token").toString();
+        Integer pageIndex = (Integer) in.get("pageIndex");
+        Integer pageSize = (Integer) in.get("pageSize");
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        Map qIn = new HashMap();
+        qIn.put("userId", userInfo.getUserId());
+        Integer offset = (pageIndex - 1) * pageSize;
+        qIn.put("offset", offset);
+        qIn.put("size", pageSize);
+
+        ArrayList<Task> tasks = iTaskService.listMyTasksDetail(qIn);
+
+        /**
+         * 读取task的统计信息
+         */
+        ArrayList list = new ArrayList();
+        for (int i = 0; i < tasks.size(); i++) {
+            Map map = new HashMap();
+            map.put("task", tasks.get(i));
+            //日志总数
+            Integer totalTaskLog = iTaskLogService.totalTaskLog(tasks.get(i).getTaskId());
+            map.put("totalTaskLog", totalTaskLog);
+
+            //未阅读的日志总数
+            Integer totalUnreadTaskLog = iTaskLogService.totalTaskLogUnread(tasks.get(i).getTaskId(), userInfo.getUserId());
+            map.put("totalUnreadTaskLog", totalUnreadTaskLog);
+
+            //未阅读的完成日志
+            Integer totalUnreadComplete = iTaskCompleteService.totalCompleteUnread(tasks.get(i).getTaskId(), userInfo.getUserId());
+            map.put("totalUnreadTaskComplete", totalUnreadComplete);
+
+            list.add(map);
+        }
+        Map out = new HashMap();
+        out.put("tasks", list);
+        return out;
     }
 }

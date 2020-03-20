@@ -24,4 +24,12 @@ public interface ITaskBusinessService {
     Map listMyTasks(Map in) throws Exception;
 
     void grab(Map in) throws Exception;
+
+    /**
+     * 读取我的任务列表，包括任务详情
+     * @param in
+     * @return
+     * @throws Exception
+     */
+    Map listMyTasksDetail(Map in) throws Exception;
 }

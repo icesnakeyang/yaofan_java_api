@@ -57,4 +57,12 @@ public interface ITaskService {
      * @throws Exception
      */
     Map totalPointIn(Map qIn) throws Exception;
+
+    /**
+     * 读取任务列表
+     * @param qIn
+     * @return
+     * @throws Exception
+     */
+    ArrayList<Task> listMyTasksDetail(Map qIn) throws Exception;
 }

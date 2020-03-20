@@ -103,6 +103,7 @@ public class TaskService implements ITaskService {
 
     /**
      * 统计一个用户指定时间段内的积分收入和积分支出
+     *
      * @param qIn
      * @return
      * @throws Exception
@@ -110,5 +111,11 @@ public class TaskService implements ITaskService {
     @Override
     public Map totalPointIn(Map qIn) throws Exception {
         return taskDao.totalPointIn(qIn);
+    }
+
+    @Override
+    public ArrayList<Task> listMyTasksDetail(Map qIn) throws Exception {
+        ArrayList<Task> tasks = taskDao.listMyTasksDetail(qIn);
+        return tasks;
     }
 }

@@ -14,4 +14,6 @@ public class TaskRequest {
     private String point;
     private String teamId;
     private String taskId;
+    private Integer pageIndex;
+    private Integer pageSize;
 }

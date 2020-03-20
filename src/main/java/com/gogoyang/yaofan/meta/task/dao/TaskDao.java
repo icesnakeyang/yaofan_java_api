@@ -55,4 +55,6 @@ public interface TaskDao {
      * @return
      */
     Map totalPointIn(Map qIn);
+
+    ArrayList<Task> listMyTasksDetail(Map qIn);
 }

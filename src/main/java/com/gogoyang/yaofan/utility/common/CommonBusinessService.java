@@ -138,14 +138,13 @@ public class CommonBusinessService implements ICommonBusinessService {
      */
     @Override
     public void checkUserTeam(String userId, String teamId) throws Exception {
-        ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(userId, GogoStatus.ACTIVE.toString());
-        int cc = 0;
-        for (int i = 0; i < myTeamViews.size(); i++) {
-            if (myTeamViews.get(i).getTeamId().equals(teamId)) {
-                cc++;
-            }
-        }
-        if (cc == 0) {
+        Map qIn=new HashMap();
+        qIn.put("userId", userId);
+        qIn.put("teamId", teamId);
+        qIn.put("status", GogoStatus.ACTIVE.toString());
+        ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(qIn);
+
+        if (myTeamViews == null) {
             throw new Exception("10017");
         }
     }

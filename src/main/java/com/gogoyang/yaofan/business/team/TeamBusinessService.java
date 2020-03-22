@@ -72,13 +72,28 @@ public class TeamBusinessService implements ITeamBusinessService {
         return out;
     }
 
+    /**
+     * 读取团队列表
+     * @param in
+     * @return
+     * @throws Exception
+     */
     @Override
-    public Map listTeam(Map in) throws Exception {
+    public Map listMyTeam(Map in) throws Exception {
         String token = in.get("token").toString();
+        Integer pageIndex=(Integer)in.get("pageIndex");
+        Integer pageSize=(Integer)in.get("pageSize");
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        ArrayList myTeams = iTeamService.listTeam(userInfo.getUserId(), GogoStatus.ACTIVE.toString());
+        Map qIn=new HashMap();
+        Integer offset=(pageIndex-1)*pageSize;
+        qIn.put("offset", offset);
+        qIn.put("size", pageSize);
+        qIn.put("userId", userInfo.getUserId());
+        qIn.put("status", GogoStatus.ACTIVE.toString());
+
+        ArrayList myTeams = iTeamService.listTeam(qIn);
 
         Map out = new HashMap();
         out.put("teams", myTeams);
@@ -140,7 +155,10 @@ public class TeamBusinessService implements ITeamBusinessService {
             throw new Exception("10007");
         }
 
-        ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(userInfo.getUserId(), GogoStatus.ACTIVE.toString());
+        qIn=new HashMap();
+        qIn.put("userId", userInfo.getUserId());
+        qIn.put("status", GogoStatus.ACTIVE.toString());
+        ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(qIn);
         if (myTeamViews.size() > 0) {
             for (int i = 0; i < myTeamViews.size(); i++) {
                 if (teamId.equals(myTeamViews.get(i).getTeamId())) {

@@ -12,7 +12,7 @@ public interface ITeamService {
 
     MyTeam createMyTeam(MyTeam myTeam) throws Exception;
 
-    ArrayList<MyTeamView> listTeam(String userId, String status) throws Exception;
+    ArrayList<MyTeamView> listTeam(Map qIn) throws Exception;
 
     /**
      * 根据团队名称关键字搜索团队

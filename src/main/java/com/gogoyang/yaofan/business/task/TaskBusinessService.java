@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLInput;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -128,9 +129,12 @@ public class TaskBusinessService implements ITaskBusinessService {
 
         UserInfo userInfo = iUserInfoService.getUserInfoByToken(token);
 
-        ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(userInfo.getUserId(), GogoStatus.ACTIVE.toString());
+        Map qIn=new HashMap();
+        qIn.put("userId", userInfo.getUserId());
+        qIn.put("status", GogoStatus.ACTIVE.toString());
+        ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(qIn);
 
-        Map qIn = new HashMap();
+        qIn = new HashMap();
         qIn.put("userId", userInfo.getUserId());
         qIn.put("status", GogoStatus.BIDDING);
         if (myTeamViews.size() > 0) {
@@ -174,7 +178,10 @@ public class TaskBusinessService implements ITaskBusinessService {
         }else{
             //团队任务，只有团队成员可见
             //读取用户的团队
-            ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(userInfo.getUserId(), GogoStatus.ACTIVE.toString());
+            Map qIn=new HashMap();
+            qIn.put("userId", userInfo.getUserId());
+            qIn.put("status", GogoStatus.ACTIVE.toString());
+            ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(qIn);
             if (myTeamViews.size() == 0) {
                 //没有加入团队
                 throw new Exception("10015");

@@ -35,10 +35,7 @@ public class TeamService implements ITeamService {
     }
 
     @Override
-    public ArrayList<MyTeamView> listTeam(String userId, String status) throws Exception {
-        Map qIn = new HashMap();
-        qIn.put("userId", userId);
-        qIn.put("status", status);
+    public ArrayList<MyTeamView> listTeam(Map qIn) throws Exception {
         ArrayList<MyTeamView> myTeamViewArrayList = teamDao.listTeam(qIn);
         return myTeamViewArrayList;
     }

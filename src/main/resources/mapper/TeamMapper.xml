@@ -114,8 +114,21 @@
         inner join user_info manager on team.manager_id = manager.user_id)
         inner join user_info creator on team.create_user_id = creator.user_id
         where 1 = 1
-        and me.user_id = #{userId}
-        and my_team.status = #{status}
+        <choose>
+            <when test="userId!=null">
+                and me.user_id = #{userId}
+            </when>
+        </choose>
+        <choose>
+            <when test="status!=null">
+                and my_team.status = #{status}
+            </when>
+        </choose>
+        <choose>
+            <when test="teamId!=null">
+                and my_team.team_id = #{teamId}
+            </when>
+        </choose>
     </select>
 
     <!--创建一个加入团队的申请-->
@@ -129,12 +142,6 @@
         and team.status=#{teamStatus}
         <![CDATA[
             and manager_id<>#{currentUserId}
-
-
-
-
-
-
         ]]>
 
     </select>

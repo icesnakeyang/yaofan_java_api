@@ -12,4 +12,7 @@ public class TeamRequest {
      * 申请加入团队的id
      */
     private String applyId;
+
+    private Integer pageIndex;
+    private Integer pageSize;
 }

@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/team")
+@RequestMapping("/api/team")
 public class TeamController {
     protected final ITeamBusinessService iTeamBusinessService;
     private final ICommonBusinessService iCommonBusinessService;
@@ -66,8 +66,9 @@ public class TeamController {
     }
 
     @ResponseBody
-    @PostMapping("listTeam")
-    public Response listTeam(HttpServletRequest httpServletRequest) {
+    @PostMapping("listMyTeam")
+    public Response listMyTeam(@RequestBody TeamRequest request,
+                             HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
         Map logMap = new HashMap();
@@ -75,9 +76,11 @@ public class TeamController {
         try {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
+            in.put("pageIndex", request.getPageIndex());
+            in.put("pageSize", request.getPageSize());
             logMap.put("token", token);
             logMap.put("GogoActType", GogoActType.LIST_TEAM);
-            Map out = iTeamBusinessService.listTeam(in);
+            Map out = iTeamBusinessService.listMyTeam(in);
             response.setData(out);
         } catch (Exception ex) {
             try {

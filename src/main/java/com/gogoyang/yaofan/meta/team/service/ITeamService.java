@@ -41,4 +41,19 @@ public interface ITeamService {
     void setApplyTeamReadTime(ApplyTeamView applyTeamView) throws Exception;
 
     void processApplyTeam(ApplyTeam applyTeam) throws Exception;
+
+    /**
+     * 修改团队信息
+     * @param qIn
+     * name
+     * description
+     * where teamId
+     */
+    void updateTeam(Map qIn);
+
+    /**
+     * 删除一个团队
+     * @param teamId
+     */
+    void deleteTeam(String teamId);
 }

@@ -23,5 +23,7 @@ public enum GogoActType {
     CREATE_COMPLETE,
     LIST_COMPLETE,
     DASHBOARD,
-    POINT_WITHDRAW
+    POINT_WITHDRAW,
+    UPDATE_TEAM,
+    DELETE_TEAM
 }

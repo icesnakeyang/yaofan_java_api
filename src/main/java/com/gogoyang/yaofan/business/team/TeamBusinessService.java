@@ -74,6 +74,7 @@ public class TeamBusinessService implements ITeamBusinessService {
 
     /**
      * 读取团队列表
+     *
      * @param in
      * @return
      * @throws Exception
@@ -81,13 +82,13 @@ public class TeamBusinessService implements ITeamBusinessService {
     @Override
     public Map listMyTeam(Map in) throws Exception {
         String token = in.get("token").toString();
-        Integer pageIndex=(Integer)in.get("pageIndex");
-        Integer pageSize=(Integer)in.get("pageSize");
+        Integer pageIndex = (Integer) in.get("pageIndex");
+        Integer pageSize = (Integer) in.get("pageSize");
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        Map qIn=new HashMap();
-        Integer offset=(pageIndex-1)*pageSize;
+        Map qIn = new HashMap();
+        Integer offset = (pageIndex - 1) * pageSize;
         qIn.put("offset", offset);
         qIn.put("size", pageSize);
         qIn.put("userId", userInfo.getUserId());
@@ -155,7 +156,7 @@ public class TeamBusinessService implements ITeamBusinessService {
             throw new Exception("10007");
         }
 
-        qIn=new HashMap();
+        qIn = new HashMap();
         qIn.put("userId", userInfo.getUserId());
         qIn.put("status", GogoStatus.ACTIVE.toString());
         ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(qIn);
@@ -310,5 +311,51 @@ public class TeamBusinessService implements ITeamBusinessService {
         myTeam.setTeamId(applyTeamView.getApplyTeamId());
         myTeam.setUserId(applyTeamView.getApplyUserId());
         iTeamService.createMyTeam(myTeam);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void updateMyTeam(Map in) throws Exception {
+        String token = in.get("token").toString();
+        String teamId = in.get("teamId").toString();
+        String name = (String) in.get("name");
+        String description = (String) in.get("description");
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        TeamView teamView = iTeamService.getTeamByTeamId(teamId);
+
+        if (teamView == null) {
+            throw new Exception("10014");
+        }
+
+        if (!teamView.getManagerId().equals(userInfo.getUserId())) {
+            //用户不是该团队管理员
+            throw new Exception("10009");
+        }
+
+        Map qIn = new HashMap();
+        qIn.put("name", name);
+        qIn.put("description", description);
+        qIn.put("teamId", teamId);
+        iTeamService.updateTeam(qIn);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void deleteMyTeam(Map in) throws Exception {
+        String token = in.get("token").toString();
+        String teamId = in.get("teamId").toString();
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        TeamView teamView = iCommonBusinessService.getTeamById(teamId);
+
+        if (!teamView.getManagerId().equals(userInfo.getUserId())) {
+            //不是管理员，不能删除
+            throw new Exception("10009");
+        }
+
+        iTeamService.deleteTeam(teamId);
     }
 }

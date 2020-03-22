@@ -103,8 +103,8 @@
         my_team.ids,
         my_team.user_id,
         my_team.team_id,
-        team.name    as team_name,
-        me.name      as my_name,
+        team.name as team_name,
+        me.name as my_name,
         manager.name as manager_name,
         creator.name as creator_name,
         my_team.status
@@ -142,6 +142,8 @@
         and team.status=#{teamStatus}
         <![CDATA[
             and manager_id<>#{currentUserId}
+
+
         ]]>
 
     </select>
@@ -240,4 +242,24 @@ and apply_team_log_id=#{applyId}
         process_user_id=#{processUserId}
         where apply_team_log_id=#{applyTeamLogId}
     </update>
+
+    <!--修改团队信息-->
+    <update id="updateTeam" parameterType="map">
+        update team
+        <set>
+            <if test="name!=null">
+                name=#{name},
+            </if>
+            <if test="description!=null">
+                description=#{description}
+            </if>
+        </set>
+        where team_id=#{teamId}
+    </update>
+
+    <!--删除一个团队-->
+    <delete id="deleteTeam" parameterType="java.lang.String">
+        delete from team
+        where team_id=#{teamId}
+    </delete>
 </mapper>

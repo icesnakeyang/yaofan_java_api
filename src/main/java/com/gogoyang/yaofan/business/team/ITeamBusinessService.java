@@ -20,4 +20,8 @@ public interface ITeamBusinessService {
     void rejectApplyTeam(Map in) throws Exception;
 
     void agreeApplyTeam(Map in) throws Exception;
+
+    void updateMyTeam(Map in) throws Exception;
+
+    void deleteMyTeam(Map in) throws Exception;
 }

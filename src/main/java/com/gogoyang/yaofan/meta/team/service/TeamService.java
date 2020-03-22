@@ -98,4 +98,18 @@ public class TeamService implements ITeamService {
     public void processApplyTeam(ApplyTeam applyTeam) throws Exception {
         teamDao.processApplyTeam(applyTeam);
     }
+
+    @Override
+    public void updateTeam(Map qIn) {
+        teamDao.updateTeam(qIn);
+    }
+
+    /**
+     *
+     * @param teamId
+     */
+    @Override
+    public void deleteTeam(String teamId) {
+        teamDao.deleteTeam(teamId);
+    }
 }

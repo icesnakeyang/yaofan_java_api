@@ -57,4 +57,6 @@ public interface TaskDao {
     Map totalPointIn(Map qIn);
 
     ArrayList<Task> listMyTasksDetail(Map qIn);
+
+    void updateTask(Task task);
 }

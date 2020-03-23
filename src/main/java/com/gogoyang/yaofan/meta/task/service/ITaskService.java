@@ -10,7 +10,7 @@ public interface ITaskService {
 
     ArrayList<Task> listBiddingTasks(Map qIn) throws Exception;
 
-    Task getTaskByTaskId(String taskAId) throws Exception;
+    Task getTaskByTaskId(String taskId) throws Exception;
 
     Integer totalTaskDuplicate(Map qIn) throws Exception;
 
@@ -65,4 +65,6 @@ public interface ITaskService {
      * @throws Exception
      */
     ArrayList<Task> listMyTasksDetail(Map qIn) throws Exception;
+
+    void updateTask(Task task) throws Exception;
 }

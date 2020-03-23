@@ -80,7 +80,7 @@
         left join user_info create_user on create_user.user_id = task.create_user_id)
        left join user_info party_b on party_b.user_id = task.party_b_id)
 left join team on task.team_id=team.team_id
-        where task_id=#{userId}
+        where task_id=#{taskId}
     </select>
 
     <!--统计重复的任务数量-->
@@ -204,5 +204,27 @@ where 1 = 1
     order by end_time
     limit #{offset}, #{size}
     </select>
+
+    <update id="updateTask" parameterType="com.gogoyang.yaofan.meta.task.entity.Task">
+        update task
+        <set>
+            <if test="point!=null">
+                point=#{point},
+            </if>
+            <if test="title!=null">
+                title=#{title},
+            </if>
+            <if test="detail!=null">
+                detail=#{detail},
+            </if>
+            <if test="endTime!=null">
+                end_time=#{endTime},
+            </if>
+            <if test="teamId!=null">
+                team_id=#{teamId}
+            </if>
+        </set>
+        where task_id=#{taskId}
+    </update>
 
 </mapper>

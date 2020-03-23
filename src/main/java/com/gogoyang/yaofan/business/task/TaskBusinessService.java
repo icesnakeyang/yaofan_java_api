@@ -370,6 +370,7 @@ public class TaskBusinessService implements ITaskBusinessService {
         return out;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateTask(Map in) throws Exception {
         String token = in.get("token").toString();
@@ -383,7 +384,21 @@ public class TaskBusinessService implements ITaskBusinessService {
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        iTaskService.getTaskByTaskId(taskId)
+        Task task=iTaskService.getTaskByTaskId(taskId);
+
+        if(task==null){
+            throw new Exception("10016");
+        }
+
+        if(!task.getStatus().equals(GogoStatus.BIDDING.toString())){
+            // 任务不是等待匹配状态，不能修改
+            throw new Exception("20004");
+        }
+
+        if(!task.getCreateUserId().equals(userInfo.getUserId())){
+            // 不能修改不是自己创建的任务
+            throw new Exception("20003");
+        }
 
         TeamView teamView = null;
         if (teamId != null) {
@@ -409,15 +424,10 @@ public class TaskBusinessService implements ITaskBusinessService {
             throw new Exception("20002");
         }
 
-        Task task = new Task();
-        task.setCreateTime(new Date());
-        task.setCreateUserId(userInfo.getUserId());
         task.setDetail(detail);
         task.setEndTime(strtodate);
         task.setPoint(point);
-        task.setTaskId(GogoTools.UUID().toString());
         task.setTitle(title);
-        task.setStatus(GogoStatus.BIDDING.toString());
         if (teamView != null) {
             task.setTeamId(teamView.getTeamId());
         }
@@ -429,6 +439,7 @@ public class TaskBusinessService implements ITaskBusinessService {
             //重复了
             throw new Exception("10013");
         }
-        iTaskService.createTask(task);
+
+        iTaskService.updateTask(task);
     }
 }

@@ -129,7 +129,7 @@ public class TaskController {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
             logMap.put("token", token);
-            logMap.put("GogoActType", GogoActType.LIST_BIDDING_TASKS);
+            logMap.put("GogoActType", GogoActType.LIST_BIDDING_TASKS.toString());
             Map out = iTaskBusinessService.listBiddingTasks(in);
             response.setData(out);
         } catch (Exception ex) {
@@ -246,6 +246,47 @@ public class TaskController {
             logMap.put("token", token);
             logMap.put("GogoActType", GogoActType.LIST_MY_TASKS);
             Map out = iTaskBusinessService.listMyTasksDetail(in);
+            response.setData(out);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * 读取等待匹配的任务，团队任务
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/listTasksDetailTeamBidding")
+    public Response listTasksDetailTeamBidding(@RequestBody TaskRequest request,
+                                HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("pageIndex", request.getPageIndex());
+            in.put("pageSize", request.getPageSize());
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.LIST_BIDDING_TASKS.toString());
+            Map out = iTaskBusinessService.listTasksDetailTeamBidding(in);
             response.setData(out);
         } catch (Exception ex) {
             try {

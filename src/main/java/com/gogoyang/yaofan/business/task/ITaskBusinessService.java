@@ -32,4 +32,6 @@ public interface ITaskBusinessService {
      * @throws Exception
      */
     Map listMyTasksDetail(Map in) throws Exception;
+
+    void updateTask(Map in) throws Exception;
 }

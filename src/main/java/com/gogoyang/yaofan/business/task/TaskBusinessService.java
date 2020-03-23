@@ -369,4 +369,66 @@ public class TaskBusinessService implements ITaskBusinessService {
         out.put("tasks", list);
         return out;
     }
+
+    @Override
+    public void updateTask(Map in) throws Exception {
+        String token = in.get("token").toString();
+        String detail = (String) in.get("detail");
+        String title = in.get("title").toString();
+        String endTimeStr = (String) in.get("endTime");
+        Date endTimeDate = (Date) in.get("endTimeDate");
+        String pointStr = (String) in.get("point");
+        String teamId = (String) in.get("teamId");
+        String taskId = (String) in.get("taskId");
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        iTaskService.getTaskByTaskId(taskId)
+
+        TeamView teamView = null;
+        if (teamId != null) {
+            teamView = iCommonBusinessService.getTeamById(teamId);
+        }
+
+        Date strtodate = null;
+
+        if (endTimeStr != null) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            ParsePosition pos = new ParsePosition(0);
+            strtodate = formatter.parse(endTimeStr, pos);
+        } else {
+            if (endTimeDate != null) {
+                strtodate = endTimeDate;
+            }
+        }
+
+        Double point = null;
+        try {
+            point = Double.parseDouble(pointStr);
+        } catch (Exception ex) {
+            throw new Exception("20002");
+        }
+
+        Task task = new Task();
+        task.setCreateTime(new Date());
+        task.setCreateUserId(userInfo.getUserId());
+        task.setDetail(detail);
+        task.setEndTime(strtodate);
+        task.setPoint(point);
+        task.setTaskId(GogoTools.UUID().toString());
+        task.setTitle(title);
+        task.setStatus(GogoStatus.BIDDING.toString());
+        if (teamView != null) {
+            task.setTeamId(teamView.getTeamId());
+        }
+
+        /**
+         * 保存前先检查是否重复
+         */
+        if (iCommonBusinessService.isDuplicateTask(task)) {
+            //重复了
+            throw new Exception("10013");
+        }
+        iTaskService.createTask(task);
+    }
 }

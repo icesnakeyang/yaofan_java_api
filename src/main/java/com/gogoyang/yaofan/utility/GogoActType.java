@@ -25,5 +25,6 @@ public enum GogoActType {
     DASHBOARD,
     POINT_WITHDRAW,
     UPDATE_TEAM,
-    DELETE_TEAM
+    DELETE_TEAM,
+    UPDATE_TASK
 }

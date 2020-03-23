@@ -13,6 +13,7 @@
         <result property="contractTime" column="contract_time"/>
         <result property="status" column="task_status"/>
         <result property="teamId" column="team_id"/>
+        <result property="teamName" column="team_name"/>
     </resultMap>
 
     <!--创建一个任务-->
@@ -62,7 +63,7 @@
     <select id="getTaskByTaskId" parameterType="java.lang.String" resultMap="taskMap">
         select task.ids,
        task_id,
-       create_user_id,
+       task.create_user_id,
        create_user.name as create_user_name,
        point,
        title,
@@ -73,11 +74,13 @@
        party_b.name     as party_b_name,
        contract_time,
        task.status as task_status,
-       team_id
-        from (task
+       task.team_id,
+       team.name as team_name
+        from ((task
         left join user_info create_user on create_user.user_id = task.create_user_id)
-       left join user_info party_b on party_b.user_id = task.party_b_id
-        where task_id=#{taskId}
+       left join user_info party_b on party_b.user_id = task.party_b_id)
+left join team on task.team_id=team.team_id
+        where task_id=#{userId}
     </select>
 
     <!--统计重复的任务数量-->

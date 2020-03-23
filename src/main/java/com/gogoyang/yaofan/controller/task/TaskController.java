@@ -74,6 +74,50 @@ public class TaskController {
     }
 
     @ResponseBody
+    @PostMapping("/updateTask")
+    public Response updateTask(@RequestBody TaskRequest request,
+                               HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            logMap.put("GogoActType", GogoActType.UPDATE_TASK.toString());
+            in.put("detail", request.getDetail());
+            logMap.put("title", request.getTitle());
+            in.put("title", request.getTitle());
+            String endDateStr = (String) request.getEndDateWx();
+            String endTimeStr = (String) request.getEndTimeWx();
+            if(endDateStr!=null && endTimeStr!=null) {
+                Date endTime = GogoTools.strToDatetime2(endDateStr + " " + endTimeStr);
+                in.put("endTimeDate", endTime);
+            }
+            in.put("endTime", request.getEndTime());
+            in.put("point", request.getPoint());
+            in.put("teamId", request.getTeamId());
+            in.put("taskId", request.getTaskId());
+            iTaskBusinessService.updateTask(in);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    @ResponseBody
     @PostMapping("/listBiddingTasks")
     public Response listBiddingTasks(@RequestBody TaskRequest request,
                                      HttpServletRequest httpServletRequest) {

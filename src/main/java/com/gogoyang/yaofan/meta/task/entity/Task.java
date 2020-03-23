@@ -20,4 +20,5 @@ public class Task {
     private Date contractTime;
     private String status;
     private String teamId;
+    private String teamName;
 }

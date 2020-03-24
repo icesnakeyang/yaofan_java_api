@@ -86,14 +86,14 @@ public class CommonBusinessService implements ICommonBusinessService {
     @Override
     public boolean isDuplicateTask(Task task) throws Exception {
         /**
-         * 如果createUserId相同，title相同，detail相同，status=bidding，teamId相同，即可判断为重复
+         * 如果createUserId相同，title相同，detail相同，status=GRABBING，teamId相同，即可判断为重复
          */
 
         Map qIn = new HashMap();
         qIn.put("title", task.getTitle());
         qIn.put("detail", task.getDetail());
         qIn.put("createUserId", task.getCreateUserId());
-        qIn.put("status", GogoStatus.BIDDING);
+        qIn.put("status", GogoStatus.GRABBING.toString());
 
         Integer cc = iTaskService.totalTaskDuplicate(qIn);
         if (cc > 0) {

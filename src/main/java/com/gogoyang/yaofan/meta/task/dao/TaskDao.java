@@ -59,4 +59,13 @@ public interface TaskDao {
     ArrayList<Task> listMyTasksDetail(Map qIn);
 
     void updateTask(Task task);
+
+
+    /**
+     * 查询一组团队集合里的等待匹配任务
+     * @param qIn
+     * teamList
+     * @return
+     */
+    ArrayList<Task> listTaskGrabbingTeam(Map qIn);
 }

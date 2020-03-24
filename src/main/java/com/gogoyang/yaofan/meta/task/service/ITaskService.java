@@ -67,4 +67,12 @@ public interface ITaskService {
     ArrayList<Task> listMyTasksDetail(Map qIn) throws Exception;
 
     void updateTask(Task task) throws Exception;
+
+    /**
+     * 查询一组团队集合里的等待匹配任务
+     * @param qIn
+     * teamList
+     * @return
+     */
+    ArrayList<Task> listTaskGrabbingTeam(Map qIn);
 }

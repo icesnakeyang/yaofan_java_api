@@ -95,7 +95,7 @@ public class TaskBusinessService implements ITaskBusinessService {
         task.setPoint(point);
         task.setTaskId(GogoTools.UUID().toString());
         task.setTitle(title);
-        task.setStatus(GogoStatus.BIDDING.toString());
+        task.setStatus(GogoStatus.GRABBING.toString());
         if (teamView != null) {
             task.setTeamId(teamView.getTeamId());
         }
@@ -136,7 +136,7 @@ public class TaskBusinessService implements ITaskBusinessService {
 
         qIn = new HashMap();
         qIn.put("userId", userInfo.getUserId());
-        qIn.put("status", GogoStatus.BIDDING);
+        qIn.put("status", GogoStatus.GRABBING.toString());
         if (myTeamViews.size() > 0) {
             ArrayList<String> teams = new ArrayList<>();
             for (int i = 0; i < myTeamViews.size(); i++) {
@@ -281,9 +281,9 @@ public class TaskBusinessService implements ITaskBusinessService {
         Task task = iCommonBusinessService.getTaskByTaskId(taskId);
 
         /**
-         * 任务必须是bidding状态
+         * 任务必须是GRABBING状态
          */
-        if (!task.getStatus().equals(GogoStatus.BIDDING.toString())) {
+        if (!task.getStatus().equals(GogoStatus.GRABBING.toString())) {
             throw new Exception("10018");
         }
 
@@ -390,7 +390,7 @@ public class TaskBusinessService implements ITaskBusinessService {
             throw new Exception("10016");
         }
 
-        if(!task.getStatus().equals(GogoStatus.BIDDING.toString())){
+        if(!task.getStatus().equals(GogoStatus.GRABBING.toString())){
             // 任务不是等待匹配状态，不能修改
             throw new Exception("20004");
         }
@@ -441,5 +441,40 @@ public class TaskBusinessService implements ITaskBusinessService {
         }
 
         iTaskService.updateTask(task);
+    }
+
+    @Override
+    public Map listTaskGrabbingTeam(Map in) throws Exception {
+        /**
+         * 1、查询所有团队等待匹配的任务
+         * 2、status==biding
+         * 3、teamId 属于我的team
+         */
+        String token = in.get("token").toString();
+        Integer pageIndex = (Integer) in.get("pageIndex");
+        Integer pageSize = (Integer) in.get("pageSize");
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        //读取我的团队集合
+        Map qIn=new HashMap();
+        qIn.put("userId", userInfo.getUserId());
+        ArrayList<MyTeamView> myTeamViews=iTeamService.listTeam(qIn);
+        if(myTeamViews.size()==0){
+            throw new Exception("20005");
+        }
+        ArrayList teamList=new ArrayList();
+        for(int i=0;i<myTeamViews.size();i++){
+            teamList.add(myTeamViews.get(i).getTeamId());
+        }
+
+        qIn = new HashMap();
+        qIn.put("teamList", teamList);
+        ArrayList<Task> tasks=iTaskService.listTaskGrabbingTeam(qIn);
+
+
+        Map out = new HashMap();
+        out.put("tasks", tasks);
+        return out;
     }
 }

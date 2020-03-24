@@ -15,6 +15,14 @@ public interface TeamDao {
 
     void createMyTeam(MyTeam myTeam);
 
+    /**
+     * 查询团队列表
+     * @param qIn
+     * userId
+     * status
+     * teamId
+     * @return
+     */
     ArrayList<MyTeamView> listTeam(Map qIn);
 
     /**

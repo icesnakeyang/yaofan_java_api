@@ -1,5 +1,7 @@
 package com.gogoyang.yaofan.business.task;
 
+import org.omg.CORBA.WCharSeqHelper;
+
 import java.util.Map;
 
 public interface ITaskBusinessService {
@@ -34,4 +36,6 @@ public interface ITaskBusinessService {
     Map listMyTasksDetail(Map in) throws Exception;
 
     void updateTask(Map in) throws Exception;
+
+    Map listTaskGrabbingTeam(Map in) throws Exception;
 }

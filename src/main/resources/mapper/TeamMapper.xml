@@ -96,7 +96,7 @@
         (#{userId}, #{teamId}, #{status})
     </insert>
 
-    <!--根据团队名称关键字搜索团队-->
+    <!--查询团队列表-->
     <select id="listTeam" parameterType="map"
             resultMap="myTeamViewMap">
         select
@@ -116,7 +116,7 @@
         where 1 = 1
         <choose>
             <when test="userId!=null">
-                and me.user_id = #{userId}
+                and my_team.user_id = #{userId}
             </when>
         </choose>
         <choose>

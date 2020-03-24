@@ -123,4 +123,17 @@ public class TaskService implements ITaskService {
     public void updateTask(Task task) throws Exception {
         taskDao.updateTask(task);
     }
+
+    /**
+     * 查询一组团队集合里的等待匹配任务
+     *
+     * @param qIn
+     * teamList
+     * @return
+     */
+    @Override
+    public ArrayList<Task> listTaskGrabbingTeam(Map qIn) {
+        ArrayList<Task> tasks = taskDao.listTaskGrabbingTeam(qIn);
+        return tasks;
+    }
 }

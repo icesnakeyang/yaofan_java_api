@@ -177,6 +177,7 @@ where 1 = 1
         and create_time < cast(#{dateEnd} as datetime)
 
 
+
         ]]>
     </select>
 
@@ -227,4 +228,15 @@ where 1 = 1
         where task_id=#{taskId}
     </update>
 
+    <!--查询一组团队集合里的等待匹配任务-->
+    <select id="listTaskGrabbingTeam" parameterType="map"
+            resultMap="taskMap">
+        select * from task
+        where 1=1
+        and status='GRABBING'
+        and team_id in
+        <foreach collection="teamList" open="(" separator="," close=")" item="item">
+            #{item}
+        </foreach>
+    </select>
 </mapper>

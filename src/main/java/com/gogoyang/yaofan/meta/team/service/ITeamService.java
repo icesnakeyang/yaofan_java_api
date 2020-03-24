@@ -12,6 +12,15 @@ public interface ITeamService {
 
     MyTeam createMyTeam(MyTeam myTeam) throws Exception;
 
+    /**
+     * 查询团队列表
+     * @param qIn
+     * userId
+     * status
+     * teamId
+     * @return
+     * @throws Exception
+     */
     ArrayList<MyTeamView> listTeam(Map qIn) throws Exception;
 
     /**

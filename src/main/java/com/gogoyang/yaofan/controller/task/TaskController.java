@@ -129,7 +129,7 @@ public class TaskController {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
             logMap.put("token", token);
-            logMap.put("GogoActType", GogoActType.LIST_BIDDING_TASKS.toString());
+            logMap.put("GogoActType", GogoActType.LIST_GRABBING_TASKS.toString());
             Map out = iTaskBusinessService.listBiddingTasks(in);
             response.setData(out);
         } catch (Exception ex) {
@@ -272,8 +272,8 @@ public class TaskController {
      * @return
      */
     @ResponseBody
-    @PostMapping("/listTasksDetailTeamBidding")
-    public Response listTasksDetailTeamBidding(@RequestBody TaskRequest request,
+    @PostMapping("/listTaskGrabbingTeam")
+    public Response listTaskGrabbingTeam(@RequestBody TaskRequest request,
                                 HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
@@ -285,8 +285,8 @@ public class TaskController {
             in.put("pageIndex", request.getPageIndex());
             in.put("pageSize", request.getPageSize());
             logMap.put("token", token);
-            logMap.put("GogoActType", GogoActType.LIST_BIDDING_TASKS.toString());
-            Map out = iTaskBusinessService.listTasksDetailTeamBidding(in);
+            logMap.put("GogoActType", GogoActType.LIST_GRABBING_TASKS.toString());
+            Map out = iTaskBusinessService.listTaskGrabbingTeam(in);
             response.setData(out);
         } catch (Exception ex) {
             try {

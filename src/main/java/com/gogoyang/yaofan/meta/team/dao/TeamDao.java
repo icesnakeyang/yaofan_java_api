@@ -34,17 +34,6 @@ public interface TeamDao {
 
     TeamView getTeamByTeamId(String name);
 
-    ApplyTeamView getApplyTeam(String applyId);
-
-    /**
-     * 统计团队或者某个用户未处理的申请数
-     * @param qIn
-     * @return
-     */
-    int totalApplyTeamUnProcess(Map qIn);
-
-    void setApplyTeamReadTime(ApplyTeamView applyTeamView);
-
     /**
      * 修改团队信息
      * @param qIn
@@ -59,4 +48,13 @@ public interface TeamDao {
      * @param teamId
      */
     void deleteTeam(String teamId);
+
+    /**
+     * 查询所有我创建的团队
+     * @param qIn
+     * userId:创建人Id
+     * status：状态(可选)
+     * @return
+     */
+    ArrayList<TeamView> listMyCreateTeam(Map qIn);
 }

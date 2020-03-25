@@ -33,11 +33,20 @@ public interface ITeamService {
 
     TeamView getTeamByTeamId(String teamId) throws Exception;
 
-    void createApplyTeam(ApplyTeam applyTeam) throws Exception;
+    void createTeamApplyLog(TeamApplyLog teamApplyLog) throws Exception;
 
-    ArrayList<ApplyTeam> listApplyTeam(Map qIn) throws Exception;
+    ArrayList<TeamApplyLog> listTeamApplyLog(Map qIn) throws Exception;
 
-    ApplyTeamView getApplyTeam(String applyId) throws Exception;
+    TeamApplyView getApplyTeam(String applyId) throws Exception;
+
+    /**
+     * 统计用户未读的团队申请日志
+     * @param qIn
+     * userId:当前用户id
+     * teamList：当前用户创建的团队结合
+     * @return
+     */
+    Integer totalTeamApplyLogUnRead(Map qIn);
 
     /**
      * 统计团队或者某个用户未处理的申请数
@@ -45,11 +54,16 @@ public interface ITeamService {
      * @return
      * @throws Exception
      */
-    int totalApplyTeamUnProcess(Map qIn) throws Exception;
+    Integer totalApplyTeamUnProcess(Map qIn) throws Exception;
 
-    void setApplyTeamReadTime(ApplyTeamView applyTeamView) throws Exception;
+    /**
+     * 设置团队申请日志的阅读时间
+     * @param qIn
+     * @throws Exception
+     */
+    void setTeamApplyLogReadTime(Map qIn) throws Exception;
 
-    void processApplyTeam(ApplyTeam applyTeam) throws Exception;
+    void processTeamApplyLog(Map qIn) throws Exception;
 
     /**
      * 修改团队信息
@@ -65,4 +79,13 @@ public interface ITeamService {
      * @param teamId
      */
     void deleteTeam(String teamId);
+
+    /**
+     * 查询所有我创建的团队
+     * @param qIn
+     * userId:创建人Id
+     * status：状态(可选)
+     * @return
+     */
+    ArrayList<TeamView> listMyCreateTeam(Map qIn);
 }

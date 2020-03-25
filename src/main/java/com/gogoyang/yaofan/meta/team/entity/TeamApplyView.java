@@ -5,14 +5,14 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class ApplyTeamView {
+public class TeamApplyView {
     private Integer ids;
-    private String applyTeamLogId;
+    private String teamApplyLogId;
     /**
      * 申请的团队id
      */
-    private String applyTeamId;
-    private String applyTeamName;
+    private String teamId;
+    private String teamName;
     /**
      * 申请人Id
      */

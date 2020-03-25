@@ -5,12 +5,12 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class ApplyTeamLog {
+public class TeamApplyLog {
     private Integer ids;
     /**
      * 申请事件Id
      */
-    private String applyTeamLogId;
+    private String teamApplyLogId;
     /**
      * 申请的团队id
      */

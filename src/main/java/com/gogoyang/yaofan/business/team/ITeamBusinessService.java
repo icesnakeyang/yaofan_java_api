@@ -24,4 +24,6 @@ public interface ITeamBusinessService {
     void updateMyTeam(Map in) throws Exception;
 
     void deleteMyTeam(Map in) throws Exception;
+
+    Map totalNewApplyMember(Map in) throws Exception;
 }

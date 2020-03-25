@@ -68,7 +68,7 @@ public class TeamController {
     @ResponseBody
     @PostMapping("listMyTeam")
     public Response listMyTeam(@RequestBody TeamRequest request,
-                             HttpServletRequest httpServletRequest) {
+                               HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
         Map logMap = new HashMap();
@@ -345,6 +345,7 @@ public class TeamController {
     /**
      * 修改我的团队信息
      * 只有管理员可以修改
+     *
      * @param request
      * @param httpServletRequest
      * @return
@@ -352,7 +353,7 @@ public class TeamController {
     @ResponseBody
     @PostMapping("/updateMyTeam")
     public Response updateMyTeam(@RequestBody TeamRequest request,
-                                   HttpServletRequest httpServletRequest) {
+                                 HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
         Map logMap = new HashMap();
@@ -387,6 +388,7 @@ public class TeamController {
     /**
      * 删除我的团队
      * 只有管理员可以删除
+     *
      * @param request
      * @param httpServletRequest
      * @return
@@ -394,7 +396,7 @@ public class TeamController {
     @ResponseBody
     @PostMapping("/deleteMyTeam")
     public Response deleteMyTeam(@RequestBody TeamRequest request,
-                                   HttpServletRequest httpServletRequest) {
+                                 HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
         Map logMap = new HashMap();
@@ -426,12 +428,28 @@ public class TeamController {
 
     /**
      * 统计当前有多少用户申请加入我的团队
+     *
      * @param httpServletRequest
      * @return
      */
     @ResponseBody
     @PostMapping("/totalNewApplyMember")
-    public Response totalNewApplyMember(HttpServletRequest httpServletRequest){
-
+    public Response totalNewApplyMember(HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            Map out = iTeamBusinessService.totalNewApplyMember(in);
+            response.setData(out);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+        }
+        return response;
     }
 }

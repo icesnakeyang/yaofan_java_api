@@ -27,41 +27,6 @@
         <result property="managerId" column="manager_id"/>
     </resultMap>
 
-    <resultMap id="applyTeamMap" type="com.gogoyang.yaofan.meta.team.entity.ApplyTeam">
-        <result property="applyTeamLogId" column="apply_team_log_id"/>
-        <result property="applyTeamId" column="apply_team_id"/>
-        <result property="applyUserId" column="apply_user_id"/>
-        <result property="applyRemark" column="apply_remark"/>
-        <result property="createTime" column="create_time"/>
-        <result property="processUserId" column="process_user_id"/>
-        <result property="readTime" column="read_time"/>
-        <result property="processResult" column="process_result"/>
-        <result property="processRemark" column="process_remark"/>
-        <result property="processTime" column="process_time"/>
-        <result property="processReadTime" column="process_read_time"/>
-    </resultMap>
-
-    <resultMap id="applyTeamViewMap" type="com.gogoyang.yaofan.meta.team.entity.ApplyTeamView">
-        <result property="applyTeamLogId" column="apply_team_log_id"/>
-        <result property="applyTeamId" column="apply_team_id"/>
-        <result property="applyTeamName" column="apply_team_name"/>
-        <result property="applyUserId" column="apply_user_id"/>
-        <result property="applyUserName" column="apply_user_name"/>
-        <result property="applyTime" column="create_time"/>
-        <result property="createUserId" column="create_user_id"/>
-        <result property="createUserName" column="create_user_name"/>
-        <result property="managerId" column="manager_id"/>
-        <result property="managerName" column="manager_user_name"/>
-        <result property="applyRemark" column="apply_remark"/>
-        <result property="processResult" column="process_result"/>
-        <result property="processRemark" column="process_remark"/>
-        <result property="processTime" column="process_time"/>
-        <result property="processUserId" column="process_user_id"/>
-        <result property="processUserName" column="process_user_name"/>
-        <result property="processReadTime" column="process_read_time"/>
-        <result property="readTime" column="read_time"/>
-    </resultMap>
-
     <!--创建一个团队-->
     <insert id="createTeam"
             useGeneratedKeys="true"
@@ -142,99 +107,9 @@
         and team.status='ACTIVE'
         <![CDATA[
             and manager_id<>#{currentUserId}
+
         ]]>
-
     </select>
-
-
-
-    <select id="listApplyTeam" parameterType="map"
-            resultMap="applyTeamViewMap">
-        select apply_team_log_id,
-        apply_team_id,
-        apply_user_id,
-        apply_user.name as apply_user_name,
-        create_user_id,
-        manager_id,
-        create_user.name as create_user_name,
-        manager_user.name as manager_user_name,
-        apply_team.create_time,
-        team.name as apply_team_name,
-        process_result
-        from ((((apply_team
-        inner join team on team_id = apply_team_id)
-        inner join user_info apply_user on apply_user_id = user_id)
-        inner join user_info create_user on create_user_id = create_user.user_id)
-        inner join user_info manager_user on manager_user.user_id = manager_id)
-        where 1=1
-        and (
-            manager_id=#{userId}
-            or apply_user_id=#{userId}
-        )
-        order by apply_team.create_time desc
-    </select>
-
-    <select id="getApplyTeam" parameterType="java.lang.String"
-            resultMap="applyTeamViewMap">
-        select
-        apply_team_log_id,
-        apply_team_id,
-       apply_user_id,
-       apply_user.name   as apply_user_name,
-       create_user_id,
-       manager_id,
-       create_user.name  as create_user_name,
-       manager_user.name as manager_user_name,
-       apply_team.create_time,
-       team.name         as apply_team_name,
-       apply_remark,
-       process_result,
-       process_remark,
-       process_time,
-       process_user_id,
-       process_user.name as process_user_name,
-       process_read_time,
-       read_time
-from (((((apply_team
-    inner join team on team_id = apply_team_id)
-    inner join user_info apply_user on apply_user_id = user_id)
-    inner join user_info create_user on create_user_id = create_user.user_id)
-         inner join user_info manager_user on manager_user.user_id = manager_id)
-         left outer join user_info process_user on process_user.user_id=process_user_id)
-where 1 = 1
-and apply_team_log_id=#{applyId}
-    </select>
-
-    <!--统计团队或者某个用户未处理的申请数-->
-    <select id="totalApplyTeamUnProcess" parameterType="map" resultType="int">
-        select count(*) as totalUnProcess
-        from apply_team
-        where 1=1
-        <if test="userId!=null">
-            and apply_user_id = #{userId}
-        </if>
-        <if test="teamId!=null">
-            and apply_team_id=#{teamId}
-        </if>
-        and process_result is null
-    </select>
-
-    <!--设置阅读时间-->
-    <update id="setApplyTeamReadTime" parameterType="com.gogoyang.yaofan.meta.team.entity.ApplyTeamView">
-        update apply_team set
-        read_time=#{readTime}
-        where apply_team_log_id=#{applyTeamLogId}
-    </update>
-
-    <!--处理团队申请结果-->
-    <update id="processApplyTeam" parameterType="com.gogoyang.yaofan.meta.team.entity.ApplyTeam">
-        update apply_team set
-        process_result=#{processResult},
-        process_remark=#{processRemark},
-        process_time=#{processTime},
-        process_user_id=#{processUserId}
-        where apply_team_log_id=#{applyTeamLogId}
-    </update>
 
     <!--修改团队信息-->
     <update id="updateTeam" parameterType="map">
@@ -255,4 +130,15 @@ and apply_team_log_id=#{applyId}
         delete from team
         where team_id=#{teamId}
     </delete>
+
+    <!--查询所有我创建的团队-->
+    <select id="listMyCreateTeam" parameterType="map" resultMap="teamViewMap">
+        select * from team
+        where create_user_id=#{userId}
+        <choose>
+            <when test="status!=null">
+                and status=#{status}
+            </when>
+        </choose>
+    </select>
 </mapper>

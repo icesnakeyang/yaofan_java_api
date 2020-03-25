@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.gogoyang.yaofan.meta.team.dao.TeamDao">
+<mapper namespace="com.gogoyang.yaofan.meta.team.dao.TeamApplyLogDao">
 
-    <resultMap id="applyTeamMap" type="com.gogoyang.yaofan.meta.team.entity.ApplyTeam">
-        <result property="applyTeamLogId" column="apply_team_log_id"/>
-        <result property="applyTeamId" column="apply_team_id"/>
+    <resultMap id="teamApplyMap" type="com.gogoyang.yaofan.meta.team.entity.TeamApplyLog">
+        <result property="teamApplyLogId" column="team_apply_log_id"/>
+        <result property="teamId" column="team_id"/>
         <result property="applyUserId" column="apply_user_id"/>
         <result property="applyRemark" column="apply_remark"/>
         <result property="createTime" column="create_time"/>
@@ -16,7 +16,7 @@
         <result property="processReadTime" column="process_read_time"/>
     </resultMap>
 
-    <resultMap id="applyTeamViewMap" type="com.gogoyang.yaofan.meta.team.entity.ApplyTeamView">
+    <resultMap id="teamApplyViewMap" type="com.gogoyang.yaofan.meta.team.entity.TeamApplyView">
         <result property="applyTeamLogId" column="apply_team_log_id"/>
         <result property="applyTeamId" column="apply_team_id"/>
         <result property="applyTeamName" column="apply_team_name"/>
@@ -37,41 +37,44 @@
         <result property="readTime" column="read_time"/>
     </resultMap>
 
-    <insert id="createApplyTeamLog" parameterType="com.gogoyang.yaofan.meta.team.entity.ApplyTeam">
-        insert into apply_team_log
-        (apply_team_log_id, apply_team_id, apply_user_id, apply_remark, create_time)
+    <!--创建一个团队申请日志-->
+    <insert id="createTeamApplyLog" parameterType="com.gogoyang.yaofan.meta.team.entity.TeamApplyLog">
+        insert into team_apply_log
+        (team_apply_log_id, team_id, apply_user_id, apply_remark, create_time)
         values
-        (#{applyTeamLogId}, #{applyTeamId},#{applyUserId}, #{applyRemark}, #{createTime})
+        (#{teamApplyLogId}, #{teamId},#{applyUserId}, #{applyRemark}, #{createTime})
     </insert>
 
-    <select id="listApplyTeam" parameterType="map"
-            resultMap="applyTeamViewMap">
-        select apply_team_log_id,
-        apply_team_id,
-        apply_user_id,
-        apply_user.name as apply_user_name,
-        create_user_id,
-        manager_id,
-        create_user.name as create_user_name,
-        manager_user.name as manager_user_name,
-        apply_team.create_time,
-        team.name as apply_team_name,
-        process_result
-        from ((((apply_team
-        inner join team on team_id = apply_team_id)
-        inner join user_info apply_user on apply_user_id = user_id)
-        inner join user_info create_user on create_user_id = create_user.user_id)
-        inner join user_info manager_user on manager_user.user_id = manager_id)
-        where 1=1
+    <!--读取团队申请日志列表-->
+    <select id="listTeamApplyLog" parameterType="map"
+            resultMap="teamApplyViewMap">
+        select team_apply_log_id,
+       team_apply_log.team_id,
+       apply_user_id,
+       apply_user.name   as apply_user_name,
+       create_user_id,
+       manager_id,
+       create_user.name  as create_user_name,
+       manager_user.name as manager_user_name,
+       team_apply_log.create_time,
+       team.name         as team_name,
+       process_result
+from ((((team_apply_log
+  inner join team on team.team_id = team_apply_log.team_id)
+  inner join user_info apply_user on apply_user_id = user_id)
+  inner join user_info create_user on create_user_id = create_user.user_id)
+       inner join user_info manager_user on manager_user.user_id = manager_id)
+where 1 = 1
         and (
             manager_id=#{userId}
             or apply_user_id=#{userId}
         )
-        order by apply_team.create_time desc
+        order by team_apply_log.create_time desc
     </select>
 
-    <select id="getApplyTeam" parameterType="java.lang.String"
-            resultMap="applyTeamViewMap">
+    <!--查询团队申请日志详情-->
+    <select id="getTeamApply" parameterType="java.lang.String"
+            resultMap="teamApplyViewMap">
         select
         apply_team_log_id,
         apply_team_id,
@@ -115,15 +118,15 @@ and apply_team_log_id=#{applyId}
         and process_result is null
     </select>
 
-    <!--设置阅读时间-->
-    <update id="setApplyTeamReadTime" parameterType="com.gogoyang.yaofan.meta.team.entity.ApplyTeamView">
-        update apply_team set
+    <!--设置团队申请日志的阅读时间-->
+    <update id="setTeamApplyLogReadTime" parameterType="map">
+        update team_apply_log set
         read_time=#{readTime}
-        where apply_team_log_id=#{applyTeamLogId}
+        where team_apply_log_id=#{teamApplyLogId}
     </update>
 
     <!--处理团队申请结果-->
-    <update id="processApplyTeam" parameterType="com.gogoyang.yaofan.meta.team.entity.ApplyTeam">
+    <update id="processTeamApplyLog" parameterType="map">
         update apply_team set
         process_result=#{processResult},
         process_remark=#{processRemark},
@@ -132,23 +135,16 @@ and apply_team_log_id=#{applyId}
         where apply_team_log_id=#{applyTeamLogId}
     </update>
 
-    <!--修改团队信息-->
-    <update id="updateTeam" parameterType="map">
-        update team
-        <set>
-            <if test="name!=null">
-                name=#{name},
-            </if>
-            <if test="description!=null">
-                description=#{description}
-            </if>
-        </set>
-        where team_id=#{teamId}
-    </update>
-
-    <!--删除一个团队-->
-    <delete id="deleteTeam" parameterType="java.lang.String">
-        delete from team
-        where team_id=#{teamId}
-    </delete>
+    <!--统计用户未读的团队申请日志-->
+    <select id="totalTeamApplyLogUnRead" parameterType="map" resultType="java.lang.Integer">
+        select * from team_apply_log
+        where read_time is null
+        <![CDATA[
+        and apply_user_id<>#{userId}
+        ]]>
+        and team_id in
+        <foreach item="item" collection="teamList" separator="," open="(" close=")" index="">
+            #{item}
+        </foreach>
+    </select>
 </mapper>

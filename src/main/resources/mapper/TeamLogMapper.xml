@@ -2,31 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gogoyang.yaofan.meta.team.dao.TeamDao">
 
-    <resultMap id="teamMap" type="com.gogoyang.yaofan.meta.team.entity.Team">
-        <result property="createUserId" column="create_user_id"/>
-        <result property="createTime" column="create_time"/>
-        <result property="teamId" column="team_id"/>
-        <result property="managerId" column="manager_id"/>
-    </resultMap>
-
-    <resultMap id="myTeamViewMap" type="com.gogoyang.yaofan.meta.team.entity.MyTeamView">
-        <result property="userId" column="user_id"/>
-        <result property="teamId" column="team_id"/>
-        <result property="teamName" column="team_name"/>
-        <result property="userName" column="my_name"/>
-        <result property="managerName" column="manager_name"/>
-        <result property="creatorName" column="creator_name"/>
-        <result property="status" column="status"/>
-    </resultMap>
-
-    <resultMap id="teamViewMap" type="com.gogoyang.yaofan.meta.team.entity.TeamView">
-        <result property="teamId" column="team_id"/>
-        <result property="teamName" column="team_name"/>
-        <result property="createTime" column="create_time"/>
-        <result property="managerName" column="manager_name"/>
-        <result property="managerId" column="manager_id"/>
-    </resultMap>
-
     <resultMap id="applyTeamMap" type="com.gogoyang.yaofan.meta.team.entity.ApplyTeam">
         <result property="applyTeamLogId" column="apply_team_log_id"/>
         <result property="applyTeamId" column="apply_team_id"/>
@@ -62,91 +37,12 @@
         <result property="readTime" column="read_time"/>
     </resultMap>
 
-    <!--创建一个团队-->
-    <insert id="createTeam"
-            useGeneratedKeys="true"
-            keyProperty="ids"
-            parameterType="com.gogoyang.yaofan.meta.team.entity.Team">
-      insert into team
-      (team_id, name, description, create_time, create_user_id, status, manager_id)
-      values
-      (#{teamId}, #{name}, #{description}, #{createTime}, #{createUserId}, #{status}, #{managerId})
-    </insert>
-
-    <select id="getTeamByName" parameterType="java.lang.String"
-            resultMap="teamMap">
-        select * from team
-        where name=#{name}
-    </select>
-
-    <select id="getTeamByTeamId" parameterType="java.lang.String"
-            resultMap="teamViewMap">
-        select team_id, team.name as team_name, manager.name as manager_name, team.status, team.create_time,
-        manager_id, description
-        from team
-        inner join user_info manager on team.manager_id = manager.user_id
-        where team.team_id=#{teamId}
-    </select>
-
-    <insert id="createMyTeam"
-            parameterType="com.gogoyang.yaofan.meta.team.entity.MyTeam">
-        insert into my_team
-        (user_id, team_id, status)
+    <insert id="createApplyTeamLog" parameterType="com.gogoyang.yaofan.meta.team.entity.ApplyTeam">
+        insert into apply_team_log
+        (apply_team_log_id, apply_team_id, apply_user_id, apply_remark, create_time)
         values
-        (#{userId}, #{teamId}, #{status})
+        (#{applyTeamLogId}, #{applyTeamId},#{applyUserId}, #{applyRemark}, #{createTime})
     </insert>
-
-    <!--查询团队列表-->
-    <select id="listTeam" parameterType="map"
-            resultMap="myTeamViewMap">
-        select
-        my_team.ids,
-        my_team.user_id,
-        my_team.team_id,
-        team.name as team_name,
-        me.name as my_name,
-        manager.name as manager_name,
-        creator.name as creator_name,
-        my_team.status
-        from (((my_team
-        inner join team on my_team.team_id = team.team_id)
-        inner join user_info me on my_team.user_id = me.user_id)
-        inner join user_info manager on team.manager_id = manager.user_id)
-        inner join user_info creator on team.create_user_id = creator.user_id
-        where 1 = 1
-        <choose>
-            <when test="userId!=null">
-                and my_team.user_id = #{userId}
-            </when>
-        </choose>
-        <choose>
-            <when test="status!=null">
-                and my_team.status = #{status}
-            </when>
-        </choose>
-        <choose>
-            <when test="teamId!=null">
-                and my_team.team_id = #{teamId}
-            </when>
-        </choose>
-    </select>
-
-    <!--创建一个加入团队的申请-->
-    <select id="searchTeam" parameterType="map"
-            resultMap="myTeamViewMap">
-        select team_id, team.name as team_name, manager.name as manager_name, team.status
-        from team
-        inner join user_info manager on team.manager_id = manager.user_id
-        where 1 = 1
-        and team.name like concat('%',#{nameKey},'%')
-        and team.status='ACTIVE'
-        <![CDATA[
-            and manager_id<>#{currentUserId}
-        ]]>
-
-    </select>
-
-
 
     <select id="listApplyTeam" parameterType="map"
             resultMap="applyTeamViewMap">

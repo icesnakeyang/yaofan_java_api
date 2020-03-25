@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class ApplyTeam {
+public class ApplyTeamLog {
     private Integer ids;
     /**
      * 申请事件Id
@@ -14,7 +14,7 @@ public class ApplyTeam {
     /**
      * 申请的团队id
      */
-    private String applyTeamId;
+    private String teamId;
     /**
      * 申请人Id
      */

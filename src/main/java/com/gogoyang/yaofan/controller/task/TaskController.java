@@ -285,7 +285,7 @@ public class TaskController {
             in.put("pageIndex", request.getPageIndex());
             in.put("pageSize", request.getPageSize());
             logMap.put("token", token);
-            logMap.put("GogoActType", GogoActType.LIST_GRABBING_TASKS.toString());
+            logMap.put("GogoActType", GogoActType.LIST_GRABBING_TASKS);
             Map out = iTaskBusinessService.listTaskGrabbingTeam(in);
             response.setData(out);
         } catch (Exception ex) {

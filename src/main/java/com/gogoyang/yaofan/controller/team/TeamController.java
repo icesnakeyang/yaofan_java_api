@@ -423,4 +423,15 @@ public class TeamController {
         }
         return response;
     }
+
+    /**
+     * 统计当前有多少用户申请加入我的团队
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/totalNewApplyMember")
+    public Response totalNewApplyMember(HttpServletRequest httpServletRequest){
+
+    }
 }

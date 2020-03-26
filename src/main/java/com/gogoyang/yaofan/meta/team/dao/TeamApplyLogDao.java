@@ -18,6 +18,11 @@ public interface TeamApplyLogDao {
     /**
      * 读取团队申请日志列表
      * @param qIn
+     * applyUserId
+     * processUserId
+     * status
+     * offset
+     * size
      * @return
      */
     ArrayList<TeamApplyLog> listTeamApplyLog(Map qIn);

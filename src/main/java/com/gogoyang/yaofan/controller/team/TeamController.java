@@ -204,9 +204,16 @@ public class TeamController {
         return response;
     }
 
+    /**
+     * 读取我申请的团队日志
+     * 包括已处理和未处理的
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
     @ResponseBody
-    @PostMapping("/listApplyTeam")
-    public Response listApplyTeam(@RequestBody TeamRequest request,
+    @PostMapping("/listTeamApplyLogMyApply")
+    public Response listTeamApplyLogMyApply(@RequestBody TeamRequest request,
                                   HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
@@ -215,9 +222,11 @@ public class TeamController {
         try {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
+            in.put("pageIndex", request.getPageIndex());
+            in.put("pageSize", request.getPageSize());
             logMap.put("token", token);
             logMap.put("GogoActType", GogoActType.LIST_APPLY_TEAM);
-            Map out = iTeamBusinessService.listApplyTeam(in);
+            Map out = iTeamBusinessService.listTeamApplyLogMyApply(in);
             response.setData(out);
         } catch (Exception ex) {
             try {

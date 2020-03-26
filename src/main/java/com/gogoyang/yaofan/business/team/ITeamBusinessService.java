@@ -13,7 +13,14 @@ public interface ITeamBusinessService {
 
     void applyTeam(Map in) throws Exception;
 
-    Map listApplyTeam(Map in) throws Exception;
+    /**
+     * 读取我申请的团队日志
+     * 包括已处理和未处理的
+     * @param in
+     * @return
+     * @throws Exception
+     */
+    Map listTeamApplyLogMyApply(Map in) throws Exception;
 
     Map getApplyTeam(Map in) throws Exception;
 

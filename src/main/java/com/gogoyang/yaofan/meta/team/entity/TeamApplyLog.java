@@ -36,9 +36,9 @@ public class TeamApplyLog {
      */
     private Date readTime;
     /**
-     * 处理结果
+     * 日志状态
      */
-    private String processResult;
+    private String status;
     /**
      * 处理说明
      */

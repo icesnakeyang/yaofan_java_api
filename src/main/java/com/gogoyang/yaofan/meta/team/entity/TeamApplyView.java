@@ -25,13 +25,7 @@ public class TeamApplyView {
     /**
      * 申请时间
      */
-    private Date applyTime;
-
-    private String createUserId;
-    private String createUserName;
-
-    private String managerId;
-    private String managerName;
+    private Date createTime;
 
     /**
      * 处理申请的团队经理Id
@@ -43,9 +37,9 @@ public class TeamApplyView {
      */
     private Date readTime;
     /**
-     * 处理结果
+     * 日志状态
      */
-    private String processResult;
+    private String status;
     /**
      * 处理说明
      */
@@ -58,4 +52,7 @@ public class TeamApplyView {
      * 处理结果被申请人阅读的时间
      */
     private Date processReadTime;
+
+    private String teamManagerId;
+    private String teamManagerName;
 }

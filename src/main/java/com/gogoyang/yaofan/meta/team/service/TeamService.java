@@ -76,6 +76,17 @@ public class TeamService implements ITeamService {
         teamApplyLogDao.createTeamApplyLog(teamApplyLog);
     }
 
+    /**
+     * 读取团队申请日志列表
+     * @param qIn
+     * applyUserId
+     * processUserId
+     * status
+     * offset
+     * size
+     * @return
+     * @throws Exception
+     */
     @Override
     public ArrayList<TeamApplyLog> listTeamApplyLog(Map qIn) throws Exception {
         ArrayList<TeamApplyLog> teamApplyLogs = teamApplyLogDao.listTeamApplyLog(qIn);

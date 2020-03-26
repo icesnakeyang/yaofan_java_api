@@ -7,6 +7,7 @@ import com.gogoyang.yaofan.utility.GogoActType;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
+import org.omg.CORBA.INTERNAL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -180,18 +181,36 @@ public class TeamBusinessService implements ITeamBusinessService {
         teamApplyLog.setTeamId(teamId);
         teamApplyLog.setApplyUserId(userInfo.getUserId());
         teamApplyLog.setCreateTime(new Date());
+        teamApplyLog.setStatus(GogoStatus.PENDING.toString());
 
         iTeamService.createTeamApplyLog(teamApplyLog);
     }
 
+    /**
+     * 读取我申请的团队日志
+     * 包括已处理和未处理的
+     * @param in
+     * @return
+     * @throws Exception
+     */
     @Override
-    public Map listApplyTeam(Map in) throws Exception {
+    public Map listTeamApplyLogMyApply(Map in) throws Exception {
         String token = in.get("token").toString();
+        Integer pageIndex=(Integer)in.get("pageIndex");
+        Integer pageSize=(Integer)in.get("pageSize");
 
+        /**
+         * 1、读取自己的用户信息，获得userId
+         * 2、查询所有团队申请日志，创建用户id=userId
+         */
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
         Map qIn = new HashMap();
-        qIn.put("userId", userInfo.getUserId());
+        Integer offset=(pageIndex-1)*pageSize;
+        qIn.put("applyUserId", userInfo.getUserId());
+        qIn.put("offset", offset);
+        qIn.put("size", pageSize);
+//         processUserId status
         ArrayList<TeamApplyLog> applyTeams = iTeamService.listTeamApplyLog(qIn);
         Map out = new HashMap();
         out.put("applyTeams", applyTeams);
@@ -214,7 +233,7 @@ public class TeamBusinessService implements ITeamBusinessService {
          * 如果当前用户是管理员，就写入readTime
          */
         boolean checkUser = false;
-        if (teamApplyView.getManagerId().equals(userInfo.getUserId())) {
+        if (teamApplyView.getTeamManagerId().equals(userInfo.getUserId())) {
             //管理员，写入readTime
             teamApplyView.setReadTime(new Date());
             Map qIn=new HashMap();
@@ -254,14 +273,14 @@ public class TeamBusinessService implements ITeamBusinessService {
             throw new Exception("10010");
         }
 
-        if (teamApplyView.getProcessResult() != null) {
+        if (teamApplyView.getStatus() != null) {
             throw new Exception("10011");
         }
 
         /**
          * 必须是该团队的管理员才能拒绝申请
          */
-        if (!teamApplyView.getManagerId().equals(userInfo.getUserId())) {
+        if (!teamApplyView.getTeamManagerId().equals(userInfo.getUserId())) {
             //不是管理员
             throw new Exception("10009");
         }
@@ -269,7 +288,7 @@ public class TeamBusinessService implements ITeamBusinessService {
         TeamApplyLog teamApplyLog = new TeamApplyLog();
         teamApplyLog.setTeamApplyLogId(teamApplyView.getTeamApplyLogId());
         teamApplyLog.setProcessRemark(processRemark);
-        teamApplyLog.setProcessResult(GogoStatus.REJECT.toString());
+        teamApplyLog.setStatus(GogoStatus.REJECT.toString());
         teamApplyLog.setProcessTime(new Date());
         teamApplyLog.setProcessUserId(userInfo.getUserId());
         Map qIn=new HashMap();
@@ -290,14 +309,14 @@ public class TeamBusinessService implements ITeamBusinessService {
             throw new Exception("10010");
         }
 
-        if (teamApplyView.getProcessResult() != null) {
+        if (teamApplyView.getStatus() != null) {
             throw new Exception("10011");
         }
 
         /**
          * 必须是该团队的管理员才能处理
          */
-        if (!teamApplyView.getManagerId().equals(userInfo.getUserId())) {
+        if (!teamApplyView.getTeamManagerId().equals(userInfo.getUserId())) {
             //不是管理员
             throw new Exception("10009");
         }

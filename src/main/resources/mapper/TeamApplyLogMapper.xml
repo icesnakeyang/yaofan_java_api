@@ -10,31 +10,29 @@
         <result property="createTime" column="create_time"/>
         <result property="processUserId" column="process_user_id"/>
         <result property="readTime" column="read_time"/>
-        <result property="processResult" column="process_result"/>
         <result property="processRemark" column="process_remark"/>
         <result property="processTime" column="process_time"/>
         <result property="processReadTime" column="process_read_time"/>
     </resultMap>
 
     <resultMap id="teamApplyViewMap" type="com.gogoyang.yaofan.meta.team.entity.TeamApplyView">
-        <result property="applyTeamLogId" column="apply_team_log_id"/>
-        <result property="applyTeamId" column="apply_team_id"/>
-        <result property="applyTeamName" column="apply_team_name"/>
+        <result property="teamApplyLogId" column="team_apply_log_id"/>
+        <result property="teamId" column="team_id"/>
+        <result property="teamName" column="team_name"/>
         <result property="applyUserId" column="apply_user_id"/>
         <result property="applyUserName" column="apply_user_name"/>
-        <result property="applyTime" column="create_time"/>
+        <result property="createTime" column="create_time"/>
         <result property="createUserId" column="create_user_id"/>
         <result property="createUserName" column="create_user_name"/>
-        <result property="managerId" column="manager_id"/>
-        <result property="managerName" column="manager_user_name"/>
-        <result property="applyRemark" column="apply_remark"/>
-        <result property="processResult" column="process_result"/>
-        <result property="processRemark" column="process_remark"/>
-        <result property="processTime" column="process_time"/>
         <result property="processUserId" column="process_user_id"/>
         <result property="processUserName" column="process_user_name"/>
+        <result property="applyRemark" column="apply_remark"/>
+        <result property="processRemark" column="process_remark"/>
+        <result property="processTime" column="process_time"/>
         <result property="processReadTime" column="process_read_time"/>
         <result property="readTime" column="read_time"/>
+        <result property="teamManagerId" column="manager_id"/>
+        <result property="teamManagerName" column="team_manager_name"/>
     </resultMap>
 
     <!--创建一个团队申请日志-->
@@ -48,28 +46,43 @@
     <!--读取团队申请日志列表-->
     <select id="listTeamApplyLog" parameterType="map"
             resultMap="teamApplyViewMap">
-        select team_apply_log_id,
-       team_apply_log.team_id,
-       apply_user_id,
-       apply_user.name   as apply_user_name,
-       create_user_id,
-       manager_id,
-       create_user.name  as create_user_name,
-       manager_user.name as manager_user_name,
-       team_apply_log.create_time,
-       team.name         as team_name,
-       process_result
-from ((((team_apply_log
-  inner join team on team.team_id = team_apply_log.team_id)
-  inner join user_info apply_user on apply_user_id = user_id)
-  inner join user_info create_user on create_user_id = create_user.user_id)
-       inner join user_info manager_user on manager_user.user_id = manager_id)
-where 1 = 1
-        and (
-            manager_id=#{userId}
-            or apply_user_id=#{userId}
-        )
-        order by team_apply_log.create_time desc
+        select team_apply_log.ids,
+        team_apply_log_id,
+        team_apply_log.team_id,
+        team.manager_id,
+        team_manager.name as team_manager_name,
+        apply_user_id,
+        apply_user.name   as apply_user_name,
+        process_user_id,
+        process_user.name as process_user_name,
+        team_apply_log.create_time,
+        team.name         as team_name,
+        team_apply_log.status,
+        apply_remark,
+        process_remark
+        from ((((team_apply_log
+        left join  team on team.team_id = team_apply_log.team_id)
+        left join user_info apply_user on apply_user_id = user_id)
+        left join user_info process_user on process_user_id = process_user.user_id)
+        left join user_info team_manager on manager_id=team_manager.user_id)
+        where 1 = 1
+        <choose>
+            <when test="applyUserId!=null">
+                and apply_user_id=#{applyUserId}
+            </when>
+        </choose>
+        <choose>
+            <when test="processUserId!=null">
+                and process_user_id=#{processUserId}
+            </when>
+        </choose>
+        <choose>
+            <when test="status!=null">
+                and team_apply_log.status=#{status}
+            </when>
+        </choose>
+        order by create_time desc
+        limit #{offset},#{size}
     </select>
 
     <!--查询团队申请日志详情-->
@@ -87,7 +100,7 @@ where 1 = 1
        apply_team.create_time,
        team.name         as apply_team_name,
        apply_remark,
-       process_result,
+       status,
        process_remark,
        process_time,
        process_user_id,
@@ -107,15 +120,15 @@ and apply_team_log_id=#{applyId}
     <!--统计团队或者某个用户未处理的申请数-->
     <select id="totalApplyTeamUnProcess" parameterType="map" resultType="int">
         select count(*) as totalUnProcess
-        from apply_team
+        from team_apply_log
         where 1=1
         <if test="userId!=null">
             and apply_user_id = #{userId}
         </if>
         <if test="teamId!=null">
-            and apply_team_id=#{teamId}
+            and team_id=#{teamId}
         </if>
-        and process_result is null
+        and status='PENDING'
     </select>
 
     <!--设置团队申请日志的阅读时间-->
@@ -128,7 +141,7 @@ and apply_team_log_id=#{applyId}
     <!--处理团队申请结果-->
     <update id="processTeamApplyLog" parameterType="map">
         update apply_team set
-        process_result=#{processResult},
+        status=#{status},
         process_remark=#{processRemark},
         process_time=#{processTime},
         process_user_id=#{processUserId}
@@ -137,7 +150,7 @@ and apply_team_log_id=#{applyId}
 
     <!--统计用户未读的团队申请日志-->
     <select id="totalTeamApplyLogUnRead" parameterType="map" resultType="java.lang.Integer">
-        select * from team_apply_log
+        select count(*) as total from team_apply_log
         where read_time is null
         <![CDATA[
         and apply_user_id<>#{userId}

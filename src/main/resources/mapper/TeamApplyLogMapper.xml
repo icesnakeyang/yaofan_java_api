@@ -38,9 +38,9 @@
     <!--创建一个团队申请日志-->
     <insert id="createTeamApplyLog" parameterType="com.gogoyang.yaofan.meta.team.entity.TeamApplyLog">
         insert into team_apply_log
-        (team_apply_log_id, team_id, apply_user_id, apply_remark, create_time)
+        (team_apply_log_id, team_id, apply_user_id, apply_remark, create_time, status)
         values
-        (#{teamApplyLogId}, #{teamId},#{applyUserId}, #{applyRemark}, #{createTime})
+        (#{teamApplyLogId}, #{teamId},#{applyUserId}, #{applyRemark}, #{createTime}, #{status})
     </insert>
 
     <!--读取团队申请日志列表-->

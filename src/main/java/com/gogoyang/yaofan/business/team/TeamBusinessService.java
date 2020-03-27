@@ -217,14 +217,20 @@ public class TeamBusinessService implements ITeamBusinessService {
         return out;
     }
 
+    /**
+     * 获取团队申请日志详情
+     * @param in
+     * @return
+     * @throws Exception
+     */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Map getApplyTeam(Map in) throws Exception {
+    public Map getTeamApplyLog(Map in) throws Exception {
         String token = in.get("token").toString();
-        String applyId = in.get("applyId").toString();
+        String teamApplyLogId = in.get("teamApplyLogId").toString();
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
-        TeamApplyView teamApplyView = iTeamService.getApplyTeam(applyId);
+        TeamApplyView teamApplyView = iTeamService.getTeamApplyLog(teamApplyLogId);
 
         if (teamApplyView == null) {
             throw new Exception("10010");
@@ -263,11 +269,11 @@ public class TeamBusinessService implements ITeamBusinessService {
     @Override
     public void rejectApplyTeam(Map in) throws Exception {
         String token = in.get("token").toString();
-        String applyId = in.get("applyId").toString();
+        String teamApplyLogId = in.get("teamApplyLogId").toString();
         String processRemark = in.get("remark").toString();
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
-        TeamApplyView teamApplyView = iTeamService.getApplyTeam(applyId);
+        TeamApplyView teamApplyView = iTeamService.getTeamApplyLog(teamApplyLogId);
 
         if (teamApplyView == null) {
             throw new Exception("10010");
@@ -299,11 +305,11 @@ public class TeamBusinessService implements ITeamBusinessService {
     @Override
     public void agreeApplyTeam(Map in) throws Exception {
         String token = in.get("token").toString();
-        String applyId = in.get("applyId").toString();
+        String teamApplyLogId = in.get("teamApplyLogId").toString();
         String processRemark = in.get("remark").toString();
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
-        TeamApplyView teamApplyView = iTeamService.getApplyTeam(applyId);
+        TeamApplyView teamApplyView = iTeamService.getTeamApplyLog(teamApplyLogId);
 
         if (teamApplyView == null) {
             throw new Exception("10010");

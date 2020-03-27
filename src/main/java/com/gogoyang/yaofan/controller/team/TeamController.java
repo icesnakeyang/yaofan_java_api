@@ -259,9 +259,9 @@ public class TeamController {
             in.put("token", token);
             logMap.put("token", token);
             logMap.put("GogoActType", GogoActType.GET_APPLY_TEAM);
-            in.put("applyId", request.getApplyId());
-            memoMap.put("applyId", request.getApplyId());
-            Map out = iTeamBusinessService.getApplyTeam(in);
+            in.put("teamApplyLogId", request.getTeamApplyLogId());
+            memoMap.put("teamApplyLogId", request.getTeamApplyLogId());
+            Map out = iTeamBusinessService.getTeamApplyLog(in);
             response.setData(out);
         } catch (Exception ex) {
             try {
@@ -295,8 +295,8 @@ public class TeamController {
             logMap.put("token", token);
             logMap.put("GogoActType", GogoActType.REJECT_APPLY_TEAM);
             in.put("remark", request.getRemark());
-            in.put("applyId", request.getApplyId());
-            memoMap.put("applyId", request.getApplyId());
+            in.put("teamApplyLogId", request.getTeamApplyLogId());
+            memoMap.put("teamApplyLogId", request.getTeamApplyLogId());
             iTeamBusinessService.rejectApplyTeam(in);
         } catch (Exception ex) {
             try {
@@ -330,8 +330,8 @@ public class TeamController {
             logMap.put("token", token);
             logMap.put("GogoActType", GogoActType.AGREE_APPLY_TEAM);
             in.put("remark", request.getRemark());
-            in.put("applyId", request.getApplyId());
-            memoMap.put("applyId", request.getApplyId());
+            in.put("teamApplyLogId", request.getTeamApplyLogId());
+            memoMap.put("teamApplyLogId", request.getTeamApplyLogId());
             iTeamBusinessService.agreeApplyTeam(in);
         } catch (Exception ex) {
             try {

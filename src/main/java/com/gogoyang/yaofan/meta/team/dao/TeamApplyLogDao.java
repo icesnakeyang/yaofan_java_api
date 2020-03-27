@@ -27,7 +27,7 @@ public interface TeamApplyLogDao {
      */
     ArrayList<TeamApplyLog> listTeamApplyLog(Map qIn);
 
-    TeamApplyView getTeamApply(String teamApplyLogId);
+    TeamApplyView getTeamApplyLog(String teamApplyLogId);
 
     /**
      * 处理团队申请日志
@@ -56,4 +56,12 @@ public interface TeamApplyLogDao {
      * @return
      */
     Integer totalApplyTeamUnProcess(Map qIn);
+
+    /**
+     * 取消加入团队申请
+     * @param qIn
+     * status
+     * teamApplyLogId
+     */
+    void cancelTeamApplyLog(Map qIn);
 }

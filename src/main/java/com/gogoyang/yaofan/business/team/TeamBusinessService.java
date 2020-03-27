@@ -424,4 +424,41 @@ public class TeamBusinessService implements ITeamBusinessService {
         out.put("totalNewApplyMember", total);
         return out;
     }
+
+    /**
+     * 取消加入团队的申请
+     * @param in
+     * @throws Exception
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void cancelTeamApplyLog(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String teamApplyLogId=in.get("teamApplyLogId").toString();
+
+        /**
+         * 1、读取我的信息
+         * 2、读取申请日志
+         * 3、日志状态必须为pending
+         * 4、检查是否我创建的日志
+         * 5、保存日志状态为cancel
+         */
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+
+        TeamApplyView teamApplyView=iTeamService.getTeamApplyLog(teamApplyLogId);
+
+        if(!teamApplyView.getStatus().equals(GogoStatus.PENDING.toString())){
+            //该日志不是等待处理状态
+            throw new Exception("20006");
+        }
+
+        if(!teamApplyView.getApplyUserId().equals(userInfo.getUserId())){
+            //当前用户是日志创建者，不能取消
+            throw new Exception("20007");
+        }
+        Map qIn=new HashMap();
+        qIn.put("status", GogoStatus.CANCEL.toString());
+        qIn.put("teamApplyLogId", teamApplyLogId);
+        iTeamService.cancelTeamApplyLog(qIn);
+    }
 }

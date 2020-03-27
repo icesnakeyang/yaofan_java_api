@@ -33,4 +33,6 @@ public interface ITeamBusinessService {
     void deleteMyTeam(Map in) throws Exception;
 
     Map totalNewApplyMember(Map in) throws Exception;
+
+    void cancelTeamApplyLog(Map in) throws Exception;
 }

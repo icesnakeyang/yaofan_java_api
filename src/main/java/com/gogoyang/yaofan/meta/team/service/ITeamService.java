@@ -47,7 +47,7 @@ public interface ITeamService {
      */
     ArrayList<TeamApplyLog> listTeamApplyLog(Map qIn) throws Exception;
 
-    TeamApplyView getApplyTeam(String applyId) throws Exception;
+    TeamApplyView getTeamApplyLog(String applyId) throws Exception;
 
     /**
      * 统计用户未读的团队申请日志
@@ -98,4 +98,12 @@ public interface ITeamService {
      * @return
      */
     ArrayList<TeamView> listMyCreateTeam(Map qIn);
+
+    /**
+     * 取消加入团队申请
+     * @param qIn
+     * status
+     * teamApplyLogId
+     */
+    void cancelTeamApplyLog(Map qIn);
 }

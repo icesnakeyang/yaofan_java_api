@@ -9,6 +9,7 @@ public enum  GogoStatus {
     PENDING,
     PROGRESS,
     COMPLETE,
-    GRABBING
+    GRABBING,
+    CANCEL
 
 }

@@ -94,8 +94,8 @@ public class TeamService implements ITeamService {
     }
 
     @Override
-    public TeamApplyView getApplyTeam(String teamApplyLogId) throws Exception {
-        TeamApplyView teamApplyView = teamApplyLogDao.getTeamApply(teamApplyLogId);
+    public TeamApplyView getTeamApplyLog(String teamApplyLogId) throws Exception {
+        TeamApplyView teamApplyView = teamApplyLogDao.getTeamApplyLog(teamApplyLogId);
         return teamApplyView;
     }
 
@@ -164,5 +164,16 @@ public class TeamService implements ITeamService {
     public ArrayList<TeamView> listMyCreateTeam(Map qIn) {
         ArrayList<TeamView> teamViews = teamDao.listMyCreateTeam(qIn);
         return teamViews;
+    }
+
+    /**
+     *
+     * @param qIn
+     * status
+     * teamApplyLogId
+     */
+    @Override
+    public void cancelTeamApplyLog(Map qIn) {
+        teamApplyLogDao.cancelTeamApplyLog(qIn);
     }
 }

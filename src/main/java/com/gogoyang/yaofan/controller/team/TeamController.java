@@ -461,4 +461,46 @@ public class TeamController {
         }
         return response;
     }
+
+    /**
+     * 取消我的加入团队申请
+     *
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/cancelTeamApplyLog")
+    public Response cancelTeamApplyLog(@RequestBody TeamRequest request,
+            HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap=new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("teamApplyLogId", request.getTeamApplyLogId());
+            logMap.put("token", token);
+            logMap.put("actType", GogoActType.CANCEL_TEAM_APPLY);
+            logMap.put("memo", "teamApplyLog:"+request.getTeamApplyLogId());
+            iTeamBusinessService.cancelTeamApplyLog(in);
+            logMap.put("result", true);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            logMap.put("result", false);
+            logMap.put("memo", "teamApplyLog:"+request.getTeamApplyLogId()+"/error:"+ex.getMessage());
+        }
+        try {
+            iCommonBusinessService.createUserActLog(logMap);
+        }catch (Exception ex3){
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+
 }

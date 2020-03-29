@@ -193,6 +193,7 @@ public class TeamBusinessService implements ITeamBusinessService {
      * @return
      * @throws Exception
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Map listTeamApplyLogMyApply(Map in) throws Exception {
         String token = in.get("token").toString();
@@ -211,9 +212,22 @@ public class TeamBusinessService implements ITeamBusinessService {
         qIn.put("offset", offset);
         qIn.put("size", pageSize);
 //         processUserId status
-        ArrayList<TeamApplyLog> applyTeams = iTeamService.listTeamApplyLog(qIn);
+        ArrayList<TeamApplyView> teamApplyLogs = iTeamService.listTeamApplyLog(qIn);
+
+        //设置处理结果阅读时间
+        for(int i=0; i<teamApplyLogs.size();i++){
+            TeamApplyView teamApplyView=teamApplyLogs.get(i);
+            if(teamApplyView.getProcessReadTime()==null){
+                teamApplyLogs.get(i).setProcessReadTime(new Date());
+                qIn=new HashMap();
+                qIn.put("processReadTime", teamApplyLogs.get(i).getProcessReadTime());
+                qIn.put("teamApplyLogId", teamApplyLogs.get(i).getTeamApplyLogId());
+                iTeamService.setTeamApplyLogReadTimeUnProcess(qIn);
+            }
+        }
+
         Map out = new HashMap();
-        out.put("applyTeams", applyTeams);
+        out.put("applyTeams", teamApplyLogs);
         return out;
     }
 
@@ -233,6 +247,7 @@ public class TeamBusinessService implements ITeamBusinessService {
         /**
          * 1、读取自己的用户信息，获得userId
          * 2、查询所有团队申请日志，创建用户id=userId
+         * 3、设置阅读时间
          */
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
@@ -249,10 +264,20 @@ public class TeamBusinessService implements ITeamBusinessService {
         qIn.put("teamList", list);
         qIn.put("offset", offset);
         qIn.put("size", pageSize);
-//         processUserId status
-        ArrayList<TeamApplyLog> applyTeams = iTeamService.listTeamApplyLog(qIn);
+        ArrayList<TeamApplyView> teamApplyViews = iTeamService.listTeamApplyLog(qIn);
+
+        //设置申请阅读时间
+        for(int i=0;i<teamApplyViews.size();i++){
+            if(teamApplyViews.get(i).getReadTime()==null){
+                qIn=new HashMap();
+                qIn.put("readTime", new Date());
+                qIn.put("teamApplyLogId", teamApplyViews.get(i).getTeamApplyLogId());
+                iTeamService.setTeamApplyLogReadTime(qIn);
+            }
+        }
+
         Map out = new HashMap();
-        out.put("applyTeams", applyTeams);
+        out.put("applyTeams", teamApplyViews);
         return out;
     }
 
@@ -442,7 +467,6 @@ public class TeamBusinessService implements ITeamBusinessService {
     @Override
     public Map totalMyTeamLogUnread(Map in) throws Exception {
         String token=in.get("token").toString();
-
 
         /**
          * 统计未读的加入我的团队申请

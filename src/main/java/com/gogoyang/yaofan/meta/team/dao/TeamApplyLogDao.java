@@ -26,7 +26,7 @@ public interface TeamApplyLogDao {
      * size
      * @return
      */
-    ArrayList<TeamApplyLog> listTeamApplyLog(Map qIn);
+    ArrayList<TeamApplyView> listTeamApplyLog(Map qIn);
 
     TeamApplyView getTeamApplyLog(String teamApplyLogId);
 
@@ -44,6 +44,8 @@ public interface TeamApplyLogDao {
     /**
      * 设置团队申请日志的阅读时间
      * @param qIn
+     * readTime
+     * teamApplyLogId
      */
     void setTeamApplyLogReadTime(Map qIn);
 
@@ -78,4 +80,12 @@ public interface TeamApplyLogDao {
      * @return
      */
     Integer totalTeamApplyLogUnReadProcess(Map qIn);
+
+    /**
+     * 设置我未阅读的处理结果的阅读时间
+     * @param qIn
+     * processReadTime
+     * teamApplyLogId
+     */
+    void setTeamApplyLogReadTimeUnProcess(Map qIn);
 }

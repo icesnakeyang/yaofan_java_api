@@ -46,7 +46,7 @@ public interface ITeamService {
      * size
      * @return
      */
-    ArrayList<TeamApplyLog> listTeamApplyLog(Map qIn) throws Exception;
+    ArrayList<TeamApplyView> listTeamApplyLog(Map qIn) throws Exception;
 
     TeamApplyView getTeamApplyLog(String applyId) throws Exception;
 
@@ -70,6 +70,8 @@ public interface ITeamService {
     /**
      * 设置团队申请日志的阅读时间
      * @param qIn
+     * readTime
+     * teamApplyLogId
      * @throws Exception
      */
     void setTeamApplyLogReadTime(Map qIn) throws Exception;
@@ -124,4 +126,12 @@ public interface ITeamService {
      * @return
      */
     Integer totalTeamApplyLogUnReadProcess(Map qIn);
+
+    /**
+     * 设置我未阅读的处理结果的阅读时间
+     * @param qIn
+     * processReadTime
+     * teamApplyLogId
+     */
+    void setTeamApplyLogReadTimeUnProcess(Map qIn);
 }

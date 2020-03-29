@@ -189,4 +189,11 @@ and team_apply_log_id=#{teamApplyLogId}
         where process_read_time is null
         and apply_user_id=#{userId}
     </select>
+
+    <!--设置我未阅读的处理结果的阅读时间-->
+    <update id="setTeamApplyLogReadTimeUnProcess" parameterType="map">
+        update team_apply_log set
+        process_read_time=#{processReadTime}
+        where team_apply_log_id=#{teamApplyLogId}
+    </update>
 </mapper>

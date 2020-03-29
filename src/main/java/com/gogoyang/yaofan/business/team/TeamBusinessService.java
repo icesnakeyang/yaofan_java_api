@@ -432,16 +432,20 @@ public class TeamBusinessService implements ITeamBusinessService {
     }
 
     /**
-     * 统计当前用户创建的团队的新申请加入人数
+     * 统计当前用户未读的团队日志
+     * 1、统计未读的加入我的团队申请
+     * 2、统计未读的已处理的我加入的团队申请
      * @param in
      * @return
      * @throws Exception
      */
     @Override
-    public Map totalNewApplyMember(Map in) throws Exception {
+    public Map totalMyTeamLogUnread(Map in) throws Exception {
         String token=in.get("token").toString();
 
+
         /**
+         * 统计未读的加入我的团队申请
          * 1、读取当前用户
          * 2、查询当前用户创建并负责的团队
          * 3、如果没有就退出
@@ -457,15 +461,23 @@ public class TeamBusinessService implements ITeamBusinessService {
         if(teamViews.size()==0){
             //当前用户没有创建的团队，返回0
             out.put("totalNewApplyMember",0);
-            return out;
+        }else{
+            ArrayList teamList=new ArrayList();
+            for(int i=0;i<teamViews.size();i++){
+                teamList.add(teamViews.get(i).getTeamId());
+            }
+            qIn.put("teamList", teamList);
+            Integer total=iTeamService.totalTeamApplyLogUnRead(qIn);
+            out.put("totalNewApplyMember", total);
         }
-        ArrayList teamList=new ArrayList();
-        for(int i=0;i<teamViews.size();i++){
-            teamList.add(teamViews.get(i).getTeamId());
-        }
-        qIn.put("teamList", teamList);
-        Integer total=iTeamService.totalTeamApplyLogUnRead(qIn);
-        out.put("totalNewApplyMember", total);
+
+        /**
+         * 统计未读的已处理的我加入的团队申请
+         */
+        qIn=new HashMap();
+        qIn.put("userId", userInfo.getUserId());
+        Integer total=iTeamService.totalTeamApplyLogUnReadProcess(qIn);
+        out.put("totalUnreadProcess", total);
         return out;
     }
 

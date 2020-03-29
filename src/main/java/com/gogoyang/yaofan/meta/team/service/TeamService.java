@@ -78,13 +78,13 @@ public class TeamService implements ITeamService {
 
     /**
      * 读取团队申请日志列表
-     * @param qIn
-     * applyUserId
-     * processUserId
-     * status
-     * teamList
-     * offset
-     * size
+     *
+     * @param qIn applyUserId
+     *            processUserId
+     *            status
+     *            teamList
+     *            offset
+     *            size
      * @return
      * @throws Exception
      */
@@ -136,12 +136,10 @@ public class TeamService implements ITeamService {
     }
 
     /**
-     *
-     * @param qIn
-     * teamApplyLogId(必填)
-     * status
-     * processRemark
-     * processTime
+     * @param qIn teamApplyLogId(必填)
+     *            status
+     *            processRemark
+     *            processTime
      * @throws Exception
      */
     @Override
@@ -164,10 +162,8 @@ public class TeamService implements ITeamService {
 
 
     /**
-     *
-     * @param qIn
-     * userId:创建人Id
-     * status：状态(可选)
+     * @param qIn userId:创建人Id
+     *            status：状态(可选)
      * @return
      */
     @Override
@@ -177,13 +173,21 @@ public class TeamService implements ITeamService {
     }
 
     /**
-     *
-     * @param qIn
-     * status
-     * teamApplyLogId
+     * @param qIn status
+     *            teamApplyLogId
      */
     @Override
     public void cancelTeamApplyLog(Map qIn) throws Exception {
         teamApplyLogDao.cancelTeamApplyLog(qIn);
+    }
+
+    /**
+     * @param qIn userId
+     * @return
+     */
+    @Override
+    public Integer totalTeamApplyLogUnReadProcess(Map qIn) {
+        Integer total = teamApplyLogDao.totalTeamApplyLogUnReadProcess(qIn);
+        return total;
     }
 }

@@ -70,4 +70,12 @@ public interface TeamApplyLogDao {
      * teamApplyLogId
      */
     void cancelTeamApplyLog(Map qIn);
+
+    /**
+     * 统计用户未阅读的团队申请日志处理结果的数量
+     * @param qIn
+     * userId
+     * @return
+     */
+    Integer totalTeamApplyLogUnReadProcess(Map qIn);
 }

@@ -182,4 +182,11 @@ and team_apply_log_id=#{teamApplyLogId}
             #{item}
         </foreach>
     </select>
+
+    <!--统计用户未阅读的团队申请日志处理结果的数量-->
+    <select id="totalTeamApplyLogUnReadProcess" parameterType="map" resultType="java.lang.Integer">
+        select count(*) as total from team_apply_log
+        where process_read_time is null
+        and apply_user_id=#{userId}
+    </select>
 </mapper>

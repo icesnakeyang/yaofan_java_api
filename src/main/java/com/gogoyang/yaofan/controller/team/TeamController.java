@@ -478,20 +478,22 @@ public class TeamController {
     }
 
     /**
-     * 统计当前有多少用户申请加入我的团队
+     * 统计当前用户未读的团队日志
+     * 1、统计未读的加入我的团队申请
+     * 2、统计未读的已处理的我加入的团队申请
      *
      * @param httpServletRequest
      * @return
      */
     @ResponseBody
-    @PostMapping("/totalNewApplyMember")
+    @PostMapping("/totalMyTeamLogUnread")
     public Response totalNewApplyMember(HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
         try {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
-            Map out = iTeamBusinessService.totalNewApplyMember(in);
+            Map out = iTeamBusinessService.totalMyTeamLogUnread(in);
             response.setData(out);
         } catch (Exception ex) {
             try {

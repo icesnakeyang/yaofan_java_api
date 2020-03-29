@@ -21,6 +21,7 @@ public interface TeamApplyLogDao {
      * applyUserId
      * processUserId
      * status
+     * teamList
      * offset
      * size
      * @return
@@ -32,6 +33,11 @@ public interface TeamApplyLogDao {
     /**
      * 处理团队申请日志
      * @param qIn
+     * teamApplyLogId(必填)
+     * status
+     * processRemark
+     * processTime
+     * processUserId
      */
     void processTeamApplyLog(Map qIn);
 

@@ -218,6 +218,45 @@ public class TeamBusinessService implements ITeamBusinessService {
     }
 
     /**
+     * 读取申请我的团队日志
+     * 包括已处理和未处理的
+     * @param in
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map listTeamApplyLogApplyUser(Map in) throws Exception {
+        String token = in.get("token").toString();
+        Integer pageIndex=(Integer)in.get("pageIndex");
+        Integer pageSize=(Integer)in.get("pageSize");
+
+        /**
+         * 1、读取自己的用户信息，获得userId
+         * 2、查询所有团队申请日志，创建用户id=userId
+         */
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        Map qIn = new HashMap();
+        qIn.put("userId", userInfo.getUserId());
+        ArrayList<TeamView> teams=iTeamService.listMyCreateTeam(qIn);
+        ArrayList list=new ArrayList();
+        for(int i=0;i<teams.size();i++){
+            String team=teams.get(i).getTeamId();
+            list.add(team);
+        }
+
+        Integer offset=(pageIndex-1)*pageSize;
+        qIn.put("teamList", list);
+        qIn.put("offset", offset);
+        qIn.put("size", pageSize);
+//         processUserId status
+        ArrayList<TeamApplyLog> applyTeams = iTeamService.listTeamApplyLog(qIn);
+        Map out = new HashMap();
+        out.put("applyTeams", applyTeams);
+        return out;
+    }
+
+    /**
      * 获取团队申请日志详情
      * @param in
      * @return
@@ -279,7 +318,7 @@ public class TeamBusinessService implements ITeamBusinessService {
             throw new Exception("10010");
         }
 
-        if (teamApplyView.getStatus() != null) {
+        if (!teamApplyView.getStatus().equals(GogoStatus.PENDING.toString())) {
             throw new Exception("10011");
         }
 
@@ -291,13 +330,12 @@ public class TeamBusinessService implements ITeamBusinessService {
             throw new Exception("10009");
         }
 
-        TeamApplyLog teamApplyLog = new TeamApplyLog();
-        teamApplyLog.setTeamApplyLogId(teamApplyView.getTeamApplyLogId());
-        teamApplyLog.setProcessRemark(processRemark);
-        teamApplyLog.setStatus(GogoStatus.REJECT.toString());
-        teamApplyLog.setProcessTime(new Date());
-        teamApplyLog.setProcessUserId(userInfo.getUserId());
         Map qIn=new HashMap();
+        qIn.put("teamApplyLogId", teamApplyLogId);
+        qIn.put("status", GogoStatus.REJECT.toString());
+        qIn.put("processRemark", processRemark);
+        qIn.put("processTime", new Date());
+        qIn.put("processUserId", userInfo.getUserId());
         iTeamService.processTeamApplyLog(qIn);
     }
 

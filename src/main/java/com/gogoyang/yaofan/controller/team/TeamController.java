@@ -246,9 +246,51 @@ public class TeamController {
         return response;
     }
 
+    /**
+     * 读取申请我的团队日志
+     * 包括已处理和未处理的
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
     @ResponseBody
-    @PostMapping("getApplyTeam")
-    public Response getApplyTeam(@RequestBody TeamRequest request,
+    @PostMapping("/listTeamApplyLogApplyUser")
+    public Response listTeamApplyLogApplyUser(@RequestBody TeamRequest request,
+                                  HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("pageIndex", request.getPageIndex());
+            in.put("pageSize", request.getPageSize());
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.LIST_APPLY_TEAM);
+            Map out = iTeamBusinessService.listTeamApplyLogApplyUser(in);
+            response.setData(out);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    @ResponseBody
+    @PostMapping("getTeamApplyLog")
+    public Response getTeamApplyLog(@RequestBody TeamRequest request,
                                  HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map logMap = new HashMap();

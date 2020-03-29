@@ -41,6 +41,7 @@ public interface ITeamService {
      * applyUserId
      * processUserId
      * status
+     * teamList
      * offset
      * size
      * @return
@@ -56,7 +57,7 @@ public interface ITeamService {
      * teamList：当前用户创建的团队结合
      * @return
      */
-    Integer totalTeamApplyLogUnRead(Map qIn);
+    Integer totalTeamApplyLogUnRead(Map qIn) throws Exception;
 
     /**
      * 统计团队或者某个用户未处理的申请数
@@ -73,6 +74,15 @@ public interface ITeamService {
      */
     void setTeamApplyLogReadTime(Map qIn) throws Exception;
 
+    /**
+     * 处理团队申请日志
+     * @param qIn
+     * teamApplyLogId(必填)
+     * status
+     * processRemark
+     * processTime
+     * processUserId
+     */
     void processTeamApplyLog(Map qIn) throws Exception;
 
     /**
@@ -82,13 +92,13 @@ public interface ITeamService {
      * description
      * where teamId
      */
-    void updateTeam(Map qIn);
+    void updateTeam(Map qIn) throws Exception;
 
     /**
      * 删除一个团队
      * @param teamId
      */
-    void deleteTeam(String teamId);
+    void deleteTeam(String teamId) throws Exception;
 
     /**
      * 查询所有我创建的团队
@@ -97,7 +107,7 @@ public interface ITeamService {
      * status：状态(可选)
      * @return
      */
-    ArrayList<TeamView> listMyCreateTeam(Map qIn);
+    ArrayList<TeamView> listMyCreateTeam(Map qIn) throws Exception;
 
     /**
      * 取消加入团队申请
@@ -105,5 +115,5 @@ public interface ITeamService {
      * status
      * teamApplyLogId
      */
-    void cancelTeamApplyLog(Map qIn);
+    void cancelTeamApplyLog(Map qIn) throws Exception;
 }

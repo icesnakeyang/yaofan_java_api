@@ -82,6 +82,7 @@ public class TeamService implements ITeamService {
      * applyUserId
      * processUserId
      * status
+     * teamList
      * offset
      * size
      * @return
@@ -105,7 +106,7 @@ public class TeamService implements ITeamService {
      * @return
      */
     @Override
-    public Integer totalTeamApplyLogUnRead(Map qIn) {
+    public Integer totalTeamApplyLogUnRead(Map qIn) throws Exception {
         Integer total = teamApplyLogDao.totalTeamApplyLogUnRead(qIn);
         return total;
     }
@@ -134,13 +135,22 @@ public class TeamService implements ITeamService {
         teamApplyLogDao.setTeamApplyLogReadTime(qIn);
     }
 
+    /**
+     *
+     * @param qIn
+     * teamApplyLogId(必填)
+     * status
+     * processRemark
+     * processTime
+     * @throws Exception
+     */
     @Override
     public void processTeamApplyLog(Map qIn) throws Exception {
         teamApplyLogDao.processTeamApplyLog(qIn);
     }
 
     @Override
-    public void updateTeam(Map qIn) {
+    public void updateTeam(Map qIn) throws Exception {
         teamDao.updateTeam(qIn);
     }
 
@@ -148,7 +158,7 @@ public class TeamService implements ITeamService {
      * @param teamId
      */
     @Override
-    public void deleteTeam(String teamId) {
+    public void deleteTeam(String teamId) throws Exception {
         teamDao.deleteTeam(teamId);
     }
 
@@ -161,7 +171,7 @@ public class TeamService implements ITeamService {
      * @return
      */
     @Override
-    public ArrayList<TeamView> listMyCreateTeam(Map qIn) {
+    public ArrayList<TeamView> listMyCreateTeam(Map qIn) throws Exception {
         ArrayList<TeamView> teamViews = teamDao.listMyCreateTeam(qIn);
         return teamViews;
     }
@@ -173,7 +183,7 @@ public class TeamService implements ITeamService {
      * teamApplyLogId
      */
     @Override
-    public void cancelTeamApplyLog(Map qIn) {
+    public void cancelTeamApplyLog(Map qIn) throws Exception {
         teamApplyLogDao.cancelTeamApplyLog(qIn);
     }
 }

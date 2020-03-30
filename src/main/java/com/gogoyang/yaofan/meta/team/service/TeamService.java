@@ -89,9 +89,9 @@ public class TeamService implements ITeamService {
      * @throws Exception
      */
     @Override
-    public ArrayList<TeamApplyView> listTeamApplyLog(Map qIn) throws Exception {
-        ArrayList<TeamApplyView> teamApplyViews = teamApplyLogDao.listTeamApplyLog(qIn);
-        return teamApplyViews;
+    public ArrayList<TeamApplyLog> listTeamApplyLog(Map qIn) throws Exception {
+        ArrayList<TeamApplyLog> teamApplyLogs = teamApplyLogDao.listTeamApplyLog(qIn);
+        return teamApplyLogs;
     }
 
     @Override
@@ -127,13 +127,25 @@ public class TeamService implements ITeamService {
     /**
      * 设置团队申请日志的阅读时间
      *
-     * @param qIn readTime
-     *            teamApplyLogId
+     * @param qIn
+     * readTime
+     * teamApplyLogId
      * @throws Exception
      */
     @Override
     public void setTeamApplyLogReadTime(Map qIn) throws Exception {
         teamApplyLogDao.setTeamApplyLogReadTime(qIn);
+    }
+
+    /**
+     *
+     * @param qIn
+     * readTime
+     * teamApplyLogId
+     */
+    @Override
+    public void setTeamApplyLogReadTimeProcess(Map qIn) {
+        teamApplyLogDao.setTeamApplyLogReadTimeProcess(qIn);
     }
 
     /**
@@ -190,16 +202,5 @@ public class TeamService implements ITeamService {
     public Integer totalTeamApplyLogUnReadProcess(Map qIn) {
         Integer total = teamApplyLogDao.totalTeamApplyLogUnReadProcess(qIn);
         return total;
-    }
-
-    /**
-     * 设置我未阅读的处理结果的阅读时间
-     * @param qIn
-     * processReadTime
-     * teamApplyLogId
-     */
-    @Override
-    public void setTeamApplyLogReadTimeUnProcess(Map qIn) {
-        teamApplyLogDao.setTeamApplyLogReadTimeUnProcess(qIn);
     }
 }

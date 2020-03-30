@@ -77,6 +77,14 @@ public interface ITeamService {
     void setTeamApplyLogReadTime(Map qIn) throws Exception;
 
     /**
+     * 设置团队申请日志的处理结果阅读时间
+     * @param qIn
+     * readTime
+     * teamApplyLogId
+     */
+    void setTeamApplyLogReadTimeProcess(Map qIn);
+
+    /**
      * 处理团队申请日志
      * @param qIn
      * teamApplyLogId(必填)

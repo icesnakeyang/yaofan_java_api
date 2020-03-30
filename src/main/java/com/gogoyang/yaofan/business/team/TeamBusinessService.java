@@ -242,6 +242,12 @@ public class TeamBusinessService implements ITeamBusinessService {
         Map qIn = new HashMap();
         qIn.put("userId", userInfo.getUserId());
         ArrayList<TeamView> teams = iTeamService.listMyCreateTeam(qIn);
+        if(teams.size()==0){
+            //没有团队，直接退出
+            Map out = new HashMap();
+            out.put("applyTeams", null);
+            return out;
+        }
         ArrayList list = new ArrayList();
         for (int i = 0; i < teams.size(); i++) {
             String team = teams.get(i).getTeamId();
@@ -249,7 +255,9 @@ public class TeamBusinessService implements ITeamBusinessService {
         }
 
         Integer offset = (pageIndex - 1) * pageSize;
-        qIn.put("teamList", list);
+        if(list.size()>0) {
+            qIn.put("teamList", list);
+        }
         qIn.put("offset", offset);
         qIn.put("size", pageSize);
 //         processUserId status
@@ -399,8 +407,8 @@ public class TeamBusinessService implements ITeamBusinessService {
          */
         MyTeam myTeam = new MyTeam();
         myTeam.setStatus(GogoStatus.ACTIVE.toString());
-        myTeam.setTeamId(teamApplyLog.getTeamApplyLogId());
-        myTeam.setUserId(teamApplyLog.getApplyUserId());
+        myTeam.setTeamId(teamApplyView.getTeamId());
+        myTeam.setUserId(teamApplyView.getApplyUserId());
         iTeamService.createMyTeam(myTeam);
     }
 

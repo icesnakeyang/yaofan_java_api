@@ -90,7 +90,7 @@
                 </foreach>
             </when>
         </choose>
-        order by create_time desc
+        order by team_apply_log.ids desc
         limit #{offset},#{size}
     </select>
 

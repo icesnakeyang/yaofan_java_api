@@ -299,7 +299,7 @@ public class TeamBusinessService implements ITeamBusinessService {
         }
 
         Map out = new HashMap();
-        out.put("applyTeamView", teamApplyView);
+        out.put("teamApplyView", teamApplyView);
 
         return out;
     }

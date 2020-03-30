@@ -44,8 +44,18 @@ public interface TeamApplyLogDao {
     /**
      * 设置团队申请日志的阅读时间
      * @param qIn
+     * readTime
+     * teamApplyLogId
      */
     void setTeamApplyLogReadTime(Map qIn);
+
+    /**
+     * 设置团队申请日志的处理结果阅读时间
+     * @param qIn
+     * readTime
+     * teamApplyLogId
+     */
+    void setTeamApplyLogReadTimeProcess(Map qIn);
 
     /**
      * 统计用户未读的团队申请日志

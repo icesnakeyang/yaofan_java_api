@@ -128,11 +128,24 @@ public class TeamService implements ITeamService {
      * 设置团队申请日志的阅读时间
      *
      * @param qIn
+     * readTime
+     * teamApplyLogId
      * @throws Exception
      */
     @Override
     public void setTeamApplyLogReadTime(Map qIn) throws Exception {
         teamApplyLogDao.setTeamApplyLogReadTime(qIn);
+    }
+
+    /**
+     *
+     * @param qIn
+     * readTime
+     * teamApplyLogId
+     */
+    @Override
+    public void setTeamApplyLogReadTimeProcess(Map qIn) {
+        teamApplyLogDao.setTeamApplyLogReadTimeProcess(qIn);
     }
 
     /**

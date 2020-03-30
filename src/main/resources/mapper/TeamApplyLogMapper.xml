@@ -57,7 +57,10 @@
         team.name as team_name,
         team_apply_log.status,
         apply_remark,
-        process_remark
+        process_remark,
+        process_time,
+        process_read_time,
+        read_time
         from ((((team_apply_log
         left join team on team.team_id = team_apply_log.team_id)
         left join user_info apply_user on apply_user_id = user_id)
@@ -143,6 +146,13 @@ and team_apply_log_id=#{teamApplyLogId}
         where team_apply_log_id=#{teamApplyLogId}
     </update>
 
+    <!--设置团队申请日志的处理结果阅读时间-->
+    <update id="setTeamApplyLogReadTimeProcess" parameterType="map">
+        update team_apply_log set
+        process_read_time=#{readTime}
+        where team_apply_log_id=#{teamApplyLogId}
+    </update>
+
     <!--处理团队申请结果-->
     <update id="processTeamApplyLog" parameterType="map">
         update team_apply_log
@@ -187,6 +197,7 @@ and team_apply_log_id=#{teamApplyLogId}
     <select id="totalTeamApplyLogUnReadProcess" parameterType="map" resultType="java.lang.Integer">
         select count(*) as total from team_apply_log
         where process_read_time is null
-        and apply_user_id=#{userId}
+        and process_time is not null
+        and apply_user_id = #{userId}
     </select>
 </mapper>

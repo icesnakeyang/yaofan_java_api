@@ -3,11 +3,9 @@ package com.gogoyang.yaofan.meta.team.service;
 import com.gogoyang.yaofan.meta.team.dao.TeamApplyLogDao;
 import com.gogoyang.yaofan.meta.team.dao.TeamDao;
 import com.gogoyang.yaofan.meta.team.entity.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -89,9 +87,9 @@ public class TeamService implements ITeamService {
      * @throws Exception
      */
     @Override
-    public ArrayList<TeamApplyLog> listTeamApplyLog(Map qIn) throws Exception {
-        ArrayList<TeamApplyLog> teamApplyLogs = teamApplyLogDao.listTeamApplyLog(qIn);
-        return teamApplyLogs;
+    public ArrayList<TeamApplyView> listTeamApplyLog(Map qIn) throws Exception {
+        ArrayList<TeamApplyView> teamApplyViews = teamApplyLogDao.listTeamApplyLog(qIn);
+        return teamApplyViews;
     }
 
     @Override
@@ -202,5 +200,10 @@ public class TeamService implements ITeamService {
     public Integer totalTeamApplyLogUnReadProcess(Map qIn) {
         Integer total = teamApplyLogDao.totalTeamApplyLogUnReadProcess(qIn);
         return total;
+    }
+
+    @Override
+    public void setTeamApplyLogReadTimeUnProcess(Map qIn) {
+        teamApplyLogDao.setTeamApplyLogReadTimeUnProcess(qIn);
     }
 }

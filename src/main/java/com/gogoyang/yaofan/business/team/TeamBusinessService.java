@@ -120,6 +120,12 @@ public class TeamBusinessService implements ITeamBusinessService {
         return out;
     }
 
+    /**
+     * 读取团队详情
+     * @param in
+     * @return
+     * @throws Exception
+     */
     @Override
     public Map getTeamByTeamId(Map in) throws Exception {
         String token = in.get("token").toString();
@@ -128,6 +134,10 @@ public class TeamBusinessService implements ITeamBusinessService {
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
         TeamView team = iTeamService.getTeamByTeamId(teamId);
+
+        /**
+         * 检测当前用户是否团队成员
+         */
 
         Map out = new HashMap();
         out.put("team", team);

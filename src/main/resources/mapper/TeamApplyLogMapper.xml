@@ -8,7 +8,7 @@
         <result property="teamName" column="team_name"/>
         <result property="applyUserId" column="apply_user_id"/>
         <result property="applyUserName" column="apply_user_name"/>
-        <result property="teamManagerId" column="team_manager_id"/>
+        <result property="teamManagerId" column="manager_id"/>
         <result property="teamManagerName" column="team_manager_name"/>
         <result property="createTime" column="create_time"/>
         <result property="teamName" column="team_name"/>

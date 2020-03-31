@@ -2,6 +2,7 @@ package com.gogoyang.yaofan.meta.team.service;
 
 import com.gogoyang.yaofan.meta.team.dao.TeamApplyLogDao;
 import com.gogoyang.yaofan.meta.team.dao.TeamDao;
+import com.gogoyang.yaofan.meta.team.dao.TeamQuitDao;
 import com.gogoyang.yaofan.meta.team.dao.TeamUserDao;
 import com.gogoyang.yaofan.meta.team.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +17,16 @@ public class TeamService implements ITeamService {
     private final TeamDao teamDao;
     private final TeamApplyLogDao teamApplyLogDao;
     private final TeamUserDao teamUserDao;
+    private final TeamQuitDao teamQuitDao;
 
     public TeamService(TeamDao teamDao,
                        TeamApplyLogDao teamApplyLogDao,
-                       TeamUserDao teamUserDao) {
+                       TeamUserDao teamUserDao,
+                       TeamQuitDao teamQuitDao) {
         this.teamDao = teamDao;
         this.teamApplyLogDao = teamApplyLogDao;
         this.teamUserDao = teamUserDao;
+        this.teamQuitDao = teamQuitDao;
     }
 
     /**
@@ -69,6 +73,8 @@ public class TeamService implements ITeamService {
      * teamId
      * managerId
      * teamName（模糊查询）
+     * offset
+     * size
      * @return
      * @throws Exception
      */
@@ -222,5 +228,14 @@ public class TeamService implements ITeamService {
     public ArrayList<TeamUser> listTeamUser(Map qIn) {
         ArrayList<TeamUser> teamUsers=teamUserDao.listTeamUser(qIn);
         return teamUsers;
+    }
+
+    /**
+     * 创建退出团队日志
+     * @param teamQuitLog
+     */
+    @Override
+    public void createTeamQuitLog(TeamQuitLog teamQuitLog) {
+        teamQuitDao.createTeamQuitLog(teamQuitLog);
     }
 }

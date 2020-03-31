@@ -84,7 +84,7 @@ public class TeamBusinessService implements ITeamBusinessService {
     }
 
     /**
-     * 读取团队列表
+     * 读取我的团队列表
      *
      * @param in
      * @return
@@ -99,16 +99,12 @@ public class TeamBusinessService implements ITeamBusinessService {
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
         Map qIn = new HashMap();
-        Integer offset = (pageIndex - 1) * pageSize;
-        qIn.put("offset", offset);
-        qIn.put("size", pageSize);
+        //读取我的所有团队
         qIn.put("userId", userInfo.getUserId());
-        qIn.put("status", GogoStatus.ACTIVE.toString());
-
-        ArrayList myTeams = iTeamService.listTeam(qIn);
+        ArrayList<TeamUser> teamUsers=iTeamService.listTeamUser(qIn);
 
         Map out = new HashMap();
-        out.put("teams", myTeams);
+        out.put("teams", teamUsers);
         return out;
     }
 
@@ -534,6 +530,8 @@ public class TeamBusinessService implements ITeamBusinessService {
         Map qIn = new HashMap();
         qIn.put("managerId", userInfo.getUserId());
         qIn.put("status", GogoStatus.ACTIVE.toString());
+        qIn.put("offset", 0);
+        qIn.put("size", 100000);
         ArrayList<Team> teams = iTeamService.listTeam(qIn);
         if (teams.size() == 0) {
             //当前用户没有创建的团队，返回0
@@ -594,5 +592,39 @@ public class TeamBusinessService implements ITeamBusinessService {
         qIn.put("status", GogoStatus.CANCEL.toString());
         qIn.put("teamApplyLogId", teamApplyLogId);
         iTeamService.cancelTeamApplyLog(qIn);
+    }
+
+    /**
+     * 用户提交退团申请
+     * @param in
+     * @throws Exception
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void quitTeam(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String teamId=in.get("teamId").toString();
+        String remark=in.get("remark").toString();
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+
+        Team team=iCommonBusinessService.getTeamById(teamId);
+
+        //首先检查用户是否为该团队成员
+
+        //检查用户是否有未完成的任务
+
+        //其他退团条件检查
+
+        //创建退团日志
+        TeamQuitLog teamQuitLog=new TeamQuitLog();
+        teamQuitLog.setCreateTime(new Date());
+        teamQuitLog.setRemark(remark);
+        teamQuitLog.setStatus(GogoStatus.PENDING.toString());
+        teamQuitLog.setTeamId(teamId);
+        teamQuitLog.setTeamQuitLogId(GogoTools.UUID().toString());
+        teamQuitLog.setUserId(userInfo.getUserId());
+
+        iTeamService.createTeamQuitLog(teamQuitLog);
     }
 }

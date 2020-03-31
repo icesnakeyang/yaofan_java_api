@@ -1,5 +1,6 @@
 package com.gogoyang.yaofan.business.task;
 
+import ch.qos.logback.classic.spi.IThrowableProxy;
 import com.gogoyang.yaofan.meta.complete.service.ITaskCompleteService;
 import com.gogoyang.yaofan.meta.point.entity.PointLedger;
 import com.gogoyang.yaofan.meta.point.service.IPointService;
@@ -7,6 +8,7 @@ import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.task.service.ITaskService;
 import com.gogoyang.yaofan.meta.taskLog.service.ITaskLogService;
 import com.gogoyang.yaofan.meta.team.entity.Team;
+import com.gogoyang.yaofan.meta.team.entity.TeamUser;
 import com.gogoyang.yaofan.meta.team.service.ITeamService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
 import com.gogoyang.yaofan.meta.user.service.IUserInfoService;
@@ -127,23 +129,20 @@ public class TaskBusinessService implements ITaskBusinessService {
         UserInfo userInfo = iUserInfoService.getUserInfoByToken(token);
 
         Map qIn=new HashMap();
+        //读取我所在的团队
         qIn.put("userId", userInfo.getUserId());
         qIn.put("status", GogoStatus.ACTIVE.toString());
-        ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(qIn);
-
-        qIn = new HashMap();
-        qIn.put("userId", userInfo.getUserId());
-        qIn.put("status", GogoStatus.GRABBING.toString());
-        if (myTeamViews.size() > 0) {
-            ArrayList<String> teams = new ArrayList<>();
-            for (int i = 0; i < myTeamViews.size(); i++) {
-                teams.add(myTeamViews.get(i).getTeamId());
-            }
-            qIn.put("teams", teams);
+        ArrayList<TeamUser> teamUsers = iTeamService.listTeamUser(qIn);
+        if(teamUsers.size()==0){
+            //我没有加入任何团队
+            throw new Exception("20005");
         }
-
+        ArrayList teamList=new ArrayList();
+        for(int i=0;i<teamUsers.size();i++){
+            teamList.add(teamUsers.get(i).getTeamId());
+        }
+        qIn.put("teamList", teamList);
         ArrayList<Task> tasks = iTaskService.listBiddingTasks(qIn);
-
         Map out = new HashMap();
         out.put("tasks", tasks);
         return out;
@@ -178,20 +177,10 @@ public class TaskBusinessService implements ITaskBusinessService {
             Map qIn=new HashMap();
             qIn.put("userId", userInfo.getUserId());
             qIn.put("status", GogoStatus.ACTIVE.toString());
-            ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(qIn);
-            if (myTeamViews.size() == 0) {
-                //没有加入团队
-                throw new Exception("10015");
-            }
-            //检查用户是否属于该任务的团队
-            int cc = 0;
-            for (int i = 0; i < myTeamViews.size(); i++) {
-                if (myTeamViews.get(i).getTeamId().equals(task.getTeamId())) {
-                    cc++;
-                }
-            }
-            if (cc == 0) {
-                //用户不是团队成员
+            qIn.put("teamId", task.getTeamId());
+            ArrayList<TeamUser> teamUsers = iTeamService.listTeamUser(qIn);
+            if (teamUsers.size() == 0) {
+                //不是当前团队成员
                 throw new Exception("10017");
             }
         }
@@ -367,6 +356,11 @@ public class TaskBusinessService implements ITaskBusinessService {
         return out;
     }
 
+    /**
+     * 修改任务
+     * @param in
+     * @throws Exception
+     */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateTask(Map in) throws Exception {
@@ -397,9 +391,10 @@ public class TaskBusinessService implements ITaskBusinessService {
             throw new Exception("20003");
         }
 
-        TeamView teamView = null;
+        //如果指定了团队Id，检查团队是否存在
+        Team team = null;
         if (teamId != null) {
-            teamView = iCommonBusinessService.getTeamById(teamId);
+            team = iCommonBusinessService.getTeamById(teamId);
         }
 
         Date strtodate = null;
@@ -425,8 +420,8 @@ public class TaskBusinessService implements ITaskBusinessService {
         task.setEndTime(strtodate);
         task.setPoint(point);
         task.setTitle(title);
-        if (teamView != null) {
-            task.setTeamId(teamView.getTeamId());
+        if (team != null) {
+            task.setTeamId(team.getTeamId());
         }
 
         /**
@@ -456,13 +451,13 @@ public class TaskBusinessService implements ITaskBusinessService {
         //读取我的团队集合
         Map qIn=new HashMap();
         qIn.put("userId", userInfo.getUserId());
-        ArrayList<MyTeamView> myTeamViews=iTeamService.listTeam(qIn);
-        if(myTeamViews.size()==0){
+        ArrayList<TeamUser> teamUsers=iTeamService.listTeamUser(qIn);
+        if(teamUsers.size()==0){
             throw new Exception("20005");
         }
         ArrayList teamList=new ArrayList();
-        for(int i=0;i<myTeamViews.size();i++){
-            teamList.add(myTeamViews.get(i).getTeamId());
+        for(int i=0;i<teamUsers.size();i++){
+            teamList.add(teamUsers.get(i).getTeamId());
         }
 
         qIn = new HashMap();

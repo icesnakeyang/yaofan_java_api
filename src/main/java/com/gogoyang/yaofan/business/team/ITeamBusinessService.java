@@ -45,4 +45,11 @@ public interface ITeamBusinessService {
     Map totalMyTeamLogUnread(Map in) throws Exception;
 
     void cancelTeamApplyLog(Map in) throws Exception;
+
+    /**
+     * 用户提交退出团队申请
+     * @param in
+     * @throws Exception
+     */
+    void quitTeam(Map in) throws Exception;
 }

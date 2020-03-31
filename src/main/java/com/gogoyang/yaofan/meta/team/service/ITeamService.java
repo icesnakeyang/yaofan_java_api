@@ -40,6 +40,8 @@ public interface ITeamService {
      * teamId
      * managerId
      * teamName（模糊查询）
+     * offset
+     * size
      * @return
      */
     ArrayList<Team> listTeam(Map qIn) throws Exception;
@@ -157,4 +159,10 @@ public interface ITeamService {
      * @return
      */
     ArrayList<TeamUser> listTeamUser(Map qIn);
+
+    /**
+     * 创建退出团队日志
+     * @param teamQuitLog
+     */
+    void createTeamQuitLog(TeamQuitLog teamQuitLog);
 }

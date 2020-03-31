@@ -51,9 +51,9 @@
             ]]>
         </if>
         and task.status='BIDDING'
-        <if test="teams!=null">
+        <if test="teamList!=null">
             and team_id in
-            <foreach collection="teams" item="team"
+            <foreach collection="teamList" item="team"
                      index="index" open="(" close=")" separator=",">
                 #{team}
             </foreach>

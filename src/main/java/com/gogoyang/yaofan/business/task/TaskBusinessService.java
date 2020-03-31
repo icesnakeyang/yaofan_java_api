@@ -6,8 +6,7 @@ import com.gogoyang.yaofan.meta.point.service.IPointService;
 import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.task.service.ITaskService;
 import com.gogoyang.yaofan.meta.taskLog.service.ITaskLogService;
-import com.gogoyang.yaofan.meta.team.entity.MyTeamView;
-import com.gogoyang.yaofan.meta.team.entity.TeamView;
+import com.gogoyang.yaofan.meta.team.entity.Team;
 import com.gogoyang.yaofan.meta.team.service.ITeamService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
 import com.gogoyang.yaofan.meta.user.service.IUserInfoService;
@@ -15,11 +14,9 @@ import com.gogoyang.yaofan.utility.GogoActType;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLInput;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -63,9 +60,9 @@ public class TaskBusinessService implements ITaskBusinessService {
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        TeamView teamView = null;
+        Team team = null;
         if (teamId != null) {
-            teamView = iCommonBusinessService.getTeamById(teamId);
+            team = iCommonBusinessService.getTeamById(teamId);
         }
 
         Date strtodate = null;
@@ -96,8 +93,8 @@ public class TaskBusinessService implements ITaskBusinessService {
         task.setTaskId(GogoTools.UUID().toString());
         task.setTitle(title);
         task.setStatus(GogoStatus.GRABBING.toString());
-        if (teamView != null) {
-            task.setTeamId(teamView.getTeamId());
+        if (team != null) {
+            task.setTeamId(team.getTeamId());
         }
 
         /**

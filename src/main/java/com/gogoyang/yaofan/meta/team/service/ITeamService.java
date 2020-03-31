@@ -6,33 +6,49 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public interface ITeamService {
+    /**
+     * 创建一个团队
+     * @param team
+     * @return
+     * @throws Exception
+     */
     Team createTeam(Team team) throws Exception;
 
-    Team getTeamByName(String name) throws Exception;
+    /**
+     * 根据teamId读取团队详情
+     * @param qIn
+     * teamId
+     * teamName
+     * @return
+     * @throws Exception
+     */
+    Team getTeam(Map qIn) throws Exception;
 
-    MyTeam createMyTeam(MyTeam myTeam) throws Exception;
+    /**
+     * 创建一个新的团队用户链接
+     * @param teamUser
+     * @return
+     * @throws Exception
+     */
+    void createTeamUser(TeamUser teamUser) throws Exception;
 
     /**
      * 查询团队列表
      * @param qIn
-     * userId
+     * createUserId
      * status
      * teamId
+     * managerId
+     * teamName（模糊查询）
      * @return
-     * @throws Exception
      */
-    ArrayList<MyTeamView> listTeam(Map qIn) throws Exception;
+    ArrayList<Team> listTeam(Map qIn) throws Exception;
 
     /**
-     * 根据团队名称关键字搜索团队
-     * @param qIn
-     * @return
+     * 创建团队申请日志
+     * @param teamApplyLog
      * @throws Exception
      */
-    ArrayList<Team> searchTeam(Map qIn) throws Exception;
-
-    TeamView getTeamByTeamId(String teamId) throws Exception;
-
     void createTeamApplyLog(TeamApplyLog teamApplyLog) throws Exception;
 
     /**
@@ -48,7 +64,13 @@ public interface ITeamService {
      */
     ArrayList<TeamApplyLog> listTeamApplyLog(Map qIn) throws Exception;
 
-    TeamApplyView getTeamApplyLog(String applyId) throws Exception;
+    /**
+     * 根据teamApplyLogId查询团队申请日志详情
+     * @param teamApplyLogId
+     * @return
+     * @throws Exception
+     */
+    TeamApplyLog getTeamApplyLog(String teamApplyLogId) throws Exception;
 
     /**
      * 统计用户未读的团队申请日志
@@ -111,15 +133,6 @@ public interface ITeamService {
     void deleteTeam(String teamId) throws Exception;
 
     /**
-     * 查询所有我创建的团队
-     * @param qIn
-     * userId:创建人Id
-     * status：状态(可选)
-     * @return
-     */
-    ArrayList<TeamView> listMyCreateTeam(Map qIn) throws Exception;
-
-    /**
      * 取消加入团队申请
      * @param qIn
      * status
@@ -134,4 +147,14 @@ public interface ITeamService {
      * @return
      */
     Integer totalTeamApplyLogUnReadProcess(Map qIn);
+
+    /**
+     * 查询一个团队用户信息
+     * @param qIn
+     * teamId
+     * userId
+     * status
+     * @return
+     */
+    ArrayList<TeamUser> listTeamUser(Map qIn);
 }

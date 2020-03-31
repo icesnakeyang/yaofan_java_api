@@ -2,35 +2,23 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gogoyang.yaofan.meta.team.dao.TeamApplyLogDao">
 
-    <resultMap id="teamApplyMap" type="com.gogoyang.yaofan.meta.team.entity.TeamApplyLog">
-        <result property="teamApplyLogId" column="team_apply_log_id"/>
-        <result property="teamId" column="team_id"/>
-        <result property="applyUserId" column="apply_user_id"/>
-        <result property="applyRemark" column="apply_remark"/>
-        <result property="createTime" column="create_time"/>
-        <result property="processUserId" column="process_user_id"/>
-        <result property="readTime" column="read_time"/>
-        <result property="processRemark" column="process_remark"/>
-        <result property="processTime" column="process_time"/>
-        <result property="processReadTime" column="process_read_time"/>
-    </resultMap>
-
-    <resultMap id="teamApplyViewMap" type="com.gogoyang.yaofan.meta.team.entity.TeamApplyView">
+    <resultMap id="teamApplyLogMap" type="com.gogoyang.yaofan.meta.team.entity.TeamApplyLog">
         <result property="teamApplyLogId" column="team_apply_log_id"/>
         <result property="teamId" column="team_id"/>
         <result property="teamName" column="team_name"/>
         <result property="applyUserId" column="apply_user_id"/>
         <result property="applyUserName" column="apply_user_name"/>
+        <result property="teamManagerId" column="team_manager_id"/>
+        <result property="teamManagerName" column="team_manager_name"/>
         <result property="createTime" column="create_time"/>
-        <result property="processUserId" column="process_user_id"/>
-        <result property="processUserName" column="process_user_name"/>
+        <result property="teamName" column="team_name"/>
         <result property="applyRemark" column="apply_remark"/>
         <result property="processRemark" column="process_remark"/>
         <result property="processTime" column="process_time"/>
+        <result property="processUserId" column="process_user_id"/>
+        <result property="processUserName" column="process_user_name"/>
         <result property="processReadTime" column="process_read_time"/>
         <result property="readTime" column="read_time"/>
-        <result property="teamManagerId" column="manager_id"/>
-        <result property="teamManagerName" column="team_manager_name"/>
     </resultMap>
 
     <!--创建一个团队申请日志-->
@@ -43,7 +31,7 @@
 
     <!--读取团队申请日志列表-->
     <select id="listTeamApplyLog" parameterType="map"
-            resultMap="teamApplyViewMap">
+            resultMap="teamApplyLogMap">
         select team_apply_log.ids,
         team_apply_log_id,
         team_apply_log.team_id,
@@ -94,9 +82,9 @@
         limit #{offset},#{size}
     </select>
 
-    <!--查询团队申请日志详情-->
+    <!--根据teamApplyLogId查询团队申请日志详情-->
     <select id="getTeamApplyLog" parameterType="java.lang.String"
-            resultMap="teamApplyViewMap">
+            resultMap="teamApplyLogMap">
        select
        team_apply_log.ids,
         team_apply_log_id,

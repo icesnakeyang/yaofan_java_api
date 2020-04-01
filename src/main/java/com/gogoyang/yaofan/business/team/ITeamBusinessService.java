@@ -68,4 +68,8 @@ public interface ITeamBusinessService {
      * @throws Exception
      */
     Map listTeamQuitLogProcess(Map in) throws Exception;
+
+    Map getTeamQuitLog(Map in) throws Exception;
+
+    void cancelTeamQuitLog(Map in) throws Exception;
 }

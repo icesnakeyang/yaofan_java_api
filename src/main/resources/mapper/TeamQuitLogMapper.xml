@@ -31,29 +31,76 @@
     <!--查询退团日志列表-->
     <select id="listTeamQuitLog" parameterType="map" resultMap="teamQuitLogMap">
         select team_quit_log.ids,
+        team_quit_log_id,
+        team_quit_log.team_id,
+        team.name as team_name,
+        team_quit_log.user_id,
+        create_user.name as user_name,
+        remark,
+        team_quit_log.create_time,
+        team_quit_log.status,
+        manager_id,
+        process_time
+        from (team_quit_log
+        left join team on team_quit_log.team_id=team.team_id)
+        left join user_info create_user on team_quit_log.user_id=create_user.user_id
+        where 1=1
+        <choose>
+            <when test="userId">
+                and team_quit_log.user_id=#{userId}
+            </when>
+        </choose>
+        <choose>
+            <when test="managerId!=null">
+                and manager_id=#{managerId}
+            </when>
+        </choose>
+        order by team_quit_log.ids desc
+        limit #{offset},#{size}
+    </select>
+
+    <!--查询退团日志详情-->
+    <select id="getTeamQuitLog" parameterType="map" resultMap="teamQuitLogMap">
+        select team_quit_log.ids,
        team_quit_log_id,
        team_quit_log.team_id,
-       name as team_name,
-       user_id,
+       team.name as team_name,
+       team_quit_log.user_id,
+       create_user.name as user_name,
        remark,
        team_quit_log.create_time,
        team_quit_log.status,
        manager_id,
-       process_time
-       from team_quit_log
-left join team on team_quit_log.team_id=team.team_id
+       process_time,
+       process_user_id,
+       process_user.name as process_user_name,
+       process_remark
+       from ((team_quit_log
+left join team on team_quit_log.team_id=team.team_id)
+left join user_info create_user on team_quit_log.user_id=create_user.user_id)
+left join user_info process_user on process_user_id=process_user.user_id
 where 1=1
-<choose>
-    <when test="userId">
-        and user_id=#{userId}
-    </when>
-</choose>
-<choose>
-    <when test="managerId!=null">
-        and manager_id=#{managerId}
-    </when>
-</choose>
-order by team_quit_log.ids desc
-limit #{offset},#{size}
+and team_quit_log_id=#{teamQuitLogId}
     </select>
+
+    <!--处理团队申请-->
+    <update id="processTeamQuitLog" parameterType="map">
+        update team_quit_log
+        <set>
+            <if test="status!=null">
+                status=#{status},
+            </if>
+            <if test="processTime!=null">
+                process_time=#{processTime},
+            </if>
+            <if test="processUserId!=null">
+                process_user_id=#{processUserId},
+            </if>
+            <if test="processRemark!=null">
+                process_remark=#{processRemark}
+            </if>
+        </set>
+        where team_quit_log_id=#{teamQuitLogId}
+    </update>
+
 </mapper>

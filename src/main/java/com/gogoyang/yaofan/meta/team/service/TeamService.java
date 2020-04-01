@@ -167,7 +167,7 @@ public class TeamService implements ITeamService {
      *            teamApplyLogId
      */
     @Override
-    public void setTeamApplyLogReadTimeProcess(Map qIn) {
+    public void setTeamApplyLogReadTimeProcess(Map qIn) throws Exception {
         teamApplyLogDao.setTeamApplyLogReadTimeProcess(qIn);
     }
 
@@ -210,7 +210,7 @@ public class TeamService implements ITeamService {
      * @return
      */
     @Override
-    public Integer totalTeamApplyLogUnReadProcess(Map qIn) {
+    public Integer totalTeamApplyLogUnReadProcess(Map qIn) throws Exception {
         Integer total = teamApplyLogDao.totalTeamApplyLogUnReadProcess(qIn);
         return total;
     }
@@ -224,7 +224,7 @@ public class TeamService implements ITeamService {
      * @return
      */
     @Override
-    public ArrayList<TeamUser> listTeamUser(Map qIn) {
+    public ArrayList<TeamUser> listTeamUser(Map qIn) throws Exception {
         ArrayList<TeamUser> teamUsers = teamUserDao.listTeamUser(qIn);
         return teamUsers;
     }
@@ -235,22 +235,46 @@ public class TeamService implements ITeamService {
      * @param teamQuitLog
      */
     @Override
-    public void createTeamQuitLog(TeamQuitLog teamQuitLog) {
+    public void createTeamQuitLog(TeamQuitLog teamQuitLog) throws Exception {
         teamQuitDao.createTeamQuitLog(teamQuitLog);
     }
 
     /**
      * 查询退团日志列表
-     * @param qIn
-     * userId
-     * managerId
-     * offset
-     * size
+     *
+     * @param qIn userId
+     *            managerId
+     *            offset
+     *            size
      * @return
      */
     @Override
-    public ArrayList<TeamQuitLog> listTeamQuitLog(Map qIn) {
+    public ArrayList<TeamQuitLog> listTeamQuitLog(Map qIn) throws Exception {
         ArrayList<TeamQuitLog> teamQuitLogs = teamQuitDao.listTeamQuitLog(qIn);
         return teamQuitLogs;
+    }
+
+    /**
+     * 查询退团日志详情
+     * @param qIn teamQuitLogId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public TeamQuitLog getTeamQuitLog(Map qIn) throws Exception {
+        TeamQuitLog teamQuitLog = teamQuitDao.getTeamQuitLog(qIn);
+        return teamQuitLog;
+    }
+
+    /**
+     * 处理团队申请
+     * @param qIn
+     * status
+     * processTime
+     * processUserId
+     */
+    @Override
+    public void processTeamQuitLog(Map qIn) {
+        teamQuitDao.processTeamQuitLog(qIn);
     }
 }

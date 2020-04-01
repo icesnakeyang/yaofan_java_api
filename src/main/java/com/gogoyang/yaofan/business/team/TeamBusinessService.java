@@ -638,6 +638,7 @@ public class TeamBusinessService implements ITeamBusinessService {
 
     /**
      * 查询我发起的退团申请列表
+     *
      * @param in
      * @return
      * @throws Exception
@@ -665,28 +666,103 @@ public class TeamBusinessService implements ITeamBusinessService {
 
     /**
      * 查询我收到的退团申请列表
+     *
      * @param in
      * @return
      * @throws Exception
      */
     @Override
     public Map listTeamQuitLogProcess(Map in) throws Exception {
+        String token = in.get("token").toString();
+        Integer pageIndex = (Integer) in.get("pageIndex");
+        Integer pageSize = (Integer) in.get("pageSize");
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        Map qIn = new HashMap();
+        Integer offset = (pageIndex - 1) * pageSize;
+        qIn.put("offset", offset);
+        qIn.put("size", pageSize);
+        qIn.put("managerId", userInfo.getUserId());
+        ArrayList<TeamQuitLog> teamQuitLogs = iTeamService.listTeamQuitLog(qIn);
+
+        Map out = new HashMap();
+        out.put("teamQuitLogs", teamQuitLogs);
+
+        return out;
+    }
+
+    @Override
+    public Map getTeamQuitLog(Map in) throws Exception {
+        String token = in.get("token").toString();
+        String teamQuitLogId = in.get("teamQuitLogId").toString();
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        Map qIn = new HashMap();
+        qIn.put("teamQuitLogId", teamQuitLogId);
+        TeamQuitLog teamQuitLog = iTeamService.getTeamQuitLog(qIn);
+
+        Map out = new HashMap();
+        out.put("teamQuitLog", teamQuitLog);
+
+        /**
+         * 检查当前用户身份，申请人，处理人
+         */
+        if (teamQuitLog.getUserId().equals(userInfo.getUserId())) {
+            //当前用户是申请人
+            out.put("isApply", true);
+        } else {
+            if (teamQuitLog.getProcessUserId() != null) {
+                //已处理
+                if (teamQuitLog.getProcessUserId().equals(userInfo.getUserId())) {
+                    //当前用户是处理人
+                    out.put("isProcess", true);
+                }
+            } else {
+                //未处理，查询团队负责人
+                qIn = new HashMap();
+                qIn.put("teamId", teamQuitLog.getTeamId());
+                Team team = iTeamService.getTeam(qIn);
+                if (team != null) {
+                    if (team.getManagerId().equals(userInfo.getUserId())) {
+                        //当前用户是团队管理员
+                        out.put("isProcess", true);
+                    }
+                }
+            }
+        }
+
+        return out;
+    }
+
+    /**
+     * 取消退出团队申请
+     * @param in
+     * @throws Exception
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void cancelTeamQuitLog(Map in) throws Exception {
         String token=in.get("token").toString();
-        Integer pageIndex=(Integer)in.get("pageIndex");
-        Integer pageSize=(Integer)in.get("pageSize");
+        String teamQuitLogId=in.get("teamQuitLogId").toString();
 
         UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
 
         Map qIn=new HashMap();
-        Integer offset=(pageIndex-1)*pageSize;
-        qIn.put("offset", offset);
-        qIn.put("size", pageSize);
-        qIn.put("managerId", userInfo.getUserId());
-        ArrayList<TeamQuitLog> teamQuitLogs=iTeamService.listTeamQuitLog(qIn);
+        qIn.put("teamQuitLogId",teamQuitLogId);
+        TeamQuitLog teamQuitLog=iTeamService.getTeamQuitLog(qIn);
 
-        Map out=new HashMap();
-        out.put("teamQuitLogs", teamQuitLogs);
+        if(!teamQuitLog.getUserId().equals(userInfo.getUserId())){
+            //不是本人的申请，不能取消
+            throw new Exception("20007");
+        }
 
-        return out;
+        qIn=new HashMap();
+        qIn.put("teamQuitLogId", teamQuitLogId);
+        qIn.put("status", GogoStatus.CANCEL);
+        qIn.put("processTime", new Date());
+        qIn.put("processUserId", userInfo.getUserId());
+        iTeamService.processTeamQuitLog(qIn);
     }
 }

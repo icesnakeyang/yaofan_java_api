@@ -526,7 +526,7 @@ public class TeamController {
             in.put("token", token);
             in.put("teamApplyLogId", request.getTeamApplyLogId());
             logMap.put("token", token);
-            logMap.put("actType", GogoActType.CANCEL_TEAM_APPLY);
+            logMap.put("GogoActType", GogoActType.CANCEL_TEAM_APPLY);
             logMap.put("memo", "teamApplyLog:"+request.getTeamApplyLogId());
             iTeamBusinessService.cancelTeamApplyLog(in);
             logMap.put("result", true);
@@ -568,7 +568,7 @@ public class TeamController {
             in.put("teamId", request.getTeamId());
             in.put("remark", request.getRemark());
             logMap.put("token", token);
-            logMap.put("actType", GogoActType.QUIT_TEAM);
+            logMap.put("GogoActType", GogoActType.QUIT_TEAM);
             memoMap.put("teamId", request.getTeamId());
             iTeamBusinessService.quitTeam(in);
             memoMap.put("result", "success");
@@ -611,7 +611,7 @@ public class TeamController {
             in.put("pageIndex", request.getPageIndex());
             in.put("pageSize", request.getPageSize());
             logMap.put("token", token);
-            logMap.put("actType", GogoActType.LIST_TEAM_QUIT_LOG);
+            logMap.put("GogoActType", GogoActType.LIST_TEAM_QUIT_LOG);
             Map out=iTeamBusinessService.listTeamQuitLogApply(in);
             response.setData(out);
             memoMap.put("result", "success");
@@ -654,9 +654,92 @@ public class TeamController {
             in.put("pageIndex", request.getPageIndex());
             in.put("pageSize", request.getPageSize());
             logMap.put("token", token);
-            logMap.put("actType", GogoActType.LIST_TEAM_QUIT_LOG);
+            logMap.put("GogoActType", GogoActType.LIST_TEAM_QUIT_LOG);
             Map out=iTeamBusinessService.listTeamQuitLogProcess(in);
             response.setData(out);
+            memoMap.put("result", "success");
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("result", "fail");
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        }catch (Exception ex3){
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * 查询退团申请详情
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/getTeamQuitLog")
+    public Response getTeamQuitLog(@RequestBody TeamRequest request,
+                                    HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap=new HashMap();
+        Map memoMap=new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("teamQuitLogId", request.getTeamQuitLogId());
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.GET_TEAM_QUIT);
+            Map out=iTeamBusinessService.getTeamQuitLog(in);
+            response.setData(out);
+            memoMap.put("result", "success");
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("result", "fail");
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        }catch (Exception ex3){
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * 取消退团申请
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/cancelTeamQuitLog")
+    public Response cancelTeamQuitLog(@RequestBody TeamRequest request,
+                                    HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap=new HashMap();
+        Map memoMap=new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("teamQuitLogId", request.getTeamQuitLogId());
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.CANCEL_TEAM_QUIT_LOG);
+            iTeamBusinessService.cancelTeamQuitLog(in);
             memoMap.put("result", "success");
         } catch (Exception ex) {
             try {

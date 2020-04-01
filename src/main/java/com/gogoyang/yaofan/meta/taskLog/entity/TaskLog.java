@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * 任务日志类
+ */
 @Data
 public class TaskLog {
     private Integer ids;

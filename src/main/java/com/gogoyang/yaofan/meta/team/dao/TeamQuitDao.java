@@ -24,4 +24,22 @@ public interface TeamQuitDao {
      * @return
      */
     ArrayList<TeamQuitLog> listTeamQuitLog(Map qIn);
+
+    /**
+     * 查询退团日志详情
+     * @param qIn
+     * teamQuitLogId
+     * @return
+     */
+    TeamQuitLog getTeamQuitLog(Map qIn);
+
+    /**
+     * 处理团队申请
+     * @param qIn
+     * status
+     * processTime
+     * processUserId
+     * processRemark
+     */
+    void processTeamQuitLog(Map qIn);
 }

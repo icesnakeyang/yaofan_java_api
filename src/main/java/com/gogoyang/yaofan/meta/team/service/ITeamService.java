@@ -165,4 +165,15 @@ public interface ITeamService {
      * @param teamQuitLog
      */
     void createTeamQuitLog(TeamQuitLog teamQuitLog);
+
+    /**
+     * 查询退团日志列表
+     * @param qIn
+     * userId
+     * managerId
+     * offset
+     * size
+     * @return
+     */
+    ArrayList<TeamQuitLog> listTeamQuitLog(Map qIn);
 }

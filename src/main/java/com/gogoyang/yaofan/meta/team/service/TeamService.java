@@ -31,6 +31,7 @@ public class TeamService implements ITeamService {
 
     /**
      * 创建一个团队
+     *
      * @param team
      * @return
      * @throws Exception
@@ -43,9 +44,9 @@ public class TeamService implements ITeamService {
 
     /**
      * 根据teamId读取团队详情
-     * @param qIn
-     * teamId
-     * teamName
+     *
+     * @param qIn teamId
+     *            teamName
      * @return
      * @throws Exception
      */
@@ -57,6 +58,7 @@ public class TeamService implements ITeamService {
 
     /**
      * 创建一个新的团队用户链接
+     *
      * @param teamUser
      * @throws Exception
      */
@@ -66,15 +68,13 @@ public class TeamService implements ITeamService {
     }
 
     /**
-     *
-     * @param qIn
-     * createUserId
-     * status
-     * teamId
-     * managerId
-     * teamName（模糊查询）
-     * offset
-     * size
+     * @param qIn createUserId
+     *            status
+     *            teamId
+     *            managerId
+     *            teamName（模糊查询）
+     *            offset
+     *            size
      * @return
      * @throws Exception
      */
@@ -86,6 +86,7 @@ public class TeamService implements ITeamService {
 
     /**
      * 创建团队申请日志
+     *
      * @param teamApplyLog
      * @throws Exception
      */
@@ -96,13 +97,13 @@ public class TeamService implements ITeamService {
 
     /**
      * 读取团队申请日志列表
-     * @param qIn
-     * applyUserId
-     * processUserId
-     * status
-     * teamList
-     * offset
-     * size
+     *
+     * @param qIn applyUserId
+     *            processUserId
+     *            status
+     *            teamList
+     *            offset
+     *            size
      * @return
      * @throws Exception
      */
@@ -114,6 +115,7 @@ public class TeamService implements ITeamService {
 
     /**
      * 根据teamApplyLogId查询团队申请日志详情
+     *
      * @param teamApplyLogId
      * @return
      * @throws Exception
@@ -151,9 +153,8 @@ public class TeamService implements ITeamService {
     /**
      * 设置团队申请日志的阅读时间
      *
-     * @param qIn
-     * readTime
-     * teamApplyLogId
+     * @param qIn readTime
+     *            teamApplyLogId
      * @throws Exception
      */
     @Override
@@ -162,10 +163,8 @@ public class TeamService implements ITeamService {
     }
 
     /**
-     *
-     * @param qIn
-     * readTime
-     * teamApplyLogId
+     * @param qIn readTime
+     *            teamApplyLogId
      */
     @Override
     public void setTeamApplyLogReadTimeProcess(Map qIn) {
@@ -218,24 +217,40 @@ public class TeamService implements ITeamService {
 
     /**
      * 查询一个团队用户信息
-     * @param qIn
-     * teamId
-     * userId
-     * status
+     *
+     * @param qIn teamId
+     *            userId
+     *            status
      * @return
      */
     @Override
     public ArrayList<TeamUser> listTeamUser(Map qIn) {
-        ArrayList<TeamUser> teamUsers=teamUserDao.listTeamUser(qIn);
+        ArrayList<TeamUser> teamUsers = teamUserDao.listTeamUser(qIn);
         return teamUsers;
     }
 
     /**
      * 创建退出团队日志
+     *
      * @param teamQuitLog
      */
     @Override
     public void createTeamQuitLog(TeamQuitLog teamQuitLog) {
         teamQuitDao.createTeamQuitLog(teamQuitLog);
+    }
+
+    /**
+     * 查询退团日志列表
+     * @param qIn
+     * userId
+     * managerId
+     * offset
+     * size
+     * @return
+     */
+    @Override
+    public ArrayList<TeamQuitLog> listTeamQuitLog(Map qIn) {
+        ArrayList<TeamQuitLog> teamQuitLogs = teamQuitDao.listTeamQuitLog(qIn);
+        return teamQuitLogs;
     }
 }

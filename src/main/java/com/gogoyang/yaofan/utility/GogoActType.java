@@ -28,5 +28,6 @@ public enum GogoActType {
     DELETE_TEAM,
     UPDATE_TASK,
     CANCEL_TEAM_APPLY,
-    QUIT_TEAM
+    QUIT_TEAM,
+    LIST_TEAM_QUIT_LOG
 }

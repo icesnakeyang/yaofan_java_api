@@ -52,4 +52,20 @@ public interface ITeamBusinessService {
      * @throws Exception
      */
     void quitTeam(Map in) throws Exception;
+
+    /**
+     * 查询我发起的退团申请列表
+     * @param in
+     * @return
+     * @throws Exception
+     */
+    Map listTeamQuitLogApply(Map in) throws Exception;
+
+    /**
+     * 查询我收到的退团申请列表
+     * @param in
+     * @return
+     * @throws Exception
+     */
+    Map listTeamQuitLogProcess(Map in) throws Exception;
 }

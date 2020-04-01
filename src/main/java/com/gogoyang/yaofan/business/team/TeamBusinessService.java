@@ -1,5 +1,6 @@
 package com.gogoyang.yaofan.business.team;
 
+import com.gogoyang.yaofan.meta.team.dao.TeamQuitDao;
 import com.gogoyang.yaofan.meta.team.entity.*;
 import com.gogoyang.yaofan.meta.team.service.ITeamService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
@@ -101,7 +102,7 @@ public class TeamBusinessService implements ITeamBusinessService {
         Map qIn = new HashMap();
         //读取我的所有团队
         qIn.put("userId", userInfo.getUserId());
-        ArrayList<TeamUser> teamUsers=iTeamService.listTeamUser(qIn);
+        ArrayList<TeamUser> teamUsers = iTeamService.listTeamUser(qIn);
 
         Map out = new HashMap();
         out.put("teams", teamUsers);
@@ -110,6 +111,7 @@ public class TeamBusinessService implements ITeamBusinessService {
 
     /**
      * 根据团队名称关键字搜索团队
+     *
      * @param in
      * @return
      * @throws Exception
@@ -279,6 +281,9 @@ public class TeamBusinessService implements ITeamBusinessService {
 
         Map qIn = new HashMap();
         qIn.put("managerId", userInfo.getUserId());
+
+        qIn.put("offset", 0);
+        qIn.put("size", 9999);
         ArrayList<Team> teams = iTeamService.listTeam(qIn);
         if (teams.size() == 0) {
             //没有团队，直接退出
@@ -401,6 +406,7 @@ public class TeamBusinessService implements ITeamBusinessService {
 
     /**
      * 通过团队加入申请
+     *
      * @param in
      * @throws Exception
      */
@@ -452,6 +458,7 @@ public class TeamBusinessService implements ITeamBusinessService {
 
     /**
      * 修改我的团队信息
+     *
      * @param in
      * @throws Exception
      */
@@ -465,7 +472,7 @@ public class TeamBusinessService implements ITeamBusinessService {
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        Map qIn=new HashMap();
+        Map qIn = new HashMap();
         qIn.put("teamId", teamId);
         Team team = iTeamService.getTeam(qIn);
 
@@ -596,19 +603,20 @@ public class TeamBusinessService implements ITeamBusinessService {
 
     /**
      * 用户提交退团申请
+     *
      * @param in
      * @throws Exception
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void quitTeam(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String teamId=in.get("teamId").toString();
-        String remark=in.get("remark").toString();
+        String token = in.get("token").toString();
+        String teamId = in.get("teamId").toString();
+        String remark = in.get("remark").toString();
 
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        Team team=iCommonBusinessService.getTeamById(teamId);
+        Team team = iCommonBusinessService.getTeamById(teamId);
 
         //首先检查用户是否为该团队成员
 
@@ -617,7 +625,7 @@ public class TeamBusinessService implements ITeamBusinessService {
         //其他退团条件检查
 
         //创建退团日志
-        TeamQuitLog teamQuitLog=new TeamQuitLog();
+        TeamQuitLog teamQuitLog = new TeamQuitLog();
         teamQuitLog.setCreateTime(new Date());
         teamQuitLog.setRemark(remark);
         teamQuitLog.setStatus(GogoStatus.PENDING.toString());
@@ -626,5 +634,59 @@ public class TeamBusinessService implements ITeamBusinessService {
         teamQuitLog.setUserId(userInfo.getUserId());
 
         iTeamService.createTeamQuitLog(teamQuitLog);
+    }
+
+    /**
+     * 查询我发起的退团申请列表
+     * @param in
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map listTeamQuitLogApply(Map in) throws Exception {
+        String token = in.get("token").toString();
+        Integer pageIndex = (Integer) in.get("pageIndex");
+        Integer pageSize = (Integer) in.get("pageSize");
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        Map qIn = new HashMap();
+        Integer offset = (pageIndex - 1) * pageSize;
+        qIn.put("offset", offset);
+        qIn.put("size", pageSize);
+        qIn.put("userId", userInfo.getUserId());
+        ArrayList<TeamQuitLog> teamQuitLogs = iTeamService.listTeamQuitLog(qIn);
+
+        Map out = new HashMap();
+        out.put("teamQuitLogs", teamQuitLogs);
+
+        return out;
+    }
+
+    /**
+     * 查询我收到的退团申请列表
+     * @param in
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map listTeamQuitLogProcess(Map in) throws Exception {
+        String token=in.get("token").toString();
+        Integer pageIndex=(Integer)in.get("pageIndex");
+        Integer pageSize=(Integer)in.get("pageSize");
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+
+        Map qIn=new HashMap();
+        Integer offset=(pageIndex-1)*pageSize;
+        qIn.put("offset", offset);
+        qIn.put("size", pageSize);
+        qIn.put("managerId", userInfo.getUserId());
+        ArrayList<TeamQuitLog> teamQuitLogs=iTeamService.listTeamQuitLog(qIn);
+
+        Map out=new HashMap();
+        out.put("teamQuitLogs", teamQuitLogs);
+
+        return out;
     }
 }

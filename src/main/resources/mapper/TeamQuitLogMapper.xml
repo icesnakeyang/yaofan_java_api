@@ -27,4 +27,33 @@
         values
         (#{teamQuitLogId}, #{teamId},#{userId}, #{remark}, #{createTime}, #{status})
     </insert>
+
+    <!--查询退团日志列表-->
+    <select id="listTeamQuitLog" parameterType="map" resultMap="teamQuitLogMap">
+        select team_quit_log.ids,
+       team_quit_log_id,
+       team_quit_log.team_id,
+       name as team_name,
+       user_id,
+       remark,
+       team_quit_log.create_time,
+       team_quit_log.status,
+       manager_id,
+       process_time
+       from team_quit_log
+left join team on team_quit_log.team_id=team.team_id
+where 1=1
+<choose>
+    <when test="userId">
+        and user_id=#{userId}
+    </when>
+</choose>
+<choose>
+    <when test="managerId!=null">
+        and manager_id=#{managerId}
+    </when>
+</choose>
+order by team_quit_log.ids desc
+limit #{offset},#{size}
+    </select>
 </mapper>

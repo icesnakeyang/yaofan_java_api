@@ -469,4 +469,86 @@ public class TaskBusinessService implements ITaskBusinessService {
         out.put("tasks", tasks);
         return out;
     }
+
+    @Override
+    public Map listMyPartyATasksDetail(Map in) throws Exception {
+        String token = in.get("token").toString();
+        Integer pageIndex = (Integer) in.get("pageIndex");
+        Integer pageSize = (Integer) in.get("pageSize");
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        Map qIn = new HashMap();
+        qIn.put("partyAId", userInfo.getUserId());
+        Integer offset = (pageIndex - 1) * pageSize;
+        qIn.put("offset", offset);
+        qIn.put("size", pageSize);
+        ArrayList<Task> tasks = iTaskService.listMyTasksDetailPartyAOrB(qIn);
+
+        /**
+         * 读取task的统计信息
+         */
+        ArrayList list = new ArrayList();
+        for (int i = 0; i < tasks.size(); i++) {
+            Map map = new HashMap();
+            map.put("task", tasks.get(i));
+            //日志总数
+            Integer totalTaskLog = iTaskLogService.totalTaskLog(tasks.get(i).getTaskId());
+            map.put("totalTaskLog", totalTaskLog);
+
+            //未阅读的日志总数
+            Integer totalUnreadTaskLog = iTaskLogService.totalTaskLogUnread(tasks.get(i).getTaskId(), userInfo.getUserId());
+            map.put("totalUnreadTaskLog", totalUnreadTaskLog);
+
+            //未阅读的完成日志
+            Integer totalUnreadComplete = iTaskCompleteService.totalCompleteUnread(tasks.get(i).getTaskId(), userInfo.getUserId());
+            map.put("totalUnreadTaskComplete", totalUnreadComplete);
+
+            list.add(map);
+        }
+        Map out = new HashMap();
+        out.put("tasks", list);
+        return out;
+    }
+
+    @Override
+    public Map listMyPartyBTasksDetail(Map in) throws Exception {
+        String token = in.get("token").toString();
+        Integer pageIndex = (Integer) in.get("pageIndex");
+        Integer pageSize = (Integer) in.get("pageSize");
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        Map qIn = new HashMap();
+        qIn.put("partyBId", userInfo.getUserId());
+        Integer offset = (pageIndex - 1) * pageSize;
+        qIn.put("offset", offset);
+        qIn.put("size", pageSize);
+        ArrayList<Task> tasks = iTaskService.listMyTasksDetailPartyAOrB(qIn);
+
+        /**
+         * 读取task的统计信息
+         */
+        ArrayList list = new ArrayList();
+        for (int i = 0; i < tasks.size(); i++) {
+            Map map = new HashMap();
+            map.put("task", tasks.get(i));
+            //日志总数
+            Integer totalTaskLog = iTaskLogService.totalTaskLog(tasks.get(i).getTaskId());
+            map.put("totalTaskLog", totalTaskLog);
+
+            //未阅读的日志总数
+            Integer totalUnreadTaskLog = iTaskLogService.totalTaskLogUnread(tasks.get(i).getTaskId(), userInfo.getUserId());
+            map.put("totalUnreadTaskLog", totalUnreadTaskLog);
+
+            //未阅读的完成日志
+            Integer totalUnreadComplete = iTaskCompleteService.totalCompleteUnread(tasks.get(i).getTaskId(), userInfo.getUserId());
+            map.put("totalUnreadTaskComplete", totalUnreadComplete);
+
+            list.add(map);
+        }
+        Map out = new HashMap();
+        out.put("tasks", list);
+        return out;
+    }
 }

@@ -25,6 +25,11 @@ public class TaskLogBusinessService implements ITaskLogBusinessService {
         this.iTaskLogService = iTaskLogService;
     }
 
+    /**
+     * 创建任务日志
+     * @param in
+     * @throws Exception
+     */
     @Override
     public void createTaskLog(Map in) throws Exception {
         String token = in.get("token").toString();

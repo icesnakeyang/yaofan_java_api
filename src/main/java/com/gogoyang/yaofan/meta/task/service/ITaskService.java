@@ -59,12 +59,26 @@ public interface ITaskService {
     Map totalPointIn(Map qIn) throws Exception;
 
     /**
-     * 读取任务列表
+     * 读取我的任务（同时包括我是甲方或乙方）包括详情
      * @param qIn
+     * userId
+     * offset
+     * size
      * @return
      * @throws Exception
      */
     ArrayList<Task> listMyTasksDetail(Map qIn) throws Exception;
+
+    /**
+     * 读取我的任务（我是甲方或者我是乙方）包括详情
+     * @param qIn
+     * partyAId
+     * partyBId
+     * offset
+     * size
+     * @return
+     */
+    ArrayList<Task> listMyTasksDetailPartyAOrB(Map qIn);
 
     void updateTask(Task task) throws Exception;
 

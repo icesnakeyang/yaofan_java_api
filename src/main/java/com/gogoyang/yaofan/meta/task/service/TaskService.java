@@ -113,9 +113,33 @@ public class TaskService implements ITaskService {
         return taskDao.totalPointIn(qIn);
     }
 
+    /**
+     * 读取我的任务（同时包括我是甲方或乙方）包括详情
+     * @param qIn
+     * userId
+     * offset
+     * size
+     * @return
+     * @throws Exception
+     */
     @Override
     public ArrayList<Task> listMyTasksDetail(Map qIn) throws Exception {
         ArrayList<Task> tasks = taskDao.listMyTasksDetail(qIn);
+        return tasks;
+    }
+
+    /**
+     * 读取我的任务（我是甲方或者我是乙方）包括详情
+     * @param qIn
+     * partyAId
+     * partyBId
+     * offset
+     * size
+     * @return
+     */
+    @Override
+    public ArrayList<Task> listMyTasksDetailPartyAOrB(Map qIn) {
+        ArrayList<Task> tasks=taskDao.listMyTasksDetailPartyAOrB(qIn);
         return tasks;
     }
 

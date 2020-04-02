@@ -56,7 +56,26 @@ public interface TaskDao {
      */
     Map totalPointIn(Map qIn);
 
+    /**
+     * 读取我的任务（同时包括我是甲方或乙方）包括详情
+     * @param qIn
+     * userId
+     * offset
+     * size
+     * @return
+     */
     ArrayList<Task> listMyTasksDetail(Map qIn);
+
+    /**
+     * 读取我的任务（我是甲方或者我是乙方）包括详情
+     * @param qIn
+     * partyAId
+     * partyBId
+     * offset
+     * size
+     * @return
+     */
+    ArrayList<Task> listMyTasksDetailPartyAOrB(Map qIn);
 
     void updateTask(Task task);
 

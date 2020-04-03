@@ -27,28 +27,23 @@ public interface ITaskService {
     void updateTaskStatus(Task task) throws Exception;
 
     /**
-     * 统计用户的任务总数
+     * 统计用户的任务总数（同时包括甲方任务和乙方任务）
      * @param qIn
+     * userId
+     * status（可选）
      * @return
      * @throws Exception
      */
-    Map countUserTask(Map qIn) throws Exception;
+    Integer totalUserTask(Map qIn) throws Exception;
 
     /**
-     * 统计用户已完成的任务总数
+     * 统计我的任务总是（我是甲方或者我是乙方）
      * @param qIn
+     * partyAId
+     * partyBId
      * @return
-     * @throws Exception
      */
-    Map countUserTaskComplete(Map qIn) throws Exception;
-
-    /**
-     * 统计用户进行中的任务总数
-     * @param qIn
-     * @return
-     * @throws Exception
-     */
-    Map countUserTaskProgress(Map qIn) throws Exception;
+    Integer totalMyTasksPartyAOrB(Map qIn);
 
     /**
      * 统计一个用户指定时间段内的积分收入和积分支出

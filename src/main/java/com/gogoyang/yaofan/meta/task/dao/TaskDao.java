@@ -29,25 +29,13 @@ public interface TaskDao {
     void updateTaskStatus(Task task);
 
     /**
-     * 统计用户的任务总数
+     * 统计用户的任务总数（同时包括甲方任务和乙方任务）
      * @param qIn
+     * userId
+     * status（可选）
      * @return
      */
-    Map countUserTask(Map qIn);
-
-    /**
-     * 统计用户已完成的任务总数
-     * @param qIn
-     * @return
-     */
-    Map countUserTaskComplete(Map qIn);
-
-    /**
-     * 统计用户进行中的任务总数
-     * @param qIn
-     * @return
-     */
-    Map countUserTaskProgress(Map qIn);
+    Integer totalUserTask(Map qIn);
 
     /**
      * 统计一个用户指定时间段内的积分收入和积分支出
@@ -79,7 +67,6 @@ public interface TaskDao {
 
     void updateTask(Task task);
 
-
     /**
      * 查询一组团队集合里的等待匹配任务
      * @param qIn
@@ -87,4 +74,13 @@ public interface TaskDao {
      * @return
      */
     ArrayList<Task> listTaskGrabbingTeam(Map qIn);
+
+    /**
+     * 统计我的任务总是（我是甲方或者我是乙方）
+     * @param qIn
+     * partyAId
+     * partyBId
+     * @return
+     */
+    Integer totalMyTasksPartyAOrB(Map qIn);
 }

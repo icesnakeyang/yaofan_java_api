@@ -16,6 +16,7 @@ import com.gogoyang.yaofan.utility.GogoActType;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
+import org.omg.CORBA.INTERNAL;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -355,6 +356,21 @@ public class TaskBusinessService implements ITaskBusinessService {
         }
         Map out = new HashMap();
         out.put("tasks", list);
+
+        //task总数
+        qIn=new HashMap();
+        qIn.put("userId", userInfo.getUserId());
+        Integer totalTasks=iTaskService.totalUserTask(qIn);
+        out.put("totalTasks", totalTasks);
+
+        //task总页数
+        Integer totalPage=totalTasks/pageSize;
+        Integer modPage=totalTasks % pageSize;
+        if(modPage>0){
+            totalPage++;
+        }
+        out.put("totalPage", totalPage);
+
         return out;
     }
 

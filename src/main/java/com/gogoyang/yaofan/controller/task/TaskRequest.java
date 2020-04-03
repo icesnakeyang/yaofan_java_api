@@ -16,4 +16,5 @@ public class TaskRequest {
     private String taskId;
     private Integer pageIndex;
     private Integer pageSize;
+    private String status;
 }

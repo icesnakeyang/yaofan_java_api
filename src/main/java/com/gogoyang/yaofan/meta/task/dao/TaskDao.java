@@ -24,6 +24,14 @@ public interface TaskDao {
      */
     void updateTaskDeal(Map qIn);
 
+    /**
+     * 读取我的任务（同时包括我是甲方或乙方）不包括详情
+     * 按任务完成时间排序
+     * @param qIn
+     * userId
+     * status
+     * @return
+     */
     ArrayList<Task> listMyTasks(Map qIn);
 
     void updateTaskStatus(Task task);

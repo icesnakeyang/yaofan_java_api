@@ -22,6 +22,14 @@ public interface ITaskService {
      */
     void updateTaskDeal(String taskId, String userId) throws Exception;
 
+    /**
+     * 读取我的任务（同时包括我是甲方或乙方）不包括详情
+     * 按任务完成时间排序
+     * @param qIn
+     * userId
+     * status
+     * @return
+     */
     ArrayList<Task> listMyTasks(Map qIn) throws Exception;
 
     void updateTaskStatus(Task task) throws Exception;

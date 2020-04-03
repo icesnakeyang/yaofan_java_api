@@ -58,6 +58,14 @@ public class TaskService implements ITaskService {
         taskDao.updateTaskDeal(qIn);
     }
 
+    /**
+     * 读取我的任务（同时包括我是甲方或乙方）不包括详情
+     * 按任务完成时间排序
+     * @param qIn
+     * userId
+     * status
+     * @return
+     */
     @Override
     public ArrayList<Task> listMyTasks(Map qIn) throws Exception {
         ArrayList<Task> tasks = taskDao.listMyTasks(qIn);

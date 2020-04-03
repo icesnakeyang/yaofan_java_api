@@ -202,6 +202,7 @@ public class TaskController {
         try {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
+            in.put("status", request.getStatus());
             logMap.put("token", token);
             logMap.put("GogoActType", GogoActType.LIST_MY_TASKS);
             Map out = iTaskBusinessService.listMyTasks(in);

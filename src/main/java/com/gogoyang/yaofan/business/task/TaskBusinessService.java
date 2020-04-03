@@ -20,6 +20,7 @@ import org.omg.CORBA.INTERNAL;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.*;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -327,9 +328,21 @@ public class TaskBusinessService implements ITaskBusinessService {
 
         Map qIn = new HashMap();
         qIn.put("userId", userInfo.getUserId());
-        Integer offset = (pageIndex - 1) * pageSize;
+
+        /**
+         * 缓冲读取数据列表
+         * 读取前一页和后一页，共3页的数据
+         */
+        Integer offset=0;
+        if(pageIndex>1){
+            offset=(pageIndex-2)*pageSize;
+        }else{
+            offset = (pageIndex - 1) * pageSize;
+        }
+        Integer size=pageSize*3;
+
         qIn.put("offset", offset);
-        qIn.put("size", pageSize);
+        qIn.put("size", size);
 
         ArrayList<Task> tasks = iTaskService.listMyTasksDetail(qIn);
 

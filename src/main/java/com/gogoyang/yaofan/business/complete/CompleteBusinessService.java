@@ -84,4 +84,17 @@ public class CompleteBusinessService implements ICompleteBusinessService {
 
         return out;
     }
+
+    @Override
+    public Map cancelComplete(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String taskId=in.get("taskId").toString();
+        String content=in.get("content").toString();
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+
+        Task task=iCommonBusinessService.getTaskByTaskId(taskId);
+
+
+    }
 }

@@ -76,4 +76,15 @@ public class TaskCompleteService implements ITaskCompleteService {
     public void processResult(TaskComplete taskComplete) throws Exception {
         taskCompleteDao.processResult(taskComplete);
     }
+
+    /**
+     * 读取没有被处理的任务完成日志
+     * @param taskId
+     * @return
+     */
+    @Override
+    public TaskComplete getTaskCompleteUnProcess(String taskId) {
+        TaskComplete taskComplete=taskCompleteDao.getTaskCompleteUnProcess(taskId);
+        return taskComplete;
+    }
 }

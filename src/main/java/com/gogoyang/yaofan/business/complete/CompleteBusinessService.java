@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLInput;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -129,6 +130,36 @@ public class CompleteBusinessService implements ICompleteBusinessService {
 
         taskComplete.setProcessRemark(content);
         taskComplete.setProcessResult(GogoStatus.CANCEL.toString());
+        taskComplete.setProcessTime(new Date());
+        taskComplete.setProcessUserId(userInfo.getUserId());
+        iTaskCompleteService.processResult(taskComplete);
+
+        task.setStatus(GogoStatus.PROGRESS.toString());
+        iTaskService.updateTaskStatus(task);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void rejectComplete(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String taskId=in.get("taskId").toString();
+        String content=in.get("content").toString();
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+
+        Task task=iCommonBusinessService.getTaskByTaskId(taskId);
+
+        if(!task.getCreateUserId().equals(userInfo.getUserId())){
+            //不是甲方，不能拒绝
+            throw new Exception("20011");
+        }
+
+        TaskComplete taskComplete=iTaskCompleteService.getTaskCompleteUnProcess(taskId);
+        if(taskComplete==null){
+            throw new Exception("20010");
+        }
+        taskComplete.setProcessRemark(content);
+        taskComplete.setProcessResult(GogoStatus.REJECT.toString());
         taskComplete.setProcessTime(new Date());
         taskComplete.setProcessUserId(userInfo.getUserId());
         iTaskCompleteService.processResult(taskComplete);

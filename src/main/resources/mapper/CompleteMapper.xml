@@ -51,6 +51,13 @@
           order by complete.ids desc
     </select>
 
+    <!--读取没有被处理的任务完成日志-->
+    <select id="getTaskCompleteUnProcess" parameterType="map" resultMap="taskCompleteMap">
+        select * from complete
+        where task_id=#{taskId}
+        and process_result is null
+    </select>
+
     <select id="totalCompleteUnread" parameterType="map" resultType="java.lang.Integer">
         select count(*) as total_unread
         from complete
@@ -58,6 +65,7 @@
         and read_time is null
         <![CDATA[
         and create_user_id <> #{userId}
+
 
 
 
@@ -72,6 +80,7 @@
         and read_time is null
         <![CDATA[
             and create_user_id <> #{readUserId}
+
 
 
         ]]>

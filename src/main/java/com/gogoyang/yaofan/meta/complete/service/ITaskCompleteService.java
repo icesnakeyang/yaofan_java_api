@@ -36,4 +36,11 @@ public interface ITaskCompleteService {
      * @throws Exception
      */
     void processResult(TaskComplete taskComplete) throws Exception;
+
+    /**
+     * 读取没有被处理的任务完成日志
+     * @param taskId
+     * @return
+     */
+    TaskComplete getTaskCompleteUnProcess(String taskId);
 }

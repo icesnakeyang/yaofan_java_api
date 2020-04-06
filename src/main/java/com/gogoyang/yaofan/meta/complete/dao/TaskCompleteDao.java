@@ -36,4 +36,11 @@ public interface TaskCompleteDao {
      * @param taskComplete
      */
     void processResult(TaskComplete taskComplete);
+
+    /**
+     * 读取没有被处理的任务完成日志
+     * @param taskId
+     * @return
+     */
+    TaskComplete getTaskCompleteUnProcess(String taskId);
 }

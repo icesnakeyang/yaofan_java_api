@@ -23,4 +23,17 @@ public interface TaskCompleteDao {
     void setTaskCompleteReadTime(Map qIn);
 
     Integer totalTaskComplete(Map qIn);
+
+    /**
+     * 根据taskCompleteId读取任务完成日志
+     * @param taskCompleteId
+     * @return
+     */
+    TaskComplete getTaskCompleteTiny(String taskCompleteId);
+
+    /**
+     * 处理完成日志结果
+     * @param taskComplete
+     */
+    void processResult(TaskComplete taskComplete);
 }

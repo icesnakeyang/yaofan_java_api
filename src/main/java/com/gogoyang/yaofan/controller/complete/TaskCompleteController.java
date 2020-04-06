@@ -117,8 +117,7 @@ public class TaskCompleteController {
             logMap.put("GogoActType", GogoActType.CANCEL_COMPLETE);
             in.put("taskId", request.getTaskId());
             memoMap.put("taskId", request.getTaskId());
-            Map out = iCompleteBusinessService.cancelComplete(in);
-            response.setData(out);
+            iCompleteBusinessService.cancelComplete(in);
             memoMap.put("result", "success");
         } catch (Exception ex) {
             try {

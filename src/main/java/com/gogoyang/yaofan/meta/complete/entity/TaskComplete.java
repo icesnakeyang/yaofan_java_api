@@ -18,6 +18,6 @@ public class TaskComplete {
     private String processUserName;
     private String processResult;
     private String processRemark;
-    private String processTime;
+    private Date processTime;
     private Date processReadTime;
 }

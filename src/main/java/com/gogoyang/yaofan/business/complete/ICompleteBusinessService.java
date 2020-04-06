@@ -7,5 +7,5 @@ public interface ICompleteBusinessService {
 
     Map listTaskComplete(Map in) throws Exception;
 
-    Map cancelComplete(Map in) throws Exception;
+    void cancelComplete(Map in) throws Exception;
 }

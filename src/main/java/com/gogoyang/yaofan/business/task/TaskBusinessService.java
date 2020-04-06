@@ -541,6 +541,21 @@ public class TaskBusinessService implements ITaskBusinessService {
         }
         Map out = new HashMap();
         out.put("tasks", list);
+
+        //task总数
+        qIn = new HashMap();
+        qIn.put("partyAId", userInfo.getUserId());
+        Integer totalTasks = iTaskService.totalMyTasksPartyAOrB(qIn);
+        out.put("totalTasks", totalTasks);
+
+        //task总页数
+        Integer totalPage = totalTasks / pageSize;
+        Integer modPage = totalTasks % pageSize;
+        if (modPage > 0) {
+            totalPage++;
+        }
+        out.put("totalPage", totalPage);
+
         return out;
     }
 

@@ -1,9 +1,9 @@
 package com.gogoyang.yaofan.business.task;
 
-import ch.qos.logback.classic.spi.IThrowableProxy;
 import com.gogoyang.yaofan.meta.complete.service.ITaskCompleteService;
 import com.gogoyang.yaofan.meta.point.entity.PointLedger;
 import com.gogoyang.yaofan.meta.point.service.IPointService;
+import com.gogoyang.yaofan.meta.stop.service.ITaskStopService;
 import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.task.service.ITaskService;
 import com.gogoyang.yaofan.meta.taskLog.service.ITaskLogService;
@@ -16,11 +16,9 @@ import com.gogoyang.yaofan.utility.GogoActType;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
-import org.omg.CORBA.INTERNAL;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.*;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -34,6 +32,7 @@ public class TaskBusinessService implements ITaskBusinessService {
     private final IPointService iPointService;
     private final ITaskLogService iTaskLogService;
     private final ITaskCompleteService iTaskCompleteService;
+    private final ITaskStopService iTaskStopService;
 
     public TaskBusinessService(ICommonBusinessService iCommonBusinessService,
                                ITaskService iTaskService,
@@ -41,7 +40,8 @@ public class TaskBusinessService implements ITaskBusinessService {
                                ITeamService iTeamService,
                                IPointService iPointService,
                                ITaskLogService iTaskLogService,
-                               ITaskCompleteService iTaskCompleteService) {
+                               ITaskCompleteService iTaskCompleteService,
+                               ITaskStopService iTaskStopService) {
         this.iCommonBusinessService = iCommonBusinessService;
         this.iTaskService = iTaskService;
         this.iUserInfoService = iUserInfoService;
@@ -49,6 +49,7 @@ public class TaskBusinessService implements ITaskBusinessService {
         this.iPointService = iPointService;
         this.iTaskLogService = iTaskLogService;
         this.iTaskCompleteService = iTaskCompleteService;
+        this.iTaskStopService = iTaskStopService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -207,6 +208,16 @@ public class TaskBusinessService implements ITaskBusinessService {
 
         Integer totalUnreadComplete = iTaskCompleteService.totalCompleteUnread(task.getTaskId(), userInfo.getUserId());
         out.put("totalUnreadTaskComplete", totalUnreadComplete);
+
+        //终止日志总数，未阅读数
+        Map qIn=new HashMap();
+        qIn.put("taskId", taskId);
+        qIn.put("partyBId", userInfo.getUserId());
+        Integer totalTaskStopUnread=iTaskStopService.totalTaskStopUnread(qIn);
+        out.put("totalTaskStopUnread", totalTaskStopUnread);
+        Integer totalTaskStop=iTaskStopService.totalTaskStop(taskId);
+        out.put("totalTaskStop", totalTaskStop);
+
         return out;
     }
 

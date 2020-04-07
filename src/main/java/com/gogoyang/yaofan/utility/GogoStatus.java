@@ -10,6 +10,8 @@ public enum  GogoStatus {
     PROGRESS,
     COMPLETE,
     GRABBING,
-    CANCEL
+    CANCEL,
+    ACCEPT,
+    STOP
 
 }

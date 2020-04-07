@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gogoyang.yaofan.meta.stop.dao.TaskStopDao">
+
+    <resultMap id="taskStopMap" type="com.gogoyang.yaofan.meta.stop.entity.TaskStop">
+        <result property="taskStopId" column="task_stop_id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="createUserName" column="create_user_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="readTime" column="read_time"/>
+        <result property="readUserId" column="read_user_id"/>
+        <result property="readUserName" column="read_user_name"/>
+        <result property="taskName" column="task_name"/>
+    </resultMap>
+
+    <!--创建任务停止日志-->
+    <insert id="createTaskStop"
+            useGeneratedKeys="true"
+            keyProperty="ids"
+            parameterType="com.gogoyang.yaofan.meta.stop.entity.TaskStop">
+      insert into task_stop
+      (task_stop_id,task_id, create_user_id, remark, create_time)
+      values
+      (#{taskStopId}, #{taskId}, #{createUserId}, #{remark}, #{createTime})
+    </insert>
+
+    <!--读取终止任务记录-->
+    <select id="getTaskStop" parameterType="map" resultMap="taskStopMap">
+        select task_stop.ids,
+        task_stop_id,
+        task_stop.task_id,
+        title as task_name,
+        task_stop.create_user_id,
+        create_user.name as create_user_name,
+        remark,
+        task_stop.create_time,
+        read_time,
+        reader_user.name as read_user_name
+        from ((task_stop
+        left join task on task_stop.task_id=task.task_id)
+        left join user_info create_user on task_stop.create_user_id=user_id)
+        left join user_info reader_user on read_user_id=reader_user.user_id
+        where 1=1
+        <choose>
+            <when test="taskId!=null">
+                and task.task_id=#{taskId}
+            </when>
+        </choose>
+        <choose>
+            <when test="createUserId!=null">
+                and task.create_user_id=#{createUserId}
+            </when>
+        </choose>
+        <choose>
+            <when test="taskStopId!=null">
+                and task_stop_id=#{taskStopId}
+            </when>
+        </choose>
+    </select>
+
+    <!--统计未阅读的终止日志-->
+    <select id="totalTaskStopUnread" parameterType="map" resultType="java.lang.Integer">
+        select count(*) as total from task_stop
+        left join task on task_stop.task_id=task.task_id
+        where read_time is null
+        <choose>
+            <when test="taskId!=null">
+                and task_stop.task_id=#{taskId}
+            </when>
+        </choose>
+        <choose>
+            <when test="partyAId!=null">
+                and task_stop.create_user_id=#{partyAId}
+            </when>
+        </choose>
+        <choose>
+            <when test="partyBId!=null">
+                and party_b_id=#{partyBId}
+            </when>
+        </choose>
+    </select>
+
+    <!--统计终止任务日志数-->
+    <select id="totalTaskStop" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(*) as total from task_stop
+        where task_stop.task_id=#{taskId}
+    </select>
+
+    <!--设置终止任务日志的阅读时间-->
+    <update id="setReadTime" parameterType="map">
+        update task_stop set
+        read_time=#{readTime},
+        read_user_id=#{readUserId}
+        where task_stop_id=#{taskStopId}
+    </update>
+
+</mapper>

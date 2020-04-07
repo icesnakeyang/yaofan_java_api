@@ -35,5 +35,7 @@ public enum GogoActType {
     CANCEL_COMPLETE,
     REJECT_COMPLETE,
     STOP_TASK,
-    GET_TASK_STOP
+    GET_TASK_STOP,
+    LIST_MY_POINT,
+    TOTAL_USER_POINT
 }

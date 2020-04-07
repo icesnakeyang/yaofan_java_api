@@ -10,10 +10,7 @@ import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class PointBusinessService implements IPointBusinessService {
@@ -109,5 +106,39 @@ public class PointBusinessService implements IPointBusinessService {
         /**
          * 用户必须是管理员，且具备批准积分兑换的权限
          */
+    }
+
+    @Override
+    public Map listMyPointLedger(Map in) throws Exception {
+        String token = in.get("token").toString();
+        Integer pageIndex = (Integer) in.get("pageIndex");
+        Integer pageSize = (Integer) in.get("pageSize");
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        Map qIn = new HashMap();
+        qIn.put("userId", userInfo.getUserId());
+        Integer offset = (pageIndex - 1) * pageSize;
+        qIn.put("offset", offset);
+        qIn.put("size", pageSize);
+        ArrayList<PointLedger> pointLedgers = iPointService.listMyPointLedger(qIn);
+
+        Map out = new HashMap();
+        out.put("pointLedgers", pointLedgers);
+
+        return out;
+    }
+
+    @Override
+    public Map totalUserPoint(Map in) throws Exception {
+        String token = in.get("token").toString();
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        Map qIn = new HashMap();
+        qIn.put("userId", userInfo.getUserId());
+        Map map = iPointService.totalUserPoint(qIn);
+
+        return map;
     }
 }

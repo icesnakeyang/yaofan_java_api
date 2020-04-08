@@ -202,6 +202,7 @@ public class TaskController {
         try {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
+            in.put("status", request.getStatus());
             logMap.put("token", token);
             logMap.put("GogoActType", GogoActType.LIST_MY_TASKS);
             Map out = iTaskBusinessService.listMyTasks(in);
@@ -246,6 +247,88 @@ public class TaskController {
             logMap.put("token", token);
             logMap.put("GogoActType", GogoActType.LIST_MY_TASKS);
             Map out = iTaskBusinessService.listMyTasksDetail(in);
+            response.setData(out);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * 读取我是甲方的任务列表，包括任务详情
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/listMyPartyATasksDetail")
+    public Response listMyPartyATasksDetail(@RequestBody TaskRequest request,
+                                HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("pageIndex", request.getPageIndex());
+            in.put("pageSize", request.getPageSize());
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.LIST_MY_TASKS);
+            Map out = iTaskBusinessService.listMyPartyATasksDetail(in);
+            response.setData(out);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * 读取我是乙方的任务列表，包括任务详情
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/listMyPartyBTasksDetail")
+    public Response listMyPartyBTasksDetail(@RequestBody TaskRequest request,
+                                HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("pageIndex", request.getPageIndex());
+            in.put("pageSize", request.getPageSize());
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.LIST_MY_TASKS);
+            Map out = iTaskBusinessService.listMyPartyBTasksDetail(in);
             response.setData(out);
         } catch (Exception ex) {
             try {

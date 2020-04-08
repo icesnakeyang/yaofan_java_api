@@ -58,6 +58,14 @@ public class TaskService implements ITaskService {
         taskDao.updateTaskDeal(qIn);
     }
 
+    /**
+     * 读取我的任务（同时包括我是甲方或乙方）不包括详情
+     * 按任务完成时间排序
+     * @param qIn
+     * userId
+     * status
+     * @return
+     */
     @Override
     public ArrayList<Task> listMyTasks(Map qIn) throws Exception {
         ArrayList<Task> tasks = taskDao.listMyTasks(qIn);
@@ -69,36 +77,18 @@ public class TaskService implements ITaskService {
         taskDao.updateTaskStatus(task);
     }
 
-    @Override
-    public Map countUserTask(Map qIn) throws Exception {
-        Map out = taskDao.countUserTask(qIn);
-        return out;
-    }
-
     /**
-     * 统计用户已完成的任务总数
-     *
+     * 统计用户的任务总数（同时包括甲方任务和乙方任务）
      * @param qIn
+     * userId
+     * status（可选）
      * @return
      * @throws Exception
      */
     @Override
-    public Map countUserTaskComplete(Map qIn) throws Exception {
-        Map out = taskDao.countUserTaskComplete(qIn);
-        return out;
-    }
-
-    /**
-     * 统计用户进行中的任务总数
-     *
-     * @param qIn
-     * @return
-     * @throws Exception
-     */
-    @Override
-    public Map countUserTaskProgress(Map qIn) throws Exception {
-        Map out = taskDao.countUserTaskProgress(qIn);
-        return out;
+    public Integer totalUserTask(Map qIn) throws Exception {
+        Integer total = taskDao.totalUserTask(qIn);
+        return total;
     }
 
     /**
@@ -113,9 +103,33 @@ public class TaskService implements ITaskService {
         return taskDao.totalPointIn(qIn);
     }
 
+    /**
+     * 读取我的任务（同时包括我是甲方或乙方）包括详情
+     *
+     * @param qIn userId
+     *            offset
+     *            size
+     * @return
+     * @throws Exception
+     */
     @Override
     public ArrayList<Task> listMyTasksDetail(Map qIn) throws Exception {
         ArrayList<Task> tasks = taskDao.listMyTasksDetail(qIn);
+        return tasks;
+    }
+
+    /**
+     * 读取我的任务（我是甲方或者我是乙方）包括详情
+     *
+     * @param qIn partyAId
+     *            partyBId
+     *            offset
+     *            size
+     * @return
+     */
+    @Override
+    public ArrayList<Task> listMyTasksDetailPartyAOrB(Map qIn) {
+        ArrayList<Task> tasks = taskDao.listMyTasksDetailPartyAOrB(qIn);
         return tasks;
     }
 
@@ -127,13 +141,25 @@ public class TaskService implements ITaskService {
     /**
      * 查询一组团队集合里的等待匹配任务
      *
-     * @param qIn
-     * teamList
+     * @param qIn teamList
      * @return
      */
     @Override
     public ArrayList<Task> listTaskGrabbingTeam(Map qIn) {
         ArrayList<Task> tasks = taskDao.listTaskGrabbingTeam(qIn);
         return tasks;
+    }
+
+    /**
+     * 统计我的任务总是（我是甲方或者我是乙方）
+     * @param qIn
+     * partyAId
+     * partyBId
+     * @return
+     */
+    @Override
+    public Integer totalMyTasksPartyAOrB(Map qIn) {
+        Integer total = taskDao.totalMyTasksPartyAOrB(qIn);
+        return total;
     }
 }

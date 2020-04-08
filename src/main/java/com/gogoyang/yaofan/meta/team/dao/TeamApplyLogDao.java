@@ -1,7 +1,6 @@
 package com.gogoyang.yaofan.meta.team.dao;
 
 import com.gogoyang.yaofan.meta.team.entity.TeamApplyLog;
-import com.gogoyang.yaofan.meta.team.entity.TeamApplyView;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.ArrayList;
@@ -28,7 +27,12 @@ public interface TeamApplyLogDao {
      */
     ArrayList<TeamApplyView> listTeamApplyLog(Map qIn);
 
-    TeamApplyView getTeamApplyLog(String teamApplyLogId);
+    /**
+     * 根据teamApplyLogId查询团队申请日志详情
+     * @param teamApplyLogId
+     * @return
+     */
+    TeamApplyLog getTeamApplyLog(String teamApplyLogId);
 
     /**
      * 处理团队申请日志

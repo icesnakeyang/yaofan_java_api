@@ -21,6 +21,13 @@ public class TaskCompleteService implements ITaskCompleteService {
         taskCompleteDao.createTaskComplete(taskComplete);
     }
 
+    /**
+     * 读取完成日志列表
+     * @param qIn
+     * taskId
+     * @return
+     * @throws Exception
+     */
     @Override
     public ArrayList<TaskComplete> listTaskComplete(Map qIn) throws Exception {
         ArrayList<TaskComplete> taskCompletes = taskCompleteDao.listTaskComplete(qIn);
@@ -47,5 +54,37 @@ public class TaskCompleteService implements ITaskCompleteService {
         qIn.put("taskId", taskId);
         Integer total = taskCompleteDao.totalTaskComplete(qIn);
         return total;
+    }
+
+    /**
+     * 根据taskCompleteId读取任务完成日志
+     * @param taskCompleteId
+     * @return
+     */
+    @Override
+    public TaskComplete getTaskCompleteTiny(String taskCompleteId) {
+        TaskComplete taskComplete=taskCompleteDao.getTaskCompleteTiny(taskCompleteId);
+        return taskComplete;
+    }
+
+    /**
+     * 处理完成日志结果
+     * @param taskComplete
+     * @throws Exception
+     */
+    @Override
+    public void processResult(TaskComplete taskComplete) throws Exception {
+        taskCompleteDao.processResult(taskComplete);
+    }
+
+    /**
+     * 读取没有被处理的任务完成日志
+     * @param taskId
+     * @return
+     */
+    @Override
+    public TaskComplete getTaskCompleteUnProcess(String taskId) {
+        TaskComplete taskComplete=taskCompleteDao.getTaskCompleteUnProcess(taskId);
+        return taskComplete;
     }
 }

@@ -1,5 +1,6 @@
 package com.gogoyang.yaofan.business.team;
 
+import com.gogoyang.yaofan.meta.team.dao.TeamQuitDao;
 import com.gogoyang.yaofan.meta.team.entity.*;
 import com.gogoyang.yaofan.meta.team.service.ITeamService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.plaf.basic.BasicScrollPaneUI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,6 +30,13 @@ public class TeamBusinessService implements ITeamBusinessService {
         this.iTeamService = iTeamService;
     }
 
+    /**
+     * 创建一个团队
+     *
+     * @param in
+     * @return
+     * @throws Exception
+     */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Map createTeam(Map in) throws Exception {
@@ -37,8 +46,9 @@ public class TeamBusinessService implements ITeamBusinessService {
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        Team team = iTeamService.getTeamByName(name);
-
+        Map qIn = new HashMap();
+        qIn.put("teamName", name);
+        Team team = iTeamService.getTeam(qIn);
 
         if (team != null) {
             //团队名称重复
@@ -51,7 +61,7 @@ public class TeamBusinessService implements ITeamBusinessService {
         team = new Team();
         team.setCreateTime(new Date());
         team.setDescription(description);
-        team.setName(name);
+        team.setTeamName(name);
         team.setStatus(GogoStatus.ACTIVE.toString());
         team.setTeamId(GogoTools.UUID().toString());
         team.setCreateUserId(userInfo.getUserId());
@@ -59,13 +69,14 @@ public class TeamBusinessService implements ITeamBusinessService {
         team = iTeamService.createTeam(team);
 
         /**
-         * 创建我的团队记录
+         * 创建团队的成员连接
          */
-        MyTeam myTeam = new MyTeam();
-        myTeam.setStatus(GogoStatus.ACTIVE.toString());
-        myTeam.setTeamId(team.getTeamId());
-        myTeam.setUserId(userInfo.getUserId());
-        iTeamService.createMyTeam(myTeam);
+        TeamUser teamUser = new TeamUser();
+        teamUser.setStatus(GogoStatus.ACTIVE.toString());
+        teamUser.setTeamId(team.getTeamId());
+        teamUser.setUserId(userInfo.getUserId());
+        teamUser.setCreateTime(new Date());
+        iTeamService.createTeamUser(teamUser);
 
         Map out = new HashMap();
         out.put("team", team);
@@ -74,7 +85,7 @@ public class TeamBusinessService implements ITeamBusinessService {
     }
 
     /**
-     * 读取团队列表
+     * 读取我的团队列表
      *
      * @param in
      * @return
@@ -89,19 +100,22 @@ public class TeamBusinessService implements ITeamBusinessService {
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
         Map qIn = new HashMap();
-        Integer offset = (pageIndex - 1) * pageSize;
-        qIn.put("offset", offset);
-        qIn.put("size", pageSize);
+        //读取我的所有团队
         qIn.put("userId", userInfo.getUserId());
-        qIn.put("status", GogoStatus.ACTIVE.toString());
-
-        ArrayList myTeams = iTeamService.listTeam(qIn);
+        ArrayList<TeamUser> teamUsers = iTeamService.listTeamUser(qIn);
 
         Map out = new HashMap();
-        out.put("teams", myTeams);
+        out.put("teams", teamUsers);
         return out;
     }
 
+    /**
+     * 根据团队名称关键字搜索团队
+     *
+     * @param in
+     * @return
+     * @throws Exception
+     */
     @Override
     public Map searchTeam(Map in) throws Exception {
         String token = in.get("token").toString();
@@ -110,10 +124,9 @@ public class TeamBusinessService implements ITeamBusinessService {
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
         Map qIn = new HashMap();
-        qIn.put("nameKey", name);
-        qIn.put("teamStatus", GogoStatus.ACTIVE.toString());
-        qIn.put("currentUserId", userInfo.getUserId());
-        ArrayList<Team> teams = iTeamService.searchTeam(qIn);
+        qIn.put("teamName", name);
+        qIn.put("status", GogoStatus.ACTIVE.toString());
+        ArrayList<Team> teams = iTeamService.listTeam(qIn);
 
         Map out = new HashMap();
         out.put("teams", teams);
@@ -121,7 +134,8 @@ public class TeamBusinessService implements ITeamBusinessService {
     }
 
     /**
-     * 读取团队详情
+     * 根据teamId读取团队详情
+     *
      * @param in
      * @return
      * @throws Exception
@@ -133,14 +147,29 @@ public class TeamBusinessService implements ITeamBusinessService {
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        TeamView team = iTeamService.getTeamByTeamId(teamId);
-
-        /**
-         * 检测当前用户是否团队成员
-         */
+        Map qIn = new HashMap();
+        qIn.put("teamId", teamId);
+        Team team = iTeamService.getTeam(qIn);
 
         Map out = new HashMap();
         out.put("team", team);
+
+        /**
+         * 判断当前用户是否为团队成员，或者管理员
+         */
+        if (team.getManagerId().equals(userInfo.getUserId())) {
+            //管理员
+            out.put("isManager", true);
+        } else {
+            //是否是团队成员
+            qIn = new HashMap();
+            qIn.put("userId", userInfo.getUserId());
+            qIn.put("teamId", teamId);
+            ArrayList<TeamUser> teamUsers = iTeamService.listTeamUser(qIn);
+            if (teamUsers.size() > 0) {
+                out.put("isMember", true);
+            }
+        }
 
         return out;
     }
@@ -151,6 +180,7 @@ public class TeamBusinessService implements ITeamBusinessService {
      * @param in
      * @throws Exception
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void applyTeam(Map in) throws Exception {
         String token = in.get("token").toString();
@@ -164,6 +194,8 @@ public class TeamBusinessService implements ITeamBusinessService {
          * 用户不能重复提交，只有处理后才能再次提交。
          * 如果用户已经加入了该团队，也不能再提交申请
          */
+
+        //检查用户是否已经提交过申请，且未处理
         Map qIn = new HashMap();
         qIn.put("userId", userInfo.getUserId());
         qIn.put("teamId", teamId);
@@ -173,19 +205,18 @@ public class TeamBusinessService implements ITeamBusinessService {
             throw new Exception("10007");
         }
 
+        //检查用户是否已经是该团队成员了
         qIn = new HashMap();
         qIn.put("userId", userInfo.getUserId());
         qIn.put("status", GogoStatus.ACTIVE.toString());
-        ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(qIn);
-        if (myTeamViews.size() > 0) {
-            for (int i = 0; i < myTeamViews.size(); i++) {
-                if (teamId.equals(myTeamViews.get(i).getTeamId())) {
-                    //已经是该团队成员了，不用申请了
-                    throw new Exception("10012");
-                }
-            }
+        qIn.put("teamId", teamId);
+        ArrayList<TeamUser> teamUsers = iTeamService.listTeamUser(qIn);
+        if (teamUsers.size() > 0) {
+            //已经是该团队成员了，不用申请了
+            throw new Exception("10012");
         }
 
+        //创建加入团队申请
         TeamApplyLog teamApplyLog = new TeamApplyLog();
         teamApplyLog.setTeamApplyLogId(GogoTools.UUID().toString());
         teamApplyLog.setApplyRemark(remark);
@@ -193,7 +224,6 @@ public class TeamBusinessService implements ITeamBusinessService {
         teamApplyLog.setApplyUserId(userInfo.getUserId());
         teamApplyLog.setCreateTime(new Date());
         teamApplyLog.setStatus(GogoStatus.PENDING.toString());
-
         iTeamService.createTeamApplyLog(teamApplyLog);
     }
 
@@ -205,7 +235,6 @@ public class TeamBusinessService implements ITeamBusinessService {
      * @return
      * @throws Exception
      */
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public Map listTeamApplyLogMyApply(Map in) throws Exception {
         String token = in.get("token").toString();
@@ -224,22 +253,9 @@ public class TeamBusinessService implements ITeamBusinessService {
         qIn.put("offset", offset);
         qIn.put("size", pageSize);
 //         processUserId status
-        ArrayList<TeamApplyView> teamApplyLogs = iTeamService.listTeamApplyLog(qIn);
-
-        //设置处理结果阅读时间
-        for(int i=0; i<teamApplyLogs.size();i++){
-            TeamApplyView teamApplyView=teamApplyLogs.get(i);
-            if(teamApplyView.getProcessReadTime()==null){
-                teamApplyLogs.get(i).setProcessReadTime(new Date());
-                qIn=new HashMap();
-                qIn.put("processReadTime", teamApplyLogs.get(i).getProcessReadTime());
-                qIn.put("teamApplyLogId", teamApplyLogs.get(i).getTeamApplyLogId());
-                iTeamService.setTeamApplyLogReadTimeUnProcess(qIn);
-            }
-        }
-
+        ArrayList<TeamApplyLog> applyTeams = iTeamService.listTeamApplyLog(qIn);
         Map out = new HashMap();
-        out.put("applyTeams", teamApplyLogs);
+        out.put("applyTeams", applyTeams);
         return out;
     }
 
@@ -260,14 +276,16 @@ public class TeamBusinessService implements ITeamBusinessService {
         /**
          * 1、读取自己的用户信息，获得userId
          * 2、查询所有团队申请日志，创建用户id=userId
-         * 3、设置阅读时间
          */
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
         Map qIn = new HashMap();
-        qIn.put("userId", userInfo.getUserId());
-        ArrayList<TeamView> teams = iTeamService.listMyCreateTeam(qIn);
-        if(teams.size()==0){
+        qIn.put("managerId", userInfo.getUserId());
+
+        qIn.put("offset", 0);
+        qIn.put("size", 9999);
+        ArrayList<Team> teams = iTeamService.listTeam(qIn);
+        if (teams.size() == 0) {
             //没有团队，直接退出
             Map out = new HashMap();
             out.put("applyTeams", null);
@@ -280,25 +298,15 @@ public class TeamBusinessService implements ITeamBusinessService {
         }
 
         Integer offset = (pageIndex - 1) * pageSize;
-        if(list.size()>0) {
+        if (list.size() > 0) {
             qIn.put("teamList", list);
         }
         qIn.put("offset", offset);
         qIn.put("size", pageSize);
-        ArrayList<TeamApplyView> teamApplyViews = iTeamService.listTeamApplyLog(qIn);
-
-        //设置申请阅读时间
-        for(int i=0;i<teamApplyViews.size();i++){
-            if(teamApplyViews.get(i).getReadTime()==null){
-                qIn=new HashMap();
-                qIn.put("readTime", new Date());
-                qIn.put("teamApplyLogId", teamApplyViews.get(i).getTeamApplyLogId());
-                iTeamService.setTeamApplyLogReadTime(qIn);
-            }
-        }
-
+//         processUserId status
+        ArrayList<TeamApplyLog> applyTeams = iTeamService.listTeamApplyLog(qIn);
         Map out = new HashMap();
-        out.put("applyTeams", teamApplyViews);
+        out.put("applyTeams", applyTeams);
         return out;
     }
 
@@ -316,16 +324,16 @@ public class TeamBusinessService implements ITeamBusinessService {
         String teamApplyLogId = in.get("teamApplyLogId").toString();
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
-        TeamApplyView teamApplyView = iTeamService.getTeamApplyLog(teamApplyLogId);
+        TeamApplyLog teamApplyLog = iTeamService.getTeamApplyLog(teamApplyLogId);
 
-        if (teamApplyView == null) {
+        if (teamApplyLog == null) {
             throw new Exception("10010");
         }
         /**
          * 如果当前用户是管理员，就写入readTime
          */
         boolean checkUser = false;
-        if (teamApplyView.getTeamManagerId().equals(userInfo.getUserId())) {
+        if (teamApplyLog.getTeamManagerId().equals(userInfo.getUserId())) {
             //管理员，写入readTime
             Map qIn = new HashMap();
             qIn.put("readTime", new Date());
@@ -333,10 +341,10 @@ public class TeamBusinessService implements ITeamBusinessService {
             iTeamService.setTeamApplyLogReadTime(qIn);
             checkUser = true;
         } else {
-            if (teamApplyView.getApplyUserId().equals(userInfo.getUserId())) {
+            if (teamApplyLog.getApplyUserId().equals(userInfo.getUserId())) {
                 //申请人，检查是否未阅读处理结果，如果没阅读，就设置阅读时间
-                if (teamApplyView.getProcessTime() != null) {
-                    if (teamApplyView.getProcessReadTime() == null) {
+                if (teamApplyLog.getProcessTime() != null) {
+                    if (teamApplyLog.getProcessReadTime() == null) {
                         //没有阅读
                         Map qIn = new HashMap();
                         qIn.put("readTime", new Date());
@@ -356,7 +364,7 @@ public class TeamBusinessService implements ITeamBusinessService {
         }
 
         Map out = new HashMap();
-        out.put("teamApplyView", teamApplyView);
+        out.put("teamApplyLog", teamApplyLog);
 
         return out;
     }
@@ -369,20 +377,20 @@ public class TeamBusinessService implements ITeamBusinessService {
         String processRemark = in.get("remark").toString();
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
-        TeamApplyView teamApplyView = iTeamService.getTeamApplyLog(teamApplyLogId);
+        TeamApplyLog teamApplyLog = iTeamService.getTeamApplyLog(teamApplyLogId);
 
-        if (teamApplyView == null) {
+        if (teamApplyLog == null) {
             throw new Exception("10010");
         }
 
-        if (!teamApplyView.getStatus().equals(GogoStatus.PENDING.toString())) {
+        if (!teamApplyLog.getStatus().equals(GogoStatus.PENDING.toString())) {
             throw new Exception("10011");
         }
 
         /**
          * 必须是该团队的管理员才能拒绝申请
          */
-        if (!teamApplyView.getTeamManagerId().equals(userInfo.getUserId())) {
+        if (!teamApplyLog.getTeamManagerId().equals(userInfo.getUserId())) {
             //不是管理员
             throw new Exception("10009");
         }
@@ -396,6 +404,12 @@ public class TeamBusinessService implements ITeamBusinessService {
         iTeamService.processTeamApplyLog(qIn);
     }
 
+    /**
+     * 通过团队加入申请
+     *
+     * @param in
+     * @throws Exception
+     */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void agreeApplyTeam(Map in) throws Exception {
@@ -404,30 +418,25 @@ public class TeamBusinessService implements ITeamBusinessService {
         String processRemark = in.get("remark").toString();
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
-        TeamApplyView teamApplyView = iTeamService.getTeamApplyLog(teamApplyLogId);
+        TeamApplyLog teamApplyLog = iTeamService.getTeamApplyLog(teamApplyLogId);
 
-        if (teamApplyView == null) {
+        if (teamApplyLog == null) {
             throw new Exception("10010");
         }
 
-        if (!teamApplyView.getStatus().equals(GogoStatus.PENDING.toString())) {
+        if (!teamApplyLog.getStatus().equals(GogoStatus.PENDING.toString())) {
             throw new Exception("10011");
         }
 
         /**
          * 必须是该团队的管理员才能处理
          */
-        if (!teamApplyView.getTeamManagerId().equals(userInfo.getUserId())) {
+        if (!teamApplyLog.getTeamManagerId().equals(userInfo.getUserId())) {
             //不是管理员
             throw new Exception("10009");
         }
 
-        TeamApplyLog teamApplyLog = new TeamApplyLog();
-        teamApplyLog.setTeamApplyLogId(teamApplyLog.getTeamApplyLogId());
-//        applyTeam.setProcessRemark(processRemark);
-//        applyTeam.setProcessResult(GogoStatus.AGREE.toString());
-//        applyTeam.setProcessTime(new Date());
-//        applyTeam.setProcessUserId(userInfo.getUserId());
+        //保存处理结果
         Map qIn = new HashMap();
         qIn.put("teamApplyLogId", teamApplyLogId);
         qIn.put("status", GogoStatus.AGREE.toString());
@@ -438,15 +447,21 @@ public class TeamBusinessService implements ITeamBusinessService {
         iTeamService.processTeamApplyLog(qIn);
 
         /**
-         * 增加my_team记录
+         * 增加团队成员连接记录
          */
-        MyTeam myTeam = new MyTeam();
-        myTeam.setStatus(GogoStatus.ACTIVE.toString());
-        myTeam.setTeamId(teamApplyView.getTeamId());
-        myTeam.setUserId(teamApplyView.getApplyUserId());
-        iTeamService.createMyTeam(myTeam);
+        TeamUser teamUser = new TeamUser();
+        teamUser.setStatus(GogoStatus.ACTIVE.toString());
+        teamUser.setTeamId(teamApplyLog.getTeamId());
+        teamUser.setUserId(teamApplyLog.getApplyUserId());
+        iTeamService.createTeamUser(teamUser);
     }
 
+    /**
+     * 修改我的团队信息
+     *
+     * @param in
+     * @throws Exception
+     */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateMyTeam(Map in) throws Exception {
@@ -457,18 +472,20 @@ public class TeamBusinessService implements ITeamBusinessService {
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        TeamView teamView = iTeamService.getTeamByTeamId(teamId);
+        Map qIn = new HashMap();
+        qIn.put("teamId", teamId);
+        Team team = iTeamService.getTeam(qIn);
 
-        if (teamView == null) {
+        if (team == null) {
             throw new Exception("10014");
         }
 
-        if (!teamView.getManagerId().equals(userInfo.getUserId())) {
+        if (!team.getManagerId().equals(userInfo.getUserId())) {
             //用户不是该团队管理员
             throw new Exception("10009");
         }
 
-        Map qIn = new HashMap();
+        qIn = new HashMap();
         qIn.put("name", name);
         qIn.put("description", description);
         qIn.put("teamId", teamId);
@@ -483,9 +500,9 @@ public class TeamBusinessService implements ITeamBusinessService {
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        TeamView teamView = iCommonBusinessService.getTeamById(teamId);
+        Team team = iCommonBusinessService.getTeamById(teamId);
 
-        if (!teamView.getManagerId().equals(userInfo.getUserId())) {
+        if (!team.getManagerId().equals(userInfo.getUserId())) {
             //不是管理员，不能删除
             throw new Exception("10009");
         }
@@ -506,6 +523,7 @@ public class TeamBusinessService implements ITeamBusinessService {
     public Map totalMyTeamLogUnread(Map in) throws Exception {
         String token = in.get("token").toString();
 
+
         /**
          * 统计未读的加入我的团队申请
          * 1、读取当前用户
@@ -517,16 +535,18 @@ public class TeamBusinessService implements ITeamBusinessService {
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
         Map qIn = new HashMap();
-        qIn.put("userId", userInfo.getUserId());
+        qIn.put("managerId", userInfo.getUserId());
         qIn.put("status", GogoStatus.ACTIVE.toString());
-        ArrayList<TeamView> teamViews = iTeamService.listMyCreateTeam(qIn);
-        if (teamViews.size() == 0) {
+        qIn.put("offset", 0);
+        qIn.put("size", 100000);
+        ArrayList<Team> teams = iTeamService.listTeam(qIn);
+        if (teams.size() == 0) {
             //当前用户没有创建的团队，返回0
             out.put("totalNewApplyMember", 0);
         } else {
             ArrayList teamList = new ArrayList();
-            for (int i = 0; i < teamViews.size(); i++) {
-                teamList.add(teamViews.get(i).getTeamId());
+            for (int i = 0; i < teams.size(); i++) {
+                teamList.add(teams.get(i).getTeamId());
             }
             qIn.put("teamList", teamList);
             Integer total = iTeamService.totalTeamApplyLogUnRead(qIn);
@@ -564,14 +584,14 @@ public class TeamBusinessService implements ITeamBusinessService {
          */
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        TeamApplyView teamApplyView = iTeamService.getTeamApplyLog(teamApplyLogId);
+        TeamApplyLog teamApplyLog = iTeamService.getTeamApplyLog(teamApplyLogId);
 
-        if (!teamApplyView.getStatus().equals(GogoStatus.PENDING.toString())) {
+        if (!teamApplyLog.getStatus().equals(GogoStatus.PENDING.toString())) {
             //该日志不是等待处理状态
             throw new Exception("20006");
         }
 
-        if (!teamApplyView.getApplyUserId().equals(userInfo.getUserId())) {
+        if (!teamApplyLog.getApplyUserId().equals(userInfo.getUserId())) {
             //当前用户是日志创建者，不能取消
             throw new Exception("20007");
         }
@@ -579,5 +599,170 @@ public class TeamBusinessService implements ITeamBusinessService {
         qIn.put("status", GogoStatus.CANCEL.toString());
         qIn.put("teamApplyLogId", teamApplyLogId);
         iTeamService.cancelTeamApplyLog(qIn);
+    }
+
+    /**
+     * 用户提交退团申请
+     *
+     * @param in
+     * @throws Exception
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void quitTeam(Map in) throws Exception {
+        String token = in.get("token").toString();
+        String teamId = in.get("teamId").toString();
+        String remark = in.get("remark").toString();
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        Team team = iCommonBusinessService.getTeamById(teamId);
+
+        //首先检查用户是否为该团队成员
+
+        //检查用户是否有未完成的任务
+
+        //其他退团条件检查
+
+        //创建退团日志
+        TeamQuitLog teamQuitLog = new TeamQuitLog();
+        teamQuitLog.setCreateTime(new Date());
+        teamQuitLog.setRemark(remark);
+        teamQuitLog.setStatus(GogoStatus.PENDING.toString());
+        teamQuitLog.setTeamId(teamId);
+        teamQuitLog.setTeamQuitLogId(GogoTools.UUID().toString());
+        teamQuitLog.setUserId(userInfo.getUserId());
+
+        iTeamService.createTeamQuitLog(teamQuitLog);
+    }
+
+    /**
+     * 查询我发起的退团申请列表
+     *
+     * @param in
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map listTeamQuitLogApply(Map in) throws Exception {
+        String token = in.get("token").toString();
+        Integer pageIndex = (Integer) in.get("pageIndex");
+        Integer pageSize = (Integer) in.get("pageSize");
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        Map qIn = new HashMap();
+        Integer offset = (pageIndex - 1) * pageSize;
+        qIn.put("offset", offset);
+        qIn.put("size", pageSize);
+        qIn.put("userId", userInfo.getUserId());
+        ArrayList<TeamQuitLog> teamQuitLogs = iTeamService.listTeamQuitLog(qIn);
+
+        Map out = new HashMap();
+        out.put("teamQuitLogs", teamQuitLogs);
+
+        return out;
+    }
+
+    /**
+     * 查询我收到的退团申请列表
+     *
+     * @param in
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map listTeamQuitLogProcess(Map in) throws Exception {
+        String token = in.get("token").toString();
+        Integer pageIndex = (Integer) in.get("pageIndex");
+        Integer pageSize = (Integer) in.get("pageSize");
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        Map qIn = new HashMap();
+        Integer offset = (pageIndex - 1) * pageSize;
+        qIn.put("offset", offset);
+        qIn.put("size", pageSize);
+        qIn.put("managerId", userInfo.getUserId());
+        ArrayList<TeamQuitLog> teamQuitLogs = iTeamService.listTeamQuitLog(qIn);
+
+        Map out = new HashMap();
+        out.put("teamQuitLogs", teamQuitLogs);
+
+        return out;
+    }
+
+    @Override
+    public Map getTeamQuitLog(Map in) throws Exception {
+        String token = in.get("token").toString();
+        String teamQuitLogId = in.get("teamQuitLogId").toString();
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        Map qIn = new HashMap();
+        qIn.put("teamQuitLogId", teamQuitLogId);
+        TeamQuitLog teamQuitLog = iTeamService.getTeamQuitLog(qIn);
+
+        Map out = new HashMap();
+        out.put("teamQuitLog", teamQuitLog);
+
+        /**
+         * 检查当前用户身份，申请人，处理人
+         */
+        if (teamQuitLog.getUserId().equals(userInfo.getUserId())) {
+            //当前用户是申请人
+            out.put("isApply", true);
+        } else {
+            if (teamQuitLog.getProcessUserId() != null) {
+                //已处理
+                if (teamQuitLog.getProcessUserId().equals(userInfo.getUserId())) {
+                    //当前用户是处理人
+                    out.put("isProcess", true);
+                }
+            } else {
+                //未处理，查询团队负责人
+                qIn = new HashMap();
+                qIn.put("teamId", teamQuitLog.getTeamId());
+                Team team = iTeamService.getTeam(qIn);
+                if (team != null) {
+                    if (team.getManagerId().equals(userInfo.getUserId())) {
+                        //当前用户是团队管理员
+                        out.put("isProcess", true);
+                    }
+                }
+            }
+        }
+
+        return out;
+    }
+
+    /**
+     * 取消退出团队申请
+     * @param in
+     * @throws Exception
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void cancelTeamQuitLog(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String teamQuitLogId=in.get("teamQuitLogId").toString();
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+
+        Map qIn=new HashMap();
+        qIn.put("teamQuitLogId",teamQuitLogId);
+        TeamQuitLog teamQuitLog=iTeamService.getTeamQuitLog(qIn);
+
+        if(!teamQuitLog.getUserId().equals(userInfo.getUserId())){
+            //不是本人的申请，不能取消
+            throw new Exception("20007");
+        }
+
+        qIn=new HashMap();
+        qIn.put("teamQuitLogId", teamQuitLogId);
+        qIn.put("status", GogoStatus.CANCEL);
+        qIn.put("processTime", new Date());
+        qIn.put("processUserId", userInfo.getUserId());
+        iTeamService.processTeamQuitLog(qIn);
     }
 }

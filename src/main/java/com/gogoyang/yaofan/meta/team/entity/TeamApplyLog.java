@@ -7,18 +7,17 @@ import java.util.Date;
 @Data
 public class TeamApplyLog {
     private Integer ids;
-    /**
-     * 申请事件Id
-     */
     private String teamApplyLogId;
     /**
      * 申请的团队id
      */
     private String teamId;
+    private String teamName;
     /**
      * 申请人Id
      */
     private String applyUserId;
+    private String applyUserName;
     /**
      * 申请理由
      */
@@ -27,10 +26,12 @@ public class TeamApplyLog {
      * 申请时间
      */
     private Date createTime;
+
     /**
      * 处理申请的团队经理Id
      */
     private String processUserId;
+    private String processUserName;
     /**
      * 申请被团队经理阅读的时间
      */
@@ -51,4 +52,10 @@ public class TeamApplyLog {
      * 处理结果被申请人阅读的时间
      */
     private Date processReadTime;
+
+    /**
+     * 团队管理员
+     */
+    private String teamManagerId;
+    private String teamManagerName;
 }

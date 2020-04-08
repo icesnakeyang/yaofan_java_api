@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLInput;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -83,5 +84,87 @@ public class CompleteBusinessService implements ICompleteBusinessService {
         iTaskCompleteService.setTaskCompleteReadTime(qIn2);
 
         return out;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void cancelComplete(Map in) throws Exception {
+        String token = in.get("token").toString();
+        String taskId = in.get("taskId").toString();
+        String content = in.get("content").toString();
+
+        /**
+         * 1、读取当前用户
+         * 2、读取要修改的任务, 检查任务状态是否complete
+         * 3、检查用户是否乙方
+         * 4、读取complete日志
+         * 5、检查complete日志是否未处理
+         * 6、处理complete日志为cancel
+         * 7、修改任务状态为progress
+         */
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        Task task = iCommonBusinessService.getTaskByTaskId(taskId);
+
+        if (!task.getStatus().equals(GogoStatus.COMPLETE.toString())) {
+            throw new Exception("20008");
+        }
+
+        if (!task.getPartyBId().equals(userInfo.getUserId())) {
+            throw new Exception("20009");
+        }
+
+        Map qIn = new HashMap();
+        qIn.put("taskId", task.getTaskId());
+        ArrayList<TaskComplete> taskCompletes = iTaskCompleteService.listTaskComplete(qIn);
+        TaskComplete taskComplete = null;
+        for (int i = 0; i < taskCompletes.size(); i++) {
+            if (taskCompletes.get(i).getProcessResult() == null) {
+                taskComplete = taskCompletes.get(i);
+            }
+        }
+        if (taskComplete == null) {
+            throw new Exception("20010");
+        }
+
+        taskComplete.setProcessRemark(content);
+        taskComplete.setProcessResult(GogoStatus.CANCEL.toString());
+        taskComplete.setProcessTime(new Date());
+        taskComplete.setProcessUserId(userInfo.getUserId());
+        iTaskCompleteService.processResult(taskComplete);
+
+        task.setStatus(GogoStatus.PROGRESS.toString());
+        iTaskService.updateTaskStatus(task);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void rejectComplete(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String taskId=in.get("taskId").toString();
+        String content=in.get("content").toString();
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+
+        Task task=iCommonBusinessService.getTaskByTaskId(taskId);
+
+        if(!task.getCreateUserId().equals(userInfo.getUserId())){
+            //不是甲方，不能拒绝
+            throw new Exception("20011");
+        }
+
+        TaskComplete taskComplete=iTaskCompleteService.getTaskCompleteUnProcess(taskId);
+        if(taskComplete==null){
+            throw new Exception("20010");
+        }
+        taskComplete.setProcessRemark(content);
+        taskComplete.setProcessResult(GogoStatus.REJECT.toString());
+        taskComplete.setProcessTime(new Date());
+        taskComplete.setProcessUserId(userInfo.getUserId());
+        iTaskCompleteService.processResult(taskComplete);
+
+        task.setStatus(GogoStatus.PROGRESS.toString());
+        iTaskService.updateTaskStatus(task);
     }
 }

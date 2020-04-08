@@ -1,22 +1,24 @@
-package com.gogoyang.yaofan.meta.taskLog.entity;
+package com.gogoyang.yaofan.meta.stop.entity;
 
 import lombok.Data;
 
 import java.util.Date;
 
 /**
- * 任务日志类
+ * 停止任务日志
  */
 @Data
-public class TaskLog {
+public class TaskStop {
     private Integer ids;
-    private String taskLogId;
+    private String taskStopId;
     private String taskId;
     private String createUserId;
-    private String createUserName;
-    private String content;
+    private String remark;
     private Date createTime;
     private Date readTime;
     private String readUserId;
+
+    private String createUserName;
     private String readUserName;
+    private String taskName;
 }

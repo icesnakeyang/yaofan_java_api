@@ -57,4 +57,28 @@
         where act_type = 'POINT_WITHDRAW'
         and process_result is null
     </select>
+
+    <!--读取我的积分账户列表-->
+    <select id="listMyPointLedger" parameterType="map"
+            resultMap="pointMap">
+        select point_ledger.ids,
+       point_ledger.task_id,
+       point_in,
+       point_out,
+       point_ledger.user_id,
+       user_info.name as user_name,
+       process_user_id,
+       process_user.name as process_user_name,
+       point_ledger.create_time,
+       remark,
+       act_type
+       from ((point_ledger
+left join task on point_ledger.task_id=task.task_id)
+left join user_info on point_ledger.user_id=user_info.user_id)
+left join user_info process_user on process_user_id=process_user.user_id
+where 1=1
+and point_ledger.user_id=#{userId}
+order by ids desc
+limit #{offset},#{size}
+    </select>
 </mapper>

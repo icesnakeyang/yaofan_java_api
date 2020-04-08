@@ -11,8 +11,7 @@ public class Team {
     /**
      * 团队名称
      */
-    private String name;
-
+    private String teamName;
     /**
      * 说明
      */
@@ -22,10 +21,12 @@ public class Team {
      * 创建人Id
      */
     private String createUserId;
+    private String createUserName;
     /**
      * 管理员Id
      */
     private String managerId;
+    private String managerName;
     /**
      * 当前状态
      */

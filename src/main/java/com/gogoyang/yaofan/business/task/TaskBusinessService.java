@@ -3,11 +3,12 @@ package com.gogoyang.yaofan.business.task;
 import com.gogoyang.yaofan.meta.complete.service.ITaskCompleteService;
 import com.gogoyang.yaofan.meta.point.entity.PointLedger;
 import com.gogoyang.yaofan.meta.point.service.IPointService;
+import com.gogoyang.yaofan.meta.stop.service.ITaskStopService;
 import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.task.service.ITaskService;
 import com.gogoyang.yaofan.meta.taskLog.service.ITaskLogService;
-import com.gogoyang.yaofan.meta.team.entity.MyTeamView;
-import com.gogoyang.yaofan.meta.team.entity.TeamView;
+import com.gogoyang.yaofan.meta.team.entity.Team;
+import com.gogoyang.yaofan.meta.team.entity.TeamUser;
 import com.gogoyang.yaofan.meta.team.service.ITeamService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
 import com.gogoyang.yaofan.meta.user.service.IUserInfoService;
@@ -15,11 +16,9 @@ import com.gogoyang.yaofan.utility.GogoActType;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLInput;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -33,6 +32,7 @@ public class TaskBusinessService implements ITaskBusinessService {
     private final IPointService iPointService;
     private final ITaskLogService iTaskLogService;
     private final ITaskCompleteService iTaskCompleteService;
+    private final ITaskStopService iTaskStopService;
 
     public TaskBusinessService(ICommonBusinessService iCommonBusinessService,
                                ITaskService iTaskService,
@@ -40,7 +40,8 @@ public class TaskBusinessService implements ITaskBusinessService {
                                ITeamService iTeamService,
                                IPointService iPointService,
                                ITaskLogService iTaskLogService,
-                               ITaskCompleteService iTaskCompleteService) {
+                               ITaskCompleteService iTaskCompleteService,
+                               ITaskStopService iTaskStopService) {
         this.iCommonBusinessService = iCommonBusinessService;
         this.iTaskService = iTaskService;
         this.iUserInfoService = iUserInfoService;
@@ -48,6 +49,7 @@ public class TaskBusinessService implements ITaskBusinessService {
         this.iPointService = iPointService;
         this.iTaskLogService = iTaskLogService;
         this.iTaskCompleteService = iTaskCompleteService;
+        this.iTaskStopService = iTaskStopService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -63,9 +65,9 @@ public class TaskBusinessService implements ITaskBusinessService {
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        TeamView teamView = null;
+        Team team = null;
         if (teamId != null) {
-            teamView = iCommonBusinessService.getTeamById(teamId);
+            team = iCommonBusinessService.getTeamById(teamId);
         }
 
         Date strtodate = null;
@@ -96,8 +98,8 @@ public class TaskBusinessService implements ITaskBusinessService {
         task.setTaskId(GogoTools.UUID().toString());
         task.setTitle(title);
         task.setStatus(GogoStatus.GRABBING.toString());
-        if (teamView != null) {
-            task.setTeamId(teamView.getTeamId());
+        if (team != null) {
+            task.setTeamId(team.getTeamId());
         }
 
         /**
@@ -129,24 +131,21 @@ public class TaskBusinessService implements ITaskBusinessService {
 
         UserInfo userInfo = iUserInfoService.getUserInfoByToken(token);
 
-        Map qIn=new HashMap();
+        Map qIn = new HashMap();
+        //读取我所在的团队
         qIn.put("userId", userInfo.getUserId());
         qIn.put("status", GogoStatus.ACTIVE.toString());
-        ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(qIn);
-
-        qIn = new HashMap();
-        qIn.put("userId", userInfo.getUserId());
-        qIn.put("status", GogoStatus.GRABBING.toString());
-        if (myTeamViews.size() > 0) {
-            ArrayList<String> teams = new ArrayList<>();
-            for (int i = 0; i < myTeamViews.size(); i++) {
-                teams.add(myTeamViews.get(i).getTeamId());
-            }
-            qIn.put("teams", teams);
+        ArrayList<TeamUser> teamUsers = iTeamService.listTeamUser(qIn);
+        if (teamUsers.size() == 0) {
+            //我没有加入任何团队
+            throw new Exception("20005");
         }
-
+        ArrayList teamList = new ArrayList();
+        for (int i = 0; i < teamUsers.size(); i++) {
+            teamList.add(teamUsers.get(i).getTeamId());
+        }
+        qIn.put("teamList", teamList);
         ArrayList<Task> tasks = iTaskService.listBiddingTasks(qIn);
-
         Map out = new HashMap();
         out.put("tasks", tasks);
         return out;
@@ -173,28 +172,18 @@ public class TaskBusinessService implements ITaskBusinessService {
             throw new Exception("10016");
         }
 
-        if(task.getTeamId()==null){
+        if (task.getTeamId() == null) {
             //非团队任务
-        }else{
+        } else {
             //团队任务，只有团队成员可见
             //读取用户的团队
-            Map qIn=new HashMap();
+            Map qIn = new HashMap();
             qIn.put("userId", userInfo.getUserId());
             qIn.put("status", GogoStatus.ACTIVE.toString());
-            ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(qIn);
-            if (myTeamViews.size() == 0) {
-                //没有加入团队
-                throw new Exception("10015");
-            }
-            //检查用户是否属于该任务的团队
-            int cc = 0;
-            for (int i = 0; i < myTeamViews.size(); i++) {
-                if (myTeamViews.get(i).getTeamId().equals(task.getTeamId())) {
-                    cc++;
-                }
-            }
-            if (cc == 0) {
-                //用户不是团队成员
+            qIn.put("teamId", task.getTeamId());
+            ArrayList<TeamUser> teamUsers = iTeamService.listTeamUser(qIn);
+            if (teamUsers.size() == 0) {
+                //不是当前团队成员
                 throw new Exception("10017");
             }
         }
@@ -219,6 +208,16 @@ public class TaskBusinessService implements ITaskBusinessService {
 
         Integer totalUnreadComplete = iTaskCompleteService.totalCompleteUnread(task.getTaskId(), userInfo.getUserId());
         out.put("totalUnreadTaskComplete", totalUnreadComplete);
+
+        //终止日志总数，未阅读数
+        Map qIn=new HashMap();
+        qIn.put("taskId", taskId);
+        qIn.put("partyBId", userInfo.getUserId());
+        Integer totalTaskStopUnread=iTaskStopService.totalTaskStopUnread(qIn);
+        out.put("totalTaskStopUnread", totalTaskStopUnread);
+        Integer totalTaskStop=iTaskStopService.totalTaskStop(taskId);
+        out.put("totalTaskStop", totalTaskStop);
+
         return out;
     }
 
@@ -237,12 +236,13 @@ public class TaskBusinessService implements ITaskBusinessService {
          * 3、我是甲方，createUserId
          */
         String token = in.get("token").toString();
+        String status = (String) in.get("status");
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
         Map qIn = new HashMap();
         qIn.put("userId", userInfo.getUserId());
-
+        qIn.put("status", status);
         ArrayList<Task> tasks = iTaskService.listMyTasks(qIn);
 
         /**
@@ -263,6 +263,8 @@ public class TaskBusinessService implements ITaskBusinessService {
             //未阅读的完成日志
             Integer totalUnreadComplete = iTaskCompleteService.totalCompleteUnread(tasks.get(i).getTaskId(), userInfo.getUserId());
             map.put("totalUnreadTaskComplete", totalUnreadComplete);
+
+            //
 
             list.add(map);
         }
@@ -338,9 +340,21 @@ public class TaskBusinessService implements ITaskBusinessService {
 
         Map qIn = new HashMap();
         qIn.put("userId", userInfo.getUserId());
-        Integer offset = (pageIndex - 1) * pageSize;
+
+        /**
+         * 缓冲读取数据列表
+         * 读取前一页和后一页，共3页的数据
+         */
+        Integer offset = 0;
+        if (pageIndex > 1) {
+            offset = (pageIndex - 2) * pageSize;
+        } else {
+            offset = (pageIndex - 1) * pageSize;
+        }
+        Integer size = pageSize * 3;
+
         qIn.put("offset", offset);
-        qIn.put("size", pageSize);
+        qIn.put("size", size);
 
         ArrayList<Task> tasks = iTaskService.listMyTasksDetail(qIn);
 
@@ -367,9 +381,30 @@ public class TaskBusinessService implements ITaskBusinessService {
         }
         Map out = new HashMap();
         out.put("tasks", list);
+
+        //task总数
+        qIn = new HashMap();
+        qIn.put("userId", userInfo.getUserId());
+        Integer totalTasks = iTaskService.totalUserTask(qIn);
+        out.put("totalTasks", totalTasks);
+
+        //task总页数
+        Integer totalPage = totalTasks / pageSize;
+        Integer modPage = totalTasks % pageSize;
+        if (modPage > 0) {
+            totalPage++;
+        }
+        out.put("totalPage", totalPage);
+
         return out;
     }
 
+    /**
+     * 修改任务
+     *
+     * @param in
+     * @throws Exception
+     */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateTask(Map in) throws Exception {
@@ -384,25 +419,26 @@ public class TaskBusinessService implements ITaskBusinessService {
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        Task task=iTaskService.getTaskByTaskId(taskId);
+        Task task = iTaskService.getTaskByTaskId(taskId);
 
-        if(task==null){
+        if (task == null) {
             throw new Exception("10016");
         }
 
-        if(!task.getStatus().equals(GogoStatus.GRABBING.toString())){
+        if (!task.getStatus().equals(GogoStatus.GRABBING.toString())) {
             // 任务不是等待匹配状态，不能修改
             throw new Exception("20004");
         }
 
-        if(!task.getCreateUserId().equals(userInfo.getUserId())){
+        if (!task.getCreateUserId().equals(userInfo.getUserId())) {
             // 不能修改不是自己创建的任务
             throw new Exception("20003");
         }
 
-        TeamView teamView = null;
+        //如果指定了团队Id，检查团队是否存在
+        Team team = null;
         if (teamId != null) {
-            teamView = iCommonBusinessService.getTeamById(teamId);
+            team = iCommonBusinessService.getTeamById(teamId);
         }
 
         Date strtodate = null;
@@ -428,8 +464,8 @@ public class TaskBusinessService implements ITaskBusinessService {
         task.setEndTime(strtodate);
         task.setPoint(point);
         task.setTitle(title);
-        if (teamView != null) {
-            task.setTeamId(teamView.getTeamId());
+        if (team != null) {
+            task.setTeamId(team.getTeamId());
         }
 
         /**
@@ -457,24 +493,121 @@ public class TaskBusinessService implements ITaskBusinessService {
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
         //读取我的团队集合
-        Map qIn=new HashMap();
+        Map qIn = new HashMap();
         qIn.put("userId", userInfo.getUserId());
-        ArrayList<MyTeamView> myTeamViews=iTeamService.listTeam(qIn);
-        if(myTeamViews.size()==0){
+        ArrayList<TeamUser> teamUsers = iTeamService.listTeamUser(qIn);
+        if (teamUsers.size() == 0) {
             throw new Exception("20005");
         }
-        ArrayList teamList=new ArrayList();
-        for(int i=0;i<myTeamViews.size();i++){
-            teamList.add(myTeamViews.get(i).getTeamId());
+        ArrayList teamList = new ArrayList();
+        for (int i = 0; i < teamUsers.size(); i++) {
+            teamList.add(teamUsers.get(i).getTeamId());
         }
 
         qIn = new HashMap();
         qIn.put("teamList", teamList);
-        ArrayList<Task> tasks=iTaskService.listTaskGrabbingTeam(qIn);
+        ArrayList<Task> tasks = iTaskService.listTaskGrabbingTeam(qIn);
 
 
         Map out = new HashMap();
         out.put("tasks", tasks);
+        return out;
+    }
+
+    @Override
+    public Map listMyPartyATasksDetail(Map in) throws Exception {
+        String token = in.get("token").toString();
+        Integer pageIndex = (Integer) in.get("pageIndex");
+        Integer pageSize = (Integer) in.get("pageSize");
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        Map qIn = new HashMap();
+        qIn.put("partyAId", userInfo.getUserId());
+        Integer offset = (pageIndex - 1) * pageSize;
+        qIn.put("offset", offset);
+        qIn.put("size", pageSize);
+        ArrayList<Task> tasks = iTaskService.listMyTasksDetailPartyAOrB(qIn);
+
+        /**
+         * 读取task的统计信息
+         */
+        ArrayList list = new ArrayList();
+        for (int i = 0; i < tasks.size(); i++) {
+            Map map = new HashMap();
+            map.put("task", tasks.get(i));
+            //日志总数
+            Integer totalTaskLog = iTaskLogService.totalTaskLog(tasks.get(i).getTaskId());
+            map.put("totalTaskLog", totalTaskLog);
+
+            //未阅读的日志总数
+            Integer totalUnreadTaskLog = iTaskLogService.totalTaskLogUnread(tasks.get(i).getTaskId(), userInfo.getUserId());
+            map.put("totalUnreadTaskLog", totalUnreadTaskLog);
+
+            //未阅读的完成日志
+            Integer totalUnreadComplete = iTaskCompleteService.totalCompleteUnread(tasks.get(i).getTaskId(), userInfo.getUserId());
+            map.put("totalUnreadTaskComplete", totalUnreadComplete);
+
+            list.add(map);
+        }
+        Map out = new HashMap();
+        out.put("tasks", list);
+
+        //task总数
+        qIn = new HashMap();
+        qIn.put("partyAId", userInfo.getUserId());
+        Integer totalTasks = iTaskService.totalMyTasksPartyAOrB(qIn);
+        out.put("totalTasks", totalTasks);
+
+        //task总页数
+        Integer totalPage = totalTasks / pageSize;
+        Integer modPage = totalTasks % pageSize;
+        if (modPage > 0) {
+            totalPage++;
+        }
+        out.put("totalPage", totalPage);
+
+        return out;
+    }
+
+    @Override
+    public Map listMyPartyBTasksDetail(Map in) throws Exception {
+        String token = in.get("token").toString();
+        Integer pageIndex = (Integer) in.get("pageIndex");
+        Integer pageSize = (Integer) in.get("pageSize");
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        Map qIn = new HashMap();
+        qIn.put("partyBId", userInfo.getUserId());
+        Integer offset = (pageIndex - 1) * pageSize;
+        qIn.put("offset", offset);
+        qIn.put("size", pageSize);
+        ArrayList<Task> tasks = iTaskService.listMyTasksDetailPartyAOrB(qIn);
+
+        /**
+         * 读取task的统计信息
+         */
+        ArrayList list = new ArrayList();
+        for (int i = 0; i < tasks.size(); i++) {
+            Map map = new HashMap();
+            map.put("task", tasks.get(i));
+            //日志总数
+            Integer totalTaskLog = iTaskLogService.totalTaskLog(tasks.get(i).getTaskId());
+            map.put("totalTaskLog", totalTaskLog);
+
+            //未阅读的日志总数
+            Integer totalUnreadTaskLog = iTaskLogService.totalTaskLogUnread(tasks.get(i).getTaskId(), userInfo.getUserId());
+            map.put("totalUnreadTaskLog", totalUnreadTaskLog);
+
+            //未阅读的完成日志
+            Integer totalUnreadComplete = iTaskCompleteService.totalCompleteUnread(tasks.get(i).getTaskId(), userInfo.getUserId());
+            map.put("totalUnreadTaskComplete", totalUnreadComplete);
+
+            list.add(map);
+        }
+        Map out = new HashMap();
+        out.put("tasks", list);
         return out;
     }
 }

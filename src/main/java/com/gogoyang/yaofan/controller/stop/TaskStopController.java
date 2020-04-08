@@ -1,12 +1,11 @@
-package com.gogoyang.yaofan.controller.taskLog;
+package com.gogoyang.yaofan.controller.stop;
 
-import com.gogoyang.yaofan.business.taskLog.ITaskLogBusinessService;
+import com.gogoyang.yaofan.business.stop.ITaskStopBusinessService;
 import com.gogoyang.yaofan.controller.vo.Response;
 import com.gogoyang.yaofan.utility.GogoActType;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,23 +13,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/tasklog")
-public class TaskLogController {
-    private final ITaskLogBusinessService iTaskLogBusinessService;
+@RequestMapping("/api/taskStop")
+public class TaskStopController {
+    private final ITaskStopBusinessService iTaskStopBusinessService;
     private final ICommonBusinessService iCommonBusinessService;
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    public TaskLogController(ITaskLogBusinessService iTaskLogBusinessService,
-                             ICommonBusinessService iCommonBusinessService) {
-        this.iTaskLogBusinessService = iTaskLogBusinessService;
+    public TaskStopController(ITaskStopBusinessService iTaskStopBusinessService,
+                              ICommonBusinessService iCommonBusinessService) {
+        this.iTaskStopBusinessService = iTaskStopBusinessService;
         this.iCommonBusinessService = iCommonBusinessService;
     }
 
+    /**
+     * 甲方终止任务
+     *
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
     @ResponseBody
-    @PostMapping("/createTaskLog")
-    public Response createTaskLog(@RequestBody TaskLogRequest request,
-                                  HttpServletRequest httpServletRequest) {
+    @PostMapping("/stopTask")
+    public Response stopTask(@RequestBody TaskStopRequest request,
+                             HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
         Map logMap = new HashMap();
@@ -39,11 +45,12 @@ public class TaskLogController {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
             in.put("taskId", request.getTaskId());
-            in.put("content", request.getContent());
+            in.put("remark", request.getRemark());
             logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.STOP_TASK);
             memoMap.put("taskId", request.getTaskId());
-            logMap.put("GogoActType", GogoActType.CREATE_TASK_LOG);
-            iTaskLogBusinessService.createTaskLog(in);
+            iTaskStopBusinessService.stopTask(in);
+            memoMap.put("result", "success");
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -51,6 +58,7 @@ public class TaskLogController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            memoMap.put("result", "fail");
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -62,9 +70,15 @@ public class TaskLogController {
         return response;
     }
 
+    /**
+     * 读取任务终止日志
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
     @ResponseBody
-    @PostMapping("/listTaskLog")
-    public Response listTaskLog(@RequestBody TaskLogRequest request,
+    @PostMapping("/getTaskStop")
+    public Response getTaskStop(@RequestBody TaskStopRequest request,
                                 HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
@@ -74,10 +88,12 @@ public class TaskLogController {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
             in.put("taskId", request.getTaskId());
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.GET_TASK_STOP);
             memoMap.put("taskId", request.getTaskId());
-            logMap.put("GogoActType", GogoActType.LIST_TASK_LOG);
-            Map out = iTaskLogBusinessService.listTaskLog(in);
+            Map out = iTaskStopBusinessService.getTaskStop(in);
             response.setData(out);
+            memoMap.put("result", "success");
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -85,6 +101,7 @@ public class TaskLogController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            memoMap.put("result", "fail");
             memoMap.put("error", ex.getMessage());
         }
         try {

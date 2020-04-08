@@ -2,8 +2,8 @@ package com.gogoyang.yaofan.utility.common;
 
 import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.task.service.ITaskService;
-import com.gogoyang.yaofan.meta.team.entity.MyTeamView;
-import com.gogoyang.yaofan.meta.team.entity.TeamView;
+import com.gogoyang.yaofan.meta.team.entity.Team;
+import com.gogoyang.yaofan.meta.team.entity.TeamUser;
 import com.gogoyang.yaofan.meta.team.service.ITeamService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
 import com.gogoyang.yaofan.meta.user.service.IUserInfoService;
@@ -111,12 +111,14 @@ public class CommonBusinessService implements ICommonBusinessService {
      * @throws Exception
      */
     @Override
-    public TeamView getTeamById(String teamId) throws Exception {
-        TeamView teamView = iTeamService.getTeamByTeamId(teamId);
-        if (teamView == null) {
+    public Team getTeamById(String teamId) throws Exception {
+        Map qIn=new HashMap();
+        qIn.put("teamId", teamId);
+        Team team = iTeamService.getTeam(qIn);
+        if (team == null) {
             throw new Exception("10014");
         }
-        return teamView;
+        return team;
     }
 
     @Override
@@ -142,9 +144,9 @@ public class CommonBusinessService implements ICommonBusinessService {
         qIn.put("userId", userId);
         qIn.put("teamId", teamId);
         qIn.put("status", GogoStatus.ACTIVE.toString());
-        ArrayList<MyTeamView> myTeamViews = iTeamService.listTeam(qIn);
+        ArrayList<TeamUser> teamUsers = iTeamService.listTeamUser(qIn);
 
-        if (myTeamViews == null) {
+        if (teamUsers.size()==0) {
             throw new Exception("10017");
         }
     }

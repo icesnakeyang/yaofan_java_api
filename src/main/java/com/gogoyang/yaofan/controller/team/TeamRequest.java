@@ -12,4 +12,5 @@ public class TeamRequest {
     private Integer pageSize;
 
     private String teamApplyLogId;
+    private String teamQuitLogId;
 }

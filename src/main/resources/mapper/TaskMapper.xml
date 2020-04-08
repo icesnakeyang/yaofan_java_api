@@ -51,9 +51,9 @@
             ]]>
         </if>
         and task.status='BIDDING'
-        <if test="teams!=null">
+        <if test="teamList!=null">
             and team_id in
-            <foreach collection="teams" item="team"
+            <foreach collection="teamList" item="team"
                      index="index" open="(" close=")" separator=",">
                 #{team}
             </foreach>
@@ -103,28 +103,34 @@ left join team on task.team_id=team.team_id
         where task_id=#{taskId}
     </update>
 
+    <!--读取我的任务（同时包括我是甲方或乙方）不包括详情-->
     <select id="listMyTasks" parameterType="map"
             resultMap="taskMap">
         select task.ids,
-       task_id,
-       create_user_id,
-       create_user.name as party_a_name,
-       point,
-       title,
-       task.create_time,
-       end_time,
-       party_b_id,
-       party_b.name     as party_b_name,
-       contract_time,
-       task.status      as task_status,
-       team_id
-from (task
-    left join user_info create_user on create_user_id = user_id)
-         left join user_info party_b on party_b_id = party_b.user_id
-where 1 = 1
-  and (create_user_id = #{userId}
-    or party_b_id = #{userId})
-    order by end_time
+        task_id,
+        create_user_id,
+        create_user.name as party_a_name,
+        point,
+        title,
+        task.create_time,
+        end_time,
+        party_b_id,
+        party_b.name as party_b_name,
+        contract_time,
+        task.status as task_status,
+        team_id
+        from (task
+        left join user_info create_user on create_user_id = user_id)
+        left join user_info party_b on party_b_id = party_b.user_id
+        where 1 = 1
+        and (create_user_id = #{userId}
+        or party_b_id = #{userId})
+        <choose>
+            <when test="status!=null">
+                and task.status=#{status}
+            </when>
+        </choose>
+        order by end_time
     </select>
 
     <update id="updateTaskStatus" parameterType="com.gogoyang.yaofan.meta.task.entity.Task">
@@ -133,37 +139,20 @@ where 1 = 1
         where task_id=#{taskId}
     </update>
 
-    <!--统计用户的任务总数-->
-    <select id="countUserTask" parameterType="map" resultType="map">
+    <!--统计用户的任务总数（同时包括甲方任务和乙方任务）-->
+    <select id="totalUserTask" parameterType="map" resultType="java.lang.Integer">
         select count(*) as total_task
         from task
         where 1 = 1
         and (
-            create_user_id = #{userId}
-            or party_b_id = #{userId}
+        create_user_id = #{userId}
+        or party_b_id = #{userId}
         )
-    </select>
-
-    <!--统计用户已完成的任务总数-->
-    <select id="countUserTaskComplete" parameterType="map" resultType="map">
-        select count(*) as total_complete from task
-        where 1=1
-        and(
-            create_user_id=#{userId}
-            or party_b_id=#{userId}
-            )
-        and status='COMPLETE'
-    </select>
-
-    <!--统计用户进行中的任务总数-->
-    <select id="countUserTaskProgress" parameterType="map" resultType="map">
-        select count(*) as total_progress from task
-        where 1=1
-        and(
-            create_user_id=#{userId}
-            or party_b_id=#{userId}
-            )
-        and status='PROGRESS'
+        <choose>
+            <when test="status!=null">
+                and status=#{status}
+            </when>
+        </choose>
     </select>
 
     <!--统计一个用户指定时间段内的积分收入和积分支出-->
@@ -176,12 +165,10 @@ where 1 = 1
         and create_time >= cast(#{dateStart} as datetime)
         and create_time < cast(#{dateEnd} as datetime)
 
-
-
         ]]>
     </select>
 
-    <!--读取我的任务（我是甲方或者我是乙方）包括详情-->
+    <!--读取我的任务（同时包括我是甲方或乙方）包括详情-->
     <select id="listMyTasksDetail" parameterType="map" resultMap="taskMap">
         select task.ids,
        task_id,
@@ -204,6 +191,57 @@ where 1 = 1
         or party_b_id=#{userId}
     order by end_time
     limit #{offset}, #{size}
+    </select>
+
+    <!--读取我的任务（我是甲方或者我是乙方）包括详情-->
+    <select id="listMyTasksDetailPartyAOrB" parameterType="map" resultMap="taskMap">
+        select task.ids,
+        task_id,
+        create_user_id,
+        create_user.name as party_a_name,
+        point,
+        title,
+        task.create_time,
+        end_time,
+        party_b_id,
+        party_b.name as party_b_name,
+        contract_time,
+        task.status as task_status,
+        team_id,
+        detail
+        from (task
+        left join user_info create_user on create_user_id = user_id)
+        left join user_info party_b on party_b_id = party_b.user_id
+        where 1 = 1
+        <choose>
+            <when test="partyAId!=null">
+                and create_user_id = #{partyAId}
+            </when>
+        </choose>
+        <choose>
+            <when test="partyBId!=null">
+                and party_b_id = #{partyBId}
+            </when>
+        </choose>
+        order by end_time
+        limit #{offset},#{size}
+    </select>
+
+    <!--统计我的任务总是（我是甲方或者我是乙方）-->
+    <select id="totalMyTasksPartyAOrB" parameterType="map" resultType="java.lang.Integer">
+        select count(*) as total
+        from task
+        where 1=1
+        <choose>
+            <when test="partyAId!=null">
+                and create_user_id=#{partyAId}
+            </when>
+        </choose>
+        <choose>
+            <when test="partyBId!=null">
+                and party_b_id='010b0f68-4913-4700-a673-7f43283e789f'
+            </when>
+        </choose>
     </select>
 
     <update id="updateTask" parameterType="com.gogoyang.yaofan.meta.task.entity.Task">

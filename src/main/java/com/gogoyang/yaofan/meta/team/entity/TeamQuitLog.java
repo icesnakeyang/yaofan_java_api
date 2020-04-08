@@ -4,10 +4,13 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * 用户退团申请日志
+ */
 @Data
-public class TeamApplyView {
+public class TeamQuitLog {
     private Integer ids;
-    private String teamApplyLogId;
+    private String teamQuitLogId;
     /**
      * 申请的团队id
      */
@@ -16,12 +19,12 @@ public class TeamApplyView {
     /**
      * 申请人Id
      */
-    private String applyUserId;
-    private String applyUserName;
+    private String userId;
+    private String userName;
     /**
      * 申请理由
      */
-    private String applyRemark;
+    private String remark;
     /**
      * 申请时间
      */
@@ -53,6 +56,9 @@ public class TeamApplyView {
      */
     private Date processReadTime;
 
+    /**
+     * 团队管理员
+     */
     private String teamManagerId;
     private String teamManagerName;
 }

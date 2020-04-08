@@ -3,6 +3,7 @@ package com.gogoyang.yaofan.business.statistic;
 import com.gogoyang.yaofan.meta.point.service.IPointService;
 import com.gogoyang.yaofan.meta.task.service.ITaskService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
+import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.omg.CORBA.INTERNAL;
@@ -42,36 +43,27 @@ public class StatisticBusinessService implements IStatisticBusinessService {
          */
         Map qIn = new HashMap();
         qIn.put("userId", userInfo.getUserId());
-        Map taskMap = iTaskService.countUserTask(qIn);
-        Long countTask = (Long) taskMap.get("total_task");
-        if (countTask == null) {
-            countTask = 0L;
-        }
-        out.put("countTask", countTask);
+        Integer totalTasks = iTaskService.totalUserTask(qIn);
+        out.put("totalTasks", totalTasks);
 
         /**
          * 完成任务数
          */
         qIn = new HashMap();
         qIn.put("userId", userInfo.getUserId());
-        taskMap = iTaskService.countUserTaskComplete(qIn);
-        Long countTaskComplete = (Long) taskMap.get("total_complete");
-        if (countTaskComplete == null) {
-            countTaskComplete = 0L;
-        }
-        out.put("countTaskComplete", countTaskComplete);
+        qIn.put("status", GogoStatus.COMPLETE);
+        Integer totalTasksComplete = iTaskService.totalUserTask(qIn);
+        out.put("totalTasksComplete", totalTasksComplete);
 
         /**
          * 统计用户进行中的任务总数
          */
         qIn = new HashMap();
         qIn.put("userId", userInfo.getUserId());
-        taskMap = iTaskService.countUserTaskProgress(qIn);
-        Long countTaskProgress = (Long) taskMap.get("total_progress");
-        if (countTaskProgress == null) {
-            countTaskProgress = 0L;
-        }
-        out.put("countTaskProgress", countTaskProgress);
+        qIn.put("status", GogoStatus.PROGRESS);
+        Integer totalTasksProgress = iTaskService.totalUserTask(qIn);
+
+        out.put("totalTasksProgress", totalTasksProgress);
 
         /**
          * 统计本月积分收入和支出
@@ -85,7 +77,7 @@ public class StatisticBusinessService implements IStatisticBusinessService {
         Date dateEnd = GogoTools.dateEndOfThisMonth();
         qIn.put("dateStart", dateStart);
         qIn.put("dateEnd", dateEnd);
-        taskMap = iTaskService.totalPointIn(qIn);
+        Map taskMap = iTaskService.totalPointIn(qIn);
         //本月收入
         Double totalIn = (Double) taskMap.get("total_in");
         if (totalIn == null) {
@@ -98,7 +90,6 @@ public class StatisticBusinessService implements IStatisticBusinessService {
             totalOut = 0.0;
         }
         out.put("totalOutMonth", totalOut);
-
 
         return out;
     }

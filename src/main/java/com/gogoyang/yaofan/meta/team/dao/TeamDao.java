@@ -8,31 +8,34 @@ import java.util.Map;
 
 @Mapper
 public interface TeamDao {
+    /**
+     * 创建一个团队
+     * @param team
+     */
     void createTeam(Team team);
 
-    Team getTeamByName(String name);
-
-    void createMyTeam(MyTeam myTeam);
+    /**
+     * 根据teamId读取团队详情
+     * @param qIn
+     * teamId
+     * teamName
+     * @return
+     */
+    Team getTeam(Map qIn);
 
     /**
      * 查询团队列表
      * @param qIn
-     * userId
+     * createUserId
      * status
      * teamId
+     * managerId
+     * teamName（模糊查询）
+     * offset
+     * size
      * @return
      */
-    ArrayList<MyTeamView> listTeam(Map qIn);
-
-    /**
-     * 根据团队名称关键字搜索团队
-     *
-     * @param qIn
-     * @return
-     */
-    ArrayList<Team> searchTeam(Map qIn);
-
-    TeamView getTeamByTeamId(String name);
+    ArrayList<Team> listTeam(Map qIn);
 
     /**
      * 修改团队信息
@@ -48,13 +51,4 @@ public interface TeamDao {
      * @param teamId
      */
     void deleteTeam(String teamId);
-
-    /**
-     * 查询所有我创建的团队
-     * @param qIn
-     * userId:创建人Id
-     * status：状态(可选)
-     * @return
-     */
-    ArrayList<TeamView> listMyCreateTeam(Map qIn);
 }

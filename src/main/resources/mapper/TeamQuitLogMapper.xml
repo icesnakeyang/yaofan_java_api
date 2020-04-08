@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gogoyang.yaofan.meta.team.dao.TeamQuitDao">
+
+    <resultMap id="teamQuitLogMap" type="com.gogoyang.yaofan.meta.team.entity.TeamQuitLog">
+        <result property="teamQuitLogId" column="team_quit_log_id"/>
+        <result property="teamId" column="team_id"/>
+        <result property="teamName" column="team_name"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="teamManagerId" column="team_manager_id"/>
+        <result property="teamManagerName" column="team_manager_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="remark" column="remark"/>
+        <result property="processRemark" column="process_remark"/>
+        <result property="processTime" column="process_time"/>
+        <result property="processUserId" column="process_user_id"/>
+        <result property="processUserName" column="process_user_name"/>
+        <result property="processReadTime" column="process_read_time"/>
+        <result property="readTime" column="read_time"/>
+    </resultMap>
+
+    <!--创建团队退出日志-->
+    <insert id="createTeamQuitLog" parameterType="com.gogoyang.yaofan.meta.team.entity.TeamQuitLog">
+        insert into team_quit_log
+        (team_quit_log_id, team_id, user_id, remark, create_time, status)
+        values
+        (#{teamQuitLogId}, #{teamId},#{userId}, #{remark}, #{createTime}, #{status})
+    </insert>
+
+    <!--查询退团日志列表-->
+    <select id="listTeamQuitLog" parameterType="map" resultMap="teamQuitLogMap">
+        select team_quit_log.ids,
+        team_quit_log_id,
+        team_quit_log.team_id,
+        team.name as team_name,
+        team_quit_log.user_id,
+        create_user.name as user_name,
+        remark,
+        team_quit_log.create_time,
+        team_quit_log.status,
+        manager_id,
+        process_time
+        from (team_quit_log
+        left join team on team_quit_log.team_id=team.team_id)
+        left join user_info create_user on team_quit_log.user_id=create_user.user_id
+        where 1=1
+        <choose>
+            <when test="userId">
+                and team_quit_log.user_id=#{userId}
+            </when>
+        </choose>
+        <choose>
+            <when test="managerId!=null">
+                and manager_id=#{managerId}
+            </when>
+        </choose>
+        order by team_quit_log.ids desc
+        limit #{offset},#{size}
+    </select>
+
+    <!--查询退团日志详情-->
+    <select id="getTeamQuitLog" parameterType="map" resultMap="teamQuitLogMap">
+        select team_quit_log.ids,
+       team_quit_log_id,
+       team_quit_log.team_id,
+       team.name as team_name,
+       team_quit_log.user_id,
+       create_user.name as user_name,
+       remark,
+       team_quit_log.create_time,
+       team_quit_log.status,
+       manager_id,
+       process_time,
+       process_user_id,
+       process_user.name as process_user_name,
+       process_remark
+       from ((team_quit_log
+left join team on team_quit_log.team_id=team.team_id)
+left join user_info create_user on team_quit_log.user_id=create_user.user_id)
+left join user_info process_user on process_user_id=process_user.user_id
+where 1=1
+and team_quit_log_id=#{teamQuitLogId}
+    </select>
+
+    <!--处理团队申请-->
+    <update id="processTeamQuitLog" parameterType="map">
+        update team_quit_log
+        <set>
+            <if test="status!=null">
+                status=#{status},
+            </if>
+            <if test="processTime!=null">
+                process_time=#{processTime},
+            </if>
+            <if test="processUserId!=null">
+                process_user_id=#{processUserId},
+            </if>
+            <if test="processRemark!=null">
+                process_remark=#{processRemark}
+            </if>
+        </set>
+        where team_quit_log_id=#{teamQuitLogId}
+    </update>
+
+</mapper>

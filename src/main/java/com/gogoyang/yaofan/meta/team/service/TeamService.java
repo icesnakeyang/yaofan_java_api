@@ -2,6 +2,8 @@ package com.gogoyang.yaofan.meta.team.service;
 
 import com.gogoyang.yaofan.meta.team.dao.TeamApplyLogDao;
 import com.gogoyang.yaofan.meta.team.dao.TeamDao;
+import com.gogoyang.yaofan.meta.team.dao.TeamQuitDao;
+import com.gogoyang.yaofan.meta.team.dao.TeamUserDao;
 import com.gogoyang.yaofan.meta.team.entity.*;
 import org.springframework.stereotype.Service;
 
@@ -12,63 +14,80 @@ import java.util.Map;
 public class TeamService implements ITeamService {
     private final TeamDao teamDao;
     private final TeamApplyLogDao teamApplyLogDao;
+    private final TeamUserDao teamUserDao;
+    private final TeamQuitDao teamQuitDao;
 
     public TeamService(TeamDao teamDao,
-                       TeamApplyLogDao teamApplyLogDao) {
+                       TeamApplyLogDao teamApplyLogDao,
+                       TeamUserDao teamUserDao,
+                       TeamQuitDao teamQuitDao) {
         this.teamDao = teamDao;
         this.teamApplyLogDao = teamApplyLogDao;
+        this.teamUserDao = teamUserDao;
+        this.teamQuitDao = teamQuitDao;
     }
 
+    /**
+     * 创建一个团队
+     *
+     * @param team
+     * @return
+     * @throws Exception
+     */
     @Override
     public Team createTeam(Team team) throws Exception {
         teamDao.createTeam(team);
         return team;
     }
 
+    /**
+     * 根据teamId读取团队详情
+     *
+     * @param qIn teamId
+     *            teamName
+     * @return
+     * @throws Exception
+     */
     @Override
-    public Team getTeamByName(String name) throws Exception {
-        Team team = teamDao.getTeamByName(name);
+    public Team getTeam(Map qIn) throws Exception {
+        Team team = teamDao.getTeam(qIn);
         return team;
     }
 
+    /**
+     * 创建一个新的团队用户链接
+     *
+     * @param teamUser
+     * @throws Exception
+     */
     @Override
-    public MyTeam createMyTeam(MyTeam myTeam) throws Exception {
-        teamDao.createMyTeam(myTeam);
-        return myTeam;
+    public void createTeamUser(TeamUser teamUser) throws Exception {
+        teamUserDao.createTeamUser(teamUser);
     }
 
     /**
-     * @param qIn userId
+     * @param qIn createUserId
      *            status
      *            teamId
+     *            managerId
+     *            teamName（模糊查询）
+     *            offset
+     *            size
      * @return
      * @throws Exception
      */
     @Override
-    public ArrayList<MyTeamView> listTeam(Map qIn) throws Exception {
-        ArrayList<MyTeamView> myTeamViewArrayList = teamDao.listTeam(qIn);
-        return myTeamViewArrayList;
-    }
-
-    /**
-     * 根据团队名称关键字搜索团队
-     *
-     * @param qIn
-     * @return
-     * @throws Exception
-     */
-    @Override
-    public ArrayList<Team> searchTeam(Map qIn) throws Exception {
-        ArrayList<Team> teams = teamDao.searchTeam(qIn);
+    public ArrayList<Team> listTeam(Map qIn) throws Exception {
+        ArrayList<Team> teams = teamDao.listTeam(qIn);
         return teams;
     }
 
-    @Override
-    public TeamView getTeamByTeamId(String teamId) throws Exception {
-        TeamView team = teamDao.getTeamByTeamId(teamId);
-        return team;
-    }
-
+    /**
+     * 创建团队申请日志
+     *
+     * @param teamApplyLog
+     * @throws Exception
+     */
     @Override
     public void createTeamApplyLog(TeamApplyLog teamApplyLog) throws Exception {
         teamApplyLogDao.createTeamApplyLog(teamApplyLog);
@@ -92,10 +111,17 @@ public class TeamService implements ITeamService {
         return teamApplyViews;
     }
 
+    /**
+     * 根据teamApplyLogId查询团队申请日志详情
+     *
+     * @param teamApplyLogId
+     * @return
+     * @throws Exception
+     */
     @Override
-    public TeamApplyView getTeamApplyLog(String teamApplyLogId) throws Exception {
-        TeamApplyView teamApplyView = teamApplyLogDao.getTeamApplyLog(teamApplyLogId);
-        return teamApplyView;
+    public TeamApplyLog getTeamApplyLog(String teamApplyLogId) throws Exception {
+        TeamApplyLog teamApplyLog = teamApplyLogDao.getTeamApplyLog(teamApplyLogId);
+        return teamApplyLog;
     }
 
     /**
@@ -125,9 +151,8 @@ public class TeamService implements ITeamService {
     /**
      * 设置团队申请日志的阅读时间
      *
-     * @param qIn
-     * readTime
-     * teamApplyLogId
+     * @param qIn readTime
+     *            teamApplyLogId
      * @throws Exception
      */
     @Override
@@ -136,13 +161,11 @@ public class TeamService implements ITeamService {
     }
 
     /**
-     *
-     * @param qIn
-     * readTime
-     * teamApplyLogId
+     * @param qIn readTime
+     *            teamApplyLogId
      */
     @Override
-    public void setTeamApplyLogReadTimeProcess(Map qIn) {
+    public void setTeamApplyLogReadTimeProcess(Map qIn) throws Exception {
         teamApplyLogDao.setTeamApplyLogReadTimeProcess(qIn);
     }
 
@@ -171,18 +194,6 @@ public class TeamService implements ITeamService {
         teamDao.deleteTeam(teamId);
     }
 
-
-    /**
-     * @param qIn userId:创建人Id
-     *            status：状态(可选)
-     * @return
-     */
-    @Override
-    public ArrayList<TeamView> listMyCreateTeam(Map qIn) throws Exception {
-        ArrayList<TeamView> teamViews = teamDao.listMyCreateTeam(qIn);
-        return teamViews;
-    }
-
     /**
      * @param qIn status
      *            teamApplyLogId
@@ -197,9 +208,72 @@ public class TeamService implements ITeamService {
      * @return
      */
     @Override
-    public Integer totalTeamApplyLogUnReadProcess(Map qIn) {
+    public Integer totalTeamApplyLogUnReadProcess(Map qIn) throws Exception {
         Integer total = teamApplyLogDao.totalTeamApplyLogUnReadProcess(qIn);
         return total;
+    }
+
+    /**
+     * 查询一个团队用户信息
+     *
+     * @param qIn teamId
+     *            userId
+     *            status
+     * @return
+     */
+    @Override
+    public ArrayList<TeamUser> listTeamUser(Map qIn) throws Exception {
+        ArrayList<TeamUser> teamUsers = teamUserDao.listTeamUser(qIn);
+        return teamUsers;
+    }
+
+    /**
+     * 创建退出团队日志
+     *
+     * @param teamQuitLog
+     */
+    @Override
+    public void createTeamQuitLog(TeamQuitLog teamQuitLog) throws Exception {
+        teamQuitDao.createTeamQuitLog(teamQuitLog);
+    }
+
+    /**
+     * 查询退团日志列表
+     *
+     * @param qIn userId
+     *            managerId
+     *            offset
+     *            size
+     * @return
+     */
+    @Override
+    public ArrayList<TeamQuitLog> listTeamQuitLog(Map qIn) throws Exception {
+        ArrayList<TeamQuitLog> teamQuitLogs = teamQuitDao.listTeamQuitLog(qIn);
+        return teamQuitLogs;
+    }
+
+    /**
+     * 查询退团日志详情
+     * @param qIn teamQuitLogId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public TeamQuitLog getTeamQuitLog(Map qIn) throws Exception {
+        TeamQuitLog teamQuitLog = teamQuitDao.getTeamQuitLog(qIn);
+        return teamQuitLog;
+    }
+
+    /**
+     * 处理团队申请
+     * @param qIn
+     * status
+     * processTime
+     * processUserId
+     */
+    @Override
+    public void processTeamQuitLog(Map qIn) {
+        teamQuitDao.processTeamQuitLog(qIn);
     }
 
     @Override

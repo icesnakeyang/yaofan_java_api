@@ -57,8 +57,6 @@
         and read_time is null
         <![CDATA[
         and create_user_id <> #{readUserId}
-
-
         ]]>
     </select>
 

@@ -139,6 +139,26 @@ public class PointBusinessService implements IPointBusinessService {
         qIn.put("userId", userInfo.getUserId());
         Map map = iPointService.totalUserPoint(qIn);
 
-        return map;
+        Map out=new HashMap();
+        if(map==null){
+            out.put("pointIn", 0);
+            out.put("pointOut", 0);
+            out.put("pointBalance", 0);
+        }else{
+            Double pIn=(Double)map.get("total_point_in");
+            if(pIn==null){
+                pIn=0.0;
+            }
+            Double pOut=(Double)map.get("point_out");
+            if(pOut==null){
+                pOut=0.0;
+            }
+            Double balance=pIn-pOut;
+            out.put("pointIn", pIn);
+            out.put("pointOut", pOut);
+            out.put("pointBalance", balance);
+        }
+
+        return out;
     }
 }

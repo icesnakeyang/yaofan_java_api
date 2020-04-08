@@ -95,7 +95,7 @@ public class TaskStopBusinessService implements ITaskStopBusinessService {
         out.put("taskStop", taskStop);
 
         //如果当前用户是乙方，设置阅读时间
-        if(taskStop.getReadTime()==null){
+        if(taskStop!=null && taskStop.getReadTime()==null){
             Task task=iCommonBusinessService.getTaskByTaskId(taskId);
             if(task.getPartyBId().equals(userInfo.getUserId())){
                 //乙方，设置阅读时间

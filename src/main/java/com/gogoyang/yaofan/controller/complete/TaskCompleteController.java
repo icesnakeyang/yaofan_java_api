@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/complete")
+@RequestMapping("/yaofanapi/complete")
 public class TaskCompleteController {
     private final ICompleteBusinessService iCompleteBusinessService;
     private final ICommonBusinessService iCommonBusinessService;

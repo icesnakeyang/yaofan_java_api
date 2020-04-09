@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/yaofanapi/user")
 public class UserController {
     private final IUserBusinessService iUserBusinessService;
     private final ICommonBusinessService iCommonBusinessService;

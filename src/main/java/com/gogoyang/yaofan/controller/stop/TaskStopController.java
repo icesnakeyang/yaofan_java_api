@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/taskStop")
+@RequestMapping("/yaofanapi/taskStop")
 public class TaskStopController {
     private final ITaskStopBusinessService iTaskStopBusinessService;
     private final ICommonBusinessService iCommonBusinessService;

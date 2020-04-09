@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/team")
+@RequestMapping("/yaofanapi/team")
 public class TeamController {
     protected final ITeamBusinessService iTeamBusinessService;
     private final ICommonBusinessService iCommonBusinessService;

@@ -89,11 +89,16 @@
         </choose>
         <choose>
             <when test="teamName!=null">
-                and team.name like '%'+#{teamName}+'%'
+
+                and team.name like concat('%',#{teamName}, '%')
             </when>
         </choose>
         order by team.ids desc
-        limit #{offset},#{size}
+        <choose>
+            <when test="offset!=null">
+                limit #{offset},#{size}
+            </when>
+        </choose>
     </select>
 
     <!--修改团队信息-->

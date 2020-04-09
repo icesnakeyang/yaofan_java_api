@@ -17,7 +17,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api/task")
+@RequestMapping("/yaofanapi/task")
 public class TaskController {
     private final ITaskBusinessService iTaskBusinessService;
     private final ICommonBusinessService iCommonBusinessService;

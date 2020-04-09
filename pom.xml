@@ -11,7 +11,7 @@
     <groupId>com.gogoyang</groupId>
     <artifactId>yaofan</artifactId>
     <version>0.0.1</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>LifeCapsule</name>
     <description>Life Capsule Pass To Feature</description>
 

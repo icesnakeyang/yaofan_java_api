@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/tasklog")
+@RequestMapping("/yaofanapi/tasklog")
 public class TaskLogController {
     private final ITaskLogBusinessService iTaskLogBusinessService;
     private final ICommonBusinessService iCommonBusinessService;

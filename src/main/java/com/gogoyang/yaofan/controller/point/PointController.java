@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/point")
+@RequestMapping("/yaofanapi/point")
 public class PointController {
     private final ICommonBusinessService iCommonBusinessService;
     private final IPointBusinessService iPointBusinessService;

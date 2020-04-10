@@ -41,4 +41,16 @@ public class UserInfoService implements IUserInfoService {
     public void updateUsername(UserInfo userInfo) throws Exception {
         userInfoDao.updateUsername(userInfo);
     }
+
+    /**
+     * 根据用户的微信openId来查询用户注册信息
+     * @param openId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public UserInfo getUserInfoByOpenId(String openId) throws Exception {
+        UserInfo userInfo=userInfoDao.getUserInfoByOpenId(openId);
+        return userInfo;
+    }
 }

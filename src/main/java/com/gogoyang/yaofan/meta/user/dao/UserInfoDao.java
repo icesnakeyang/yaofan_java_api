@@ -14,4 +14,11 @@ public interface UserInfoDao {
     UserInfo getUserInfoByUserId(String userId);
 
     void updateUsername(UserInfo userInfo);
+
+    /**
+     * 根据用户的微信openId来查询用户注册信息
+     * @param openId
+     * @return
+     */
+    UserInfo getUserInfoByOpenId(String openId);
 }

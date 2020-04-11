@@ -92,4 +92,20 @@ public interface TeamApplyLogDao {
      * @return
      */
     Integer totalTeamApplyLogUnReadProcess(Map qIn);
+
+    /**
+     * 统计我申请加入的团队申请总数
+     * @param qIn
+     * userId
+     * @return
+     */
+    Integer totalTeamApplyLogMyApply(Map qIn);
+
+    /**
+     * 统计申请加入我的团队的申请总数
+     * @param qIn
+     * teamList
+     * @return
+     */
+    Integer totalTeamApplyLogMyTeam(Map qIn);
 }

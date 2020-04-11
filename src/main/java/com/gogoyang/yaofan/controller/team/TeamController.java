@@ -488,14 +488,14 @@ public class TeamController {
      * @return
      */
     @ResponseBody
-    @PostMapping("/totalMyTeamLogUnread")
-    public Response totalNewApplyMember(HttpServletRequest httpServletRequest) {
+    @PostMapping("/totalMyTeamLog")
+    public Response totalMyTeamLog(HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
         try {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
-            Map out = iTeamBusinessService.totalMyTeamLogUnread(in);
+            Map out = iTeamBusinessService.totalMyTeamLog(in);
             response.setData(out);
         } catch (Exception ex) {
             try {

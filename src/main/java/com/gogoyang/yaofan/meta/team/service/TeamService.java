@@ -277,4 +277,28 @@ public class TeamService implements ITeamService {
     public void processTeamQuitLog(Map qIn) {
         teamQuitDao.processTeamQuitLog(qIn);
     }
+
+    /**
+     * 统计我申请加入的团队申请总数
+     * @param qIn
+     * userId
+     * @return
+     */
+    @Override
+    public Integer totalTeamApplyLogMyApply(Map qIn) {
+        Integer total=teamApplyLogDao.totalTeamApplyLogMyApply(qIn);
+        return total;
+    }
+
+    /**
+     * 统计申请加入我的团队的申请总数
+     * @param qIn
+     * teamList
+     * @return
+     */
+    @Override
+    public Integer totalTeamApplyLogMyTeam(Map qIn) {
+        Integer total=teamApplyLogDao.totalTeamApplyLogMyTeam(qIn);
+        return total;
+    }
 }

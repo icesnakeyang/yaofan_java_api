@@ -30,7 +30,8 @@
             me.name as my_name,
             manager.name as manager_name,
             creator.name as creator_name,
-            team_user.status
+            team_user.status,
+        description
             from (((team_user
             inner join team on team_user.team_id = team.team_id)
             inner join user_info me on team_user.user_id = me.user_id)

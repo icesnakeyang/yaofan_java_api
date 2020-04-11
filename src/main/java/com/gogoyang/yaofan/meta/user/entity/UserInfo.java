@@ -18,6 +18,7 @@ public class UserInfo {
     private String status;
     private String phone;
     private String name;
+    private String idCard;
 
     //微信信息
     private String openId;

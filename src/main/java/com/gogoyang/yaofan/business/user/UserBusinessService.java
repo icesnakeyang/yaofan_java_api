@@ -96,10 +96,14 @@ public class UserBusinessService implements IUserBusinessService {
     public Map updateUsername(Map in) throws Exception {
         String token = in.get("token").toString();
         String name = in.get("username").toString();
+        String idCard=(String)in.get("idCard");
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
         userInfo.setName(name);
+        if(idCard!=null){
+            userInfo.setIdCard(idCard);
+        }
 
         iUserInfoService.updateUsername(userInfo);
 

@@ -210,12 +210,12 @@ public class TaskBusinessService implements ITaskBusinessService {
         out.put("totalUnreadTaskComplete", totalUnreadComplete);
 
         //终止日志总数，未阅读数
-        Map qIn=new HashMap();
+        Map qIn = new HashMap();
         qIn.put("taskId", taskId);
         qIn.put("partyBId", userInfo.getUserId());
-        Integer totalTaskStopUnread=iTaskStopService.totalTaskStopUnread(qIn);
+        Integer totalTaskStopUnread = iTaskStopService.totalTaskStopUnread(qIn);
         out.put("totalTaskStopUnread", totalTaskStopUnread);
-        Integer totalTaskStop=iTaskStopService.totalTaskStop(taskId);
+        Integer totalTaskStop = iTaskStopService.totalTaskStop(taskId);
         out.put("totalTaskStop", totalTaskStop);
 
         return out;
@@ -609,5 +609,65 @@ public class TaskBusinessService implements ITaskBusinessService {
         Map out = new HashMap();
         out.put("tasks", list);
         return out;
+    }
+
+    /**
+     * 统计当前用户所有的任务统计信息
+     *
+     * @param in
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map totalTasks(Map in) throws Exception {
+        String token = in.get("token").toString();
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+
+        Map out=new HashMap();
+
+        /**
+         * 统计我是甲方的任务总数
+         */
+        Integer totalTaskPartyA=totalTaskPartyA(userInfo.getUserId());
+        out.put("totalTaskPartyA", totalTaskPartyA);
+
+        /**
+         * 统计我是乙方的任务总数
+         */
+        Integer totalTaskPartyB=totalTaskPartyB(userInfo.getUserId());
+        out.put("totalTaskPartyB",totalTaskPartyB);
+
+        /**
+         * 统计我的完成日志总数
+         */
+
+        /**
+         * 统计我的完成日志未读总数
+         */
+
+        /**
+         * 统计我的任务的日志总数
+         */
+
+        /**
+         * 统计我的未读日志总数
+         */
+
+        return out;
+    }
+
+    private Integer totalTaskPartyA(String userId) throws Exception {
+        Map qIn = new HashMap();
+        qIn.put("partyAId", userId);
+        Integer total = iTaskService.totalMyTasksPartyAOrB(qIn);
+        return total;
+    }
+
+    private Integer totalTaskPartyB(String userId) throws Exception {
+        Map qIn = new HashMap();
+        qIn.put("partyBId", userId);
+        Integer total = iTaskService.totalMyTasksPartyAOrB(qIn);
+        return total;
     }
 }

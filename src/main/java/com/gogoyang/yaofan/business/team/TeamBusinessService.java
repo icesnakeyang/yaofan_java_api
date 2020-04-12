@@ -573,10 +573,13 @@ public class TeamBusinessService implements ITeamBusinessService {
         /**
          * 统计加入我的团队申请总数
          */
-        qIn=new HashMap();
-        qIn.put("teamList", teamList);
-        Integer totalTeamApplyLogMyTeam=iTeamService.totalTeamApplyLogMyTeam(qIn);
-        out.put("totalTeamApplyLogMyTeam",totalTeamApplyLogMyTeam);
+        if(teamList.size()>0){
+            //有自己的团队
+            qIn=new HashMap();
+            qIn.put("teamList", teamList);
+            Integer totalTeamApplyLogMyTeam=iTeamService.totalTeamApplyLogMyTeam(qIn);
+            out.put("totalTeamApplyLogMyTeam",totalTeamApplyLogMyTeam);
+        }
 
         return out;
     }

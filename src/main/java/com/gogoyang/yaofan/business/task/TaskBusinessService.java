@@ -622,21 +622,27 @@ public class TaskBusinessService implements ITaskBusinessService {
     public Map totalTasks(Map in) throws Exception {
         String token = in.get("token").toString();
 
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        Map out=new HashMap();
+        Map out = new HashMap();
 
         /**
          * 统计我是甲方的任务总数
          */
-        Integer totalTaskPartyA=totalTaskPartyA(userInfo.getUserId());
+        Integer totalTaskPartyA = totalTaskPartyA(userInfo.getUserId());
         out.put("totalTaskPartyA", totalTaskPartyA);
 
         /**
          * 统计我是乙方的任务总数
          */
-        Integer totalTaskPartyB=totalTaskPartyB(userInfo.getUserId());
-        out.put("totalTaskPartyB",totalTaskPartyB);
+        Integer totalTaskPartyB = totalTaskPartyB(userInfo.getUserId());
+        out.put("totalTaskPartyB", totalTaskPartyB);
+
+        /**
+         * 统计我正在进行中的任务总数
+         */
+        Integer totalTaskProgress = totalTaskProgressAB(userInfo.getUserId());
+        out.put("totalTaskProgress", totalTaskProgress);
 
         /**
          * 统计我的完成日志总数
@@ -668,6 +674,14 @@ public class TaskBusinessService implements ITaskBusinessService {
         Map qIn = new HashMap();
         qIn.put("partyBId", userId);
         Integer total = iTaskService.totalMyTasksPartyAOrB(qIn);
+        return total;
+    }
+
+    private Integer totalTaskProgressAB(String userId) throws Exception {
+        Map qIn = new HashMap();
+        qIn.put("userId", userId);
+        qIn.put("status", GogoStatus.PROGRESS);
+        Integer total = iTaskService.totalUserTask(qIn);
         return total;
     }
 }

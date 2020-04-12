@@ -49,6 +49,7 @@ public interface ITaskService {
      * @param qIn
      * partyAId
      * partyBId
+     * status
      * @return
      */
     Integer totalMyTasksPartyAOrB(Map qIn);

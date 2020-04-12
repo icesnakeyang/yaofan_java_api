@@ -242,6 +242,11 @@ left join team on task.team_id=team.team_id
                 and party_b_id=#{partyBId}
             </when>
         </choose>
+        <choose>
+            <when test="status!=null">
+                and status=#{status}
+            </when>
+        </choose>
     </select>
 
     <update id="updateTask" parameterType="com.gogoyang.yaofan.meta.task.entity.Task">

@@ -325,7 +325,7 @@ public class TaskBusinessService implements ITaskBusinessService {
 
         //甲方出账
         PointLedger pointLedgerA=new PointLedger();
-        pointLedgerA.setActType(GogoActType.DEAl.toString());
+        pointLedgerA.setActType(GogoActType.DEAL.toString());
         pointLedgerA.setCreateTime(new Date());
         pointLedgerA.setPointOut(task.getPoint());
         pointLedgerA.setTaskId(task.getTaskId());

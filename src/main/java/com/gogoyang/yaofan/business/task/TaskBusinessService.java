@@ -273,6 +273,11 @@ public class TaskBusinessService implements ITaskBusinessService {
         return out;
     }
 
+    /**
+     * 抢单
+     * @param in
+     * @throws Exception
+     */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void grab(Map in) throws Exception {
@@ -309,6 +314,7 @@ public class TaskBusinessService implements ITaskBusinessService {
         /**
          * 记录积分账
          */
+        //乙方入账
         PointLedger pointLedger = new PointLedger();
         pointLedger.setActType(GogoActType.GRAB.toString());
         pointLedger.setCreateTime(new Date());
@@ -316,6 +322,15 @@ public class TaskBusinessService implements ITaskBusinessService {
         pointLedger.setTaskId(task.getTaskId());
         pointLedger.setUserId(userInfo.getUserId());
         iPointService.createPointLedger(pointLedger);
+
+        //甲方出账
+        PointLedger pointLedgerA=new PointLedger();
+        pointLedgerA.setActType(GogoActType.DEAl.toString());
+        pointLedgerA.setCreateTime(new Date());
+        pointLedgerA.setPointOut(task.getPoint());
+        pointLedgerA.setTaskId(task.getTaskId());
+        pointLedgerA.setUserId(task.getCreateUserId());
+        iPointService.createPointLedger(pointLedgerA);
     }
 
     /**

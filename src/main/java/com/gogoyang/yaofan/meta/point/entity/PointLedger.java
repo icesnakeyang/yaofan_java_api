@@ -23,4 +23,5 @@ public class PointLedger {
     private Date processTime;
     private Date processReadTime;
     private String pointLedgerId;
+    private String title;
 }

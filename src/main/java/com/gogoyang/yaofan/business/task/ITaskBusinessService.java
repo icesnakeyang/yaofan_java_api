@@ -24,6 +24,11 @@ public interface ITaskBusinessService {
      */
     Map listMyTasks(Map in) throws Exception;
 
+    /**
+     * 抢单
+     * @param in
+     * @throws Exception
+     */
     void grab(Map in) throws Exception;
 
     /**

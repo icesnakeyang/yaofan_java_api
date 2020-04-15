@@ -93,4 +93,10 @@ public interface ITaskService {
      * @return
      */
     ArrayList<Task> listTaskGrabbingTeam(Map qIn);
+
+    /**
+     * 删除一个任务
+     * @param taskId
+     */
+    void deleteTask(String taskId);
 }

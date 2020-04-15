@@ -3,6 +3,7 @@ package com.gogoyang.yaofan.controller.task;
 import com.gogoyang.yaofan.business.task.ITaskBusinessService;
 import com.gogoyang.yaofan.controller.vo.Response;
 import com.gogoyang.yaofan.utility.GogoActType;
+import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.slf4j.Logger;
@@ -457,6 +458,47 @@ public class TaskController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+        }
+        return response;
+    }
+
+    /**
+     * 删除一个任务
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/deleteTask")
+    public Response deleteTask(@RequestBody TaskRequest request,
+                               HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap=new HashMap();
+        Map memoMap=new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("taskId", request.getTaskId());
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.DELETE_TASK);
+            iTaskBusinessService.deleteTask(in);
+            memoMap.put("result", GogoStatus.SUCCESS);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("result", GogoStatus.FAILED);
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        }catch (Exception ex3){
+            logger.error(ex3.getMessage());
         }
         return response;
     }

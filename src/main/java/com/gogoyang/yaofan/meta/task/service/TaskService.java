@@ -61,9 +61,9 @@ public class TaskService implements ITaskService {
     /**
      * 读取我的任务（同时包括我是甲方或乙方）不包括详情
      * 按任务完成时间排序
-     * @param qIn
-     * userId
-     * status
+     *
+     * @param qIn userId
+     *            status
      * @return
      */
     @Override
@@ -79,9 +79,9 @@ public class TaskService implements ITaskService {
 
     /**
      * 统计用户的任务总数（同时包括甲方任务和乙方任务）
-     * @param qIn
-     * userId
-     * status（可选）
+     *
+     * @param qIn userId
+     *            status（可选）
      * @return
      * @throws Exception
      */
@@ -151,11 +151,20 @@ public class TaskService implements ITaskService {
     }
 
     /**
+     * 删除一个任务
+     * @param taskId
+     */
+    @Override
+    public void deleteTask(String taskId) {
+        taskDao.deleteTask(taskId);
+    }
+
+    /**
      * 统计我的任务总是（我是甲方或者我是乙方）
-     * @param qIn
-     * partyAId
-     * partyBId
-     * status
+     *
+     * @param qIn partyAId
+     *            partyBId
+     *            status
      * @return
      */
     @Override

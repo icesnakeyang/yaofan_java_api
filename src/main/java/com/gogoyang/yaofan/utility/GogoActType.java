@@ -41,5 +41,6 @@ public enum GogoActType {
     GET_TASK_STOP,
     LIST_MY_POINT,
     TOTAL_USER_POINT,
-    WX_LOGIN
+    WX_LOGIN,
+    DELETE_TASK
 }

@@ -165,6 +165,7 @@ left join team on task.team_id=team.team_id
         and create_time >= cast(#{dateStart} as datetime)
         and create_time < cast(#{dateEnd} as datetime)
 
+
         ]]>
     </select>
 
@@ -300,4 +301,10 @@ left join team on task.team_id=team.team_id
             #{item}
         </foreach>
     </select>
+
+    <!--删除一个任务-->
+    <delete id="deleteTask" parameterType="java.lang.String">
+        delete from task
+        where task_id=#{taskId}
+    </delete>
 </mapper>

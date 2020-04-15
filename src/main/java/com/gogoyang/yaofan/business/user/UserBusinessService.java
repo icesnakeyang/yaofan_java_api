@@ -96,12 +96,61 @@ public class UserBusinessService implements IUserBusinessService {
     public Map updateUsername(Map in) throws Exception {
         String token = in.get("token").toString();
         String name = in.get("username").toString();
+        String idCard=(String)in.get("idCard");
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
         userInfo.setName(name);
+        if(idCard!=null){
+            userInfo.setIdCard(idCard);
+        }
 
         iUserInfoService.updateUsername(userInfo);
+
+        Map out = new HashMap();
+        out.put("userInfo", userInfo);
+
+        return out;
+    }
+
+    /**
+     * 根据微信用户信息注册或者登录用户
+     * @param in
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map wxLogin(Map in) throws Exception {
+        String openId = in.get("openId").toString();
+        String nickName = in.get("nickName").toString();
+        String gender = in.get("gender").toString();
+        String city = in.get("city").toString();
+        String province = in.get("province").toString();
+        String country = in.get("country").toString();
+
+        /**
+         * 通过openId查询用户记录
+         */
+        UserInfo userInfo = iUserInfoService.getUserInfoByOpenId(openId);
+        if (userInfo == null) {
+            /**
+             * 没有查询到用户，创建一个用户
+             */
+            userInfo = new UserInfo();
+            userInfo.setUserId(GogoTools.UUID().toString());
+            userInfo.setToken(GogoTools.UUID().toString());
+            userInfo.setCreateTime(new Date());
+            userInfo.setTokenTime(new Date());
+            userInfo.setStatus(GogoStatus.ACTIVE.toString());
+            userInfo.setName(nickName);
+            userInfo.setNickName(nickName);
+            userInfo.setCity(city);
+            userInfo.setGender(gender);
+            userInfo.setProvince(province);
+            userInfo.setCountry(country);
+            userInfo.setOpenId(openId);
+            iUserInfoService.createUserInfo(userInfo);
+        }
 
         Map out = new HashMap();
         out.put("userInfo", userInfo);

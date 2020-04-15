@@ -5,9 +5,11 @@ import com.gogoyang.yaofan.meta.team.dao.TeamDao;
 import com.gogoyang.yaofan.meta.team.dao.TeamQuitDao;
 import com.gogoyang.yaofan.meta.team.dao.TeamUserDao;
 import com.gogoyang.yaofan.meta.team.entity.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -106,9 +108,9 @@ public class TeamService implements ITeamService {
      * @throws Exception
      */
     @Override
-    public ArrayList<TeamApplyView> listTeamApplyLog(Map qIn) throws Exception {
-        ArrayList<TeamApplyView> teamApplyViews = teamApplyLogDao.listTeamApplyLog(qIn);
-        return teamApplyViews;
+    public ArrayList<TeamApplyLog> listTeamApplyLog(Map qIn) throws Exception {
+        ArrayList<TeamApplyLog> teamApplyLogs = teamApplyLogDao.listTeamApplyLog(qIn);
+        return teamApplyLogs;
     }
 
     /**
@@ -276,8 +278,27 @@ public class TeamService implements ITeamService {
         teamQuitDao.processTeamQuitLog(qIn);
     }
 
+    /**
+     * 统计我申请加入的团队申请总数
+     * @param qIn
+     * userId
+     * @return
+     */
     @Override
-    public void setTeamApplyLogReadTimeUnProcess(Map qIn) {
-        teamApplyLogDao.setTeamApplyLogReadTimeUnProcess(qIn);
+    public Integer totalTeamApplyLogMyApply(Map qIn) {
+        Integer total=teamApplyLogDao.totalTeamApplyLogMyApply(qIn);
+        return total;
+    }
+
+    /**
+     * 统计申请加入我的团队的申请总数
+     * @param qIn
+     * teamList
+     * @return
+     */
+    @Override
+    public Integer totalTeamApplyLogMyTeam(Map qIn) {
+        Integer total=teamApplyLogDao.totalTeamApplyLogMyTeam(qIn);
+        return total;
     }
 }

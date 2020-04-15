@@ -239,7 +239,12 @@ left join team on task.team_id=team.team_id
         </choose>
         <choose>
             <when test="partyBId!=null">
-                and party_b_id='010b0f68-4913-4700-a673-7f43283e789f'
+                and party_b_id=#{partyBId}
+            </when>
+        </choose>
+        <choose>
+            <when test="status!=null">
+                and status=#{status}
             </when>
         </choose>
     </select>

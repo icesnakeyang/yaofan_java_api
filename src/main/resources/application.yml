@@ -7,7 +7,10 @@ spring:
     password: 112233ccddEE
 mybatis:
   mapper-locations: classpath:mapper/*.xml
-
 logging:
   file:
     name: logging:logs/application-yaofan.log
+wechat:
+  appid: "wxaaceff5dd77419f7"
+  secret: "9da02665a9c331b74cb170fba60ea5fd"
+  user_url: "https://api.weixin.qq.com/sns/jscode2session"

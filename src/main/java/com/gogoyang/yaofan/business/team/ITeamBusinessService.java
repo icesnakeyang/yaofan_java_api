@@ -42,7 +42,7 @@ public interface ITeamBusinessService {
      * @return
      * @throws Exception
      */
-    Map totalMyTeamLogUnread(Map in) throws Exception;
+    Map totalMyTeamLog(Map in) throws Exception;
 
     void cancelTeamApplyLog(Map in) throws Exception;
 

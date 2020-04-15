@@ -12,4 +12,12 @@ public interface IUserInfoService {
     UserInfo getUserInfoByUserId(String userId) throws Exception;
 
     void updateUsername(UserInfo userInfo) throws Exception;
+
+    /**
+     * 根据用户的微信openId来查询用户注册信息
+     * @param openId
+     * @return
+     * @throws Exception
+     */
+    UserInfo getUserInfoByOpenId(String openId) throws Exception;
 }

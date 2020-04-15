@@ -6,6 +6,9 @@
         <result property="userId" column="user_id"/>
         <result property="createTime" column="create_time"/>
         <result property="tokenTime" column="token_time"/>
+        <result property="openId" column="open_id"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="idCard" column="id_card"/>
     </resultMap>
 
     <insert id="createUserInfo"
@@ -13,9 +16,11 @@
             keyProperty="ids"
             parameterType="com.gogoyang.yaofan.meta.user.entity.UserInfo">
       insert into user_info
-      (user_id, phone, password, token, token_time, create_time, status, name)
+      (user_id, phone, password, token, token_time, create_time, status, name,
+      open_id, nick_name, gender, city, province, country)
       values
-      (#{userId}, #{phone}, #{password}, #{token}, #{tokenTime}, #{createTime}, #{status}, #{name})
+      (#{userId}, #{phone}, #{password}, #{token}, #{tokenTime}, #{createTime}, #{status}, #{name},
+      #{openId}, #{nickName}, #{gender}, #{city}, #{province}, #{country})
     </insert>
 
     <select id="getUserInfoByPhone" parameterType="java.lang.String"
@@ -37,8 +42,22 @@
     </select>
 
     <update id="updateUsername" parameterType="com.gogoyang.yaofan.meta.user.entity.UserInfo">
-        update user_info set
-        name=#{name}
+        update user_info
+         <set>
+             <if test="name!=null">
+                 name=#{name},
+             </if>
+             <if test="idCard!=null">
+                 id_card=#{idCard}
+             </if>
+         </set>
+
         where user_id=#{userId}
     </update>
+
+    <!--根据用户的微信openId来查询用户注册信息-->
+    <select id="getUserInfoByOpenId" parameterType="java.lang.String" resultMap="userInfoMap">
+        select * from user_info
+        where open_id=#{openId}
+    </select>
 </mapper>

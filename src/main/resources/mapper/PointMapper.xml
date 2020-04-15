@@ -71,7 +71,8 @@
        process_user.name as process_user_name,
        point_ledger.create_time,
        remark,
-       act_type
+       act_type,
+       title
        from ((point_ledger
 left join task on point_ledger.task_id=task.task_id)
 left join user_info on point_ledger.user_id=user_info.user_id)

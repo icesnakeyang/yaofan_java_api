@@ -18,4 +18,5 @@ public class TeamUser {
     private String managerName;
     private String creatorName;
     private String status;
+    private String description;
 }

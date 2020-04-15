@@ -149,7 +149,7 @@ public class PointBusinessService implements IPointBusinessService {
             if(pIn==null){
                 pIn=0.0;
             }
-            Double pOut=(Double)map.get("point_out");
+            Double pOut=(Double)map.get("total_point_out");
             if(pOut==null){
                 pOut=0.0;
             }

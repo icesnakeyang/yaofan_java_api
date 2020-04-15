@@ -172,9 +172,13 @@ and team_apply_log_id=#{teamApplyLogId}
     <select id="totalTeamApplyLogUnRead" parameterType="map" resultType="java.lang.Integer">
         select count(*) as total from team_apply_log
         where read_time is null
-        <![CDATA[
-        and apply_user_id<>#{userId}
-        ]]>
+        <choose>
+            <when test="userId!=null">
+                <![CDATA[
+                and apply_user_id<>#{userId}
+                ]]>
+            </when>
+        </choose>
         and team_id in
         <foreach item="item" collection="teamList" separator="," open="(" close=")" index="">
             #{item}
@@ -189,10 +193,18 @@ and team_apply_log_id=#{teamApplyLogId}
         and apply_user_id = #{userId}
     </select>
 
-    <!--设置我未阅读的处理结果的阅读时间-->
-    <update id="setTeamApplyLogReadTimeUnProcess" parameterType="map">
-        update team_apply_log set
-        process_read_time=#{processReadTime}
-        where team_apply_log_id=#{teamApplyLogId}
-    </update>
+    <!--统计我申请加入的团队申请总数-->
+    <select id="totalTeamApplyLogMyApply" parameterType="map" resultType="java.lang.Integer">
+        select count(*) as total from team_apply_log
+        where apply_user_id=#{userId}
+    </select>
+
+    <!--统计申请加入我的团队的申请总数-->
+    <select id="totalTeamApplyLogMyTeam" parameterType="map" resultType="java.lang.Integer">
+        select count(*) as total from team_apply_log
+        where team_id in
+        <foreach item="item" collection="teamList" separator="," open="(" close=")" index="">
+            #{item}
+        </foreach>
+    </select>
 </mapper>

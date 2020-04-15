@@ -1,5 +1,6 @@
 package com.gogoyang.yaofan.business.user;
 
+
 import java.util.Map;
 
 public interface IUserBusinessService {
@@ -10,4 +11,6 @@ public interface IUserBusinessService {
     Map loginByToken(Map in) throws Exception;
 
     Map updateUsername(Map in) throws Exception;
+
+    Map wxLogin(Map userInfo) throws Exception;
 }

@@ -511,19 +511,19 @@ public class TeamBusinessService implements ITeamBusinessService {
     }
 
     /**
-     * 统计当前用户未读的团队日志
+     * 统计当前用户的团队日志数量
      * 1、统计未读的加入我的团队申请
      * 2、统计未读的已处理的我加入的团队申请
+     * 3、统计我加入的团队申请总数
+     * 4、统计加入我的团队申请总数
      *
      * @param in
      * @return
      * @throws Exception
      */
     @Override
-    public Map totalMyTeamLogUnread(Map in) throws Exception {
+    public Map totalMyTeamLog(Map in) throws Exception {
         String token = in.get("token").toString();
-
-
         /**
          * 统计未读的加入我的团队申请
          * 1、读取当前用户
@@ -540,11 +540,12 @@ public class TeamBusinessService implements ITeamBusinessService {
         qIn.put("offset", 0);
         qIn.put("size", 100000);
         ArrayList<Team> teams = iTeamService.listTeam(qIn);
+
+        ArrayList teamList = new ArrayList();
         if (teams.size() == 0) {
             //当前用户没有创建的团队，返回0
             out.put("totalNewApplyMember", 0);
         } else {
-            ArrayList teamList = new ArrayList();
             for (int i = 0; i < teams.size(); i++) {
                 teamList.add(teams.get(i).getTeamId());
             }
@@ -560,6 +561,26 @@ public class TeamBusinessService implements ITeamBusinessService {
         qIn.put("userId", userInfo.getUserId());
         Integer total = iTeamService.totalTeamApplyLogUnReadProcess(qIn);
         out.put("totalUnreadProcess", total);
+
+        /**
+         * 统计我加入的团队申请总数
+         */
+        qIn=new HashMap();
+        qIn.put("userId", userInfo.getUserId());
+        Integer totalMyApply=iTeamService.totalTeamApplyLogMyApply(qIn);
+        out.put("totalTeamApplyLogMyApply", totalMyApply);
+
+        /**
+         * 统计加入我的团队申请总数
+         */
+        if(teamList.size()>0){
+            //有自己的团队
+            qIn=new HashMap();
+            qIn.put("teamList", teamList);
+            Integer totalTeamApplyLogMyTeam=iTeamService.totalTeamApplyLogMyTeam(qIn);
+            out.put("totalTeamApplyLogMyTeam",totalTeamApplyLogMyTeam);
+        }
+
         return out;
     }
 

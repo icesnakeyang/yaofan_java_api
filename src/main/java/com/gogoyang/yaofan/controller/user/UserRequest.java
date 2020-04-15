@@ -8,4 +8,5 @@ public class UserRequest {
     private String password;
     private String token;
     private String username;
+    private String idCard;
 }

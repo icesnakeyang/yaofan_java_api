@@ -24,6 +24,11 @@ public interface ITaskBusinessService {
      */
     Map listMyTasks(Map in) throws Exception;
 
+    /**
+     * 抢单
+     * @param in
+     * @throws Exception
+     */
     void grab(Map in) throws Exception;
 
     /**
@@ -41,4 +46,12 @@ public interface ITaskBusinessService {
     Map listMyPartyATasksDetail(Map in) throws Exception;
 
     Map listMyPartyBTasksDetail(Map in) throws Exception;
+
+    /**
+     * 统计当前用户所有的任务统计信息
+     * @param in
+     * @return
+     * @throws Exception
+     */
+    Map totalTasks(Map in) throws Exception;
 }

@@ -17,7 +17,10 @@ public enum GogoActType {
     LIST_GRABBING_TASKS,
     GET_TASK,
     LIST_MY_TASKS,
+    //抢单入账
     GRAB,
+    //交易出账
+    DEAL,
     CREATE_TASK_LOG,
     LIST_TASK_LOG,
     CREATE_COMPLETE,

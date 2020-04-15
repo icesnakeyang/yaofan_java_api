@@ -147,6 +147,7 @@ public class UserController {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
             in.put("username", request.getUsername());
+            in.put("idCard", request.getIdCard());
             memoMap.put("username", request.getUsername());
             Map out=iUserBusinessService.updateUsername(in);
             response.setData(out);

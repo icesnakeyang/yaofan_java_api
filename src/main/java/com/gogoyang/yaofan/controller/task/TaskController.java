@@ -7,7 +7,6 @@ import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +46,7 @@ public class TaskController {
             in.put("title", request.getTitle());
             String endDateStr = (String) request.getEndDateWx();
             String endTimeStr = (String) request.getEndTimeWx();
-            if(endDateStr!=null && endTimeStr!=null) {
+            if (endDateStr != null && endTimeStr != null) {
                 Date endTime = GogoTools.strToDatetime2(endDateStr + " " + endTimeStr);
                 in.put("endTimeDate", endTime);
             }
@@ -90,7 +89,7 @@ public class TaskController {
             in.put("title", request.getTitle());
             String endDateStr = (String) request.getEndDateWx();
             String endTimeStr = (String) request.getEndTimeWx();
-            if(endDateStr!=null && endTimeStr!=null) {
+            if (endDateStr != null && endTimeStr != null) {
                 Date endTime = GogoTools.strToDatetime2(endDateStr + " " + endTimeStr);
                 in.put("endTimeDate", endTime);
             }
@@ -187,6 +186,7 @@ public class TaskController {
 
     /**
      * 读取我的任务列表，不包括任务详情
+     *
      * @param request
      * @param httpServletRequest
      * @return
@@ -227,6 +227,7 @@ public class TaskController {
 
     /**
      * 读取我的任务列表，包括任务详情
+     *
      * @param request
      * @param httpServletRequest
      * @return
@@ -234,7 +235,7 @@ public class TaskController {
     @ResponseBody
     @PostMapping("/listMyTasksDetail")
     public Response listMyTasksDetail(@RequestBody TaskRequest request,
-                                HttpServletRequest httpServletRequest) {
+                                      HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
         Map logMap = new HashMap();
@@ -268,6 +269,7 @@ public class TaskController {
 
     /**
      * 读取我是甲方的任务列表，包括任务详情
+     *
      * @param request
      * @param httpServletRequest
      * @return
@@ -275,7 +277,7 @@ public class TaskController {
     @ResponseBody
     @PostMapping("/listMyPartyATasksDetail")
     public Response listMyPartyATasksDetail(@RequestBody TaskRequest request,
-                                HttpServletRequest httpServletRequest) {
+                                            HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
         Map logMap = new HashMap();
@@ -309,6 +311,7 @@ public class TaskController {
 
     /**
      * 读取我是乙方的任务列表，包括任务详情
+     *
      * @param request
      * @param httpServletRequest
      * @return
@@ -316,7 +319,7 @@ public class TaskController {
     @ResponseBody
     @PostMapping("/listMyPartyBTasksDetail")
     public Response listMyPartyBTasksDetail(@RequestBody TaskRequest request,
-                                HttpServletRequest httpServletRequest) {
+                                            HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
         Map logMap = new HashMap();
@@ -350,6 +353,7 @@ public class TaskController {
 
     /**
      * 读取等待匹配的任务，团队任务
+     *
      * @param request
      * @param httpServletRequest
      * @return
@@ -357,7 +361,7 @@ public class TaskController {
     @ResponseBody
     @PostMapping("/listTaskGrabbingTeam")
     public Response listTaskGrabbingTeam(@RequestBody TaskRequest request,
-                                HttpServletRequest httpServletRequest) {
+                                         HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
         Map logMap = new HashMap();
@@ -389,6 +393,12 @@ public class TaskController {
         return response;
     }
 
+    /**
+     * 抢单
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
     @ResponseBody
     @PostMapping("/grab")
     public Response grab(@RequestBody TaskRequest request,
@@ -419,6 +429,34 @@ public class TaskController {
             iCommonBusinessService.createUserActLog(logMap);
         } catch (Exception ex3) {
             logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * 统计当前用户所有的任务统计信息
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/totalTasks")
+    public Response totalTasks(@RequestBody TaskRequest request,
+                               HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            Map out = iTaskBusinessService.totalTasks(in);
+            response.setData(out);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
         }
         return response;
     }

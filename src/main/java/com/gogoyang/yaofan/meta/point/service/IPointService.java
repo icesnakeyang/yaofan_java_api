@@ -30,4 +30,13 @@ public interface IPointService {
      */
     ArrayList<PointLedger> listMyPointLedger(Map qIn);
 
+    /**
+     * 统计用户可以取现的积分
+     * @param qIn
+     * partyAId
+     * partyBId
+     * @return
+     */
+    Map totalPointAccept(Map qIn);
+
 }

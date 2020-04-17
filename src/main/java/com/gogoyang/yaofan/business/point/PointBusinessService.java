@@ -5,6 +5,7 @@ import com.gogoyang.yaofan.meta.point.entity.PointLedger;
 import com.gogoyang.yaofan.meta.point.service.IPointService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
 import com.gogoyang.yaofan.utility.GogoActType;
+import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.springframework.stereotype.Service;
@@ -129,6 +130,12 @@ public class PointBusinessService implements IPointBusinessService {
         return out;
     }
 
+    /**
+     * 统计用户积分
+     * @param in
+     * @return
+     * @throws Exception
+     */
     @Override
     public Map totalUserPoint(Map in) throws Exception {
         String token = in.get("token").toString();
@@ -139,6 +146,7 @@ public class PointBusinessService implements IPointBusinessService {
         qIn.put("userId", userInfo.getUserId());
         Map map = iPointService.totalUserPoint(qIn);
 
+        //计算用户的进账和出账积分
         Map out=new HashMap();
         if(map==null){
             out.put("pointIn", 0);
@@ -157,6 +165,21 @@ public class PointBusinessService implements IPointBusinessService {
             out.put("pointIn", pIn);
             out.put("pointOut", pOut);
             out.put("pointBalance", balance);
+        }
+
+        //计算用户可以取现的积分
+        qIn=new HashMap();
+        qIn.put("partyAId", userInfo.getUserId());
+        qIn.put("partyBId", userInfo.getUserId());
+        Map map1=iPointService.totalPointAccept(qIn);
+        if(map1==null){
+            out.put("withdrawAble", 0);
+        }else{
+            Double withdrawAble=(Double)map1.get("total_in");
+            if(withdrawAble==null){
+                withdrawAble=0.0;
+            }
+            out.put("withdrawAble", withdrawAble);
         }
 
         return out;

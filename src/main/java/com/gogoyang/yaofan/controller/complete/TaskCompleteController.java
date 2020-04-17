@@ -181,4 +181,48 @@ public class TaskCompleteController {
         }
         return response;
     }
+
+    /**
+     * 甲方验收通过任务完成
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/acceptComplete")
+    public Response acceptComplete(@RequestBody TaskCompleteRequest request,
+                                     HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("taskId", request.getTaskId());
+            in.put("content", request.getContent());
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.ACCEPT_TASK);
+            in.put("taskId", request.getTaskId());
+            memoMap.put("taskId", request.getTaskId());
+            iCompleteBusinessService.acceptComplete(in);
+            memoMap.put("result", "success");
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("result", "fail");
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
 }

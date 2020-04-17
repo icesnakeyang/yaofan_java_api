@@ -11,4 +11,5 @@ public interface ICompleteBusinessService {
 
     void rejectComplete(Map in) throws Exception;
 
+    void acceptComplete(Map in) throws Exception;
 }

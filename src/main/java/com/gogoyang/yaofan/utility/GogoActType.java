@@ -43,5 +43,6 @@ public enum GogoActType {
     TOTAL_USER_POINT,
     WX_LOGIN,
     DELETE_TASK,
-    DELETE_TASK_LOG
+    DELETE_TASK_LOG,
+    ACCEPT_TASK
 }

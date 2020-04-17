@@ -167,4 +167,39 @@ public class CompleteBusinessService implements ICompleteBusinessService {
         task.setStatus(GogoStatus.PROGRESS.toString());
         iTaskService.updateTaskStatus(task);
     }
+
+    /**
+     * 同意任务验收
+     * @param in
+     * @throws Exception
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void acceptComplete(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String taskId=in.get("taskId").toString();
+        String content=in.get("content").toString();
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+
+        Task task=iCommonBusinessService.getTaskByTaskId(taskId);
+
+        if(!task.getCreateUserId().equals(userInfo.getUserId())){
+            //不是甲方，不能验收
+            throw new Exception("20019");
+        }
+
+        TaskComplete taskComplete=iTaskCompleteService.getTaskCompleteUnProcess(taskId);
+        if(taskComplete==null){
+            throw new Exception("20010");
+        }
+        taskComplete.setProcessRemark(content);
+        taskComplete.setProcessResult(GogoStatus.ACCEPT.toString());
+        taskComplete.setProcessTime(new Date());
+        taskComplete.setProcessUserId(userInfo.getUserId());
+        iTaskCompleteService.processResult(taskComplete);
+
+        task.setStatus(GogoStatus.ACCEPT.toString());
+        iTaskService.updateTaskStatus(task);
+    }
 }

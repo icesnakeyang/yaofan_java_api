@@ -27,4 +27,17 @@ public interface TaskLogDao {
      * @return
      */
     Integer totalTaskLogUnread(Map qIn);
+
+    /**
+     * 删除任务日志
+     * @param taskLogId
+     */
+    void deleteTaskLog(String taskLogId);
+
+    /**
+     * 查询任务日志
+     * @param taskLogId
+     * @return
+     */
+    TaskLog getTaskLogByLogId(String taskLogId);
 }

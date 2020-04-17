@@ -6,4 +6,6 @@ public interface ITaskLogBusinessService {
     void createTaskLog(Map in) throws Exception;
 
     Map listTaskLog(Map in) throws Exception;
+
+    void deleteTaskLog(Map in) throws Exception;
 }

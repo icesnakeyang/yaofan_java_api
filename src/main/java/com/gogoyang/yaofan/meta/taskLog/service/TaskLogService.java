@@ -49,4 +49,24 @@ public class TaskLogService implements ITaskLogService {
         Integer totalTaskLogUnread = taskLogDao.totalTaskLogUnread(qIn);
         return totalTaskLogUnread;
     }
+
+    /**
+     * 删除任务日志
+     * @param taskLogId
+     */
+    @Override
+    public void deleteTaskLog(String taskLogId) {
+        taskLogDao.deleteTaskLog(taskLogId);
+    }
+
+    /**
+     * 查询任务日志
+     * @param taskLogId
+     * @return
+     */
+    @Override
+    public TaskLog getTaskLogByLogId(String taskLogId) {
+        TaskLog taskLog=taskLogDao.getTaskLogByLogId(taskLogId);
+        return taskLog;
+    }
 }

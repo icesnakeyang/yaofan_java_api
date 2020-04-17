@@ -42,5 +42,6 @@ public enum GogoActType {
     LIST_MY_POINT,
     TOTAL_USER_POINT,
     WX_LOGIN,
-    DELETE_TASK
+    DELETE_TASK,
+    DELETE_TASK_LOG
 }

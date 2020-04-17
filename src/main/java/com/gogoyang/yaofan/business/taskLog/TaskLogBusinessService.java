@@ -80,4 +80,25 @@ public class TaskLogBusinessService implements ITaskLogBusinessService {
 
         return out;
     }
+
+    /**
+     * 删除任务日志
+     * @param in
+     * @throws Exception
+     */
+    @Override
+    public void deleteTaskLog(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String taskLogId=in.get("taskLogId").toString();
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+
+        TaskLog taskLog=iTaskLogService.getTaskLogByLogId(taskLogId);
+        if(!taskLog.getCreateUserId().equals(userInfo.getUserId())){
+            //只能删除自己创建的日志
+            throw new Exception("20018");
+        }
+
+        iTaskLogService.deleteTaskLog(taskLogId);
+    }
 }

@@ -7,4 +7,5 @@ public class TaskLogRequest {
     private String taskId;
     private String createUserId;
     private String content;
+    private String taskLogId;
 }

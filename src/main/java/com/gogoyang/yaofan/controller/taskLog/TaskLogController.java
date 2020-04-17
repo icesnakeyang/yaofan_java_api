@@ -95,4 +95,44 @@ public class TaskLogController {
         }
         return response;
     }
+
+    /**
+     * 删除一个任务日志
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/deleteTaskLog")
+    public Response deleteTaskLog(@RequestBody TaskLogRequest request,
+                                  HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("taskLogId", request.getTaskLogId());
+            logMap.put("token", token);
+            memoMap.put("taskLogId", request.getTaskLogId());
+            logMap.put("GogoActType", GogoActType.DELETE_TASK_LOG);
+            iTaskLogBusinessService.deleteTaskLog(in);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
 }

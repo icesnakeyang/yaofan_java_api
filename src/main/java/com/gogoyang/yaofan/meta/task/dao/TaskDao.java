@@ -92,4 +92,10 @@ public interface TaskDao {
      * @return
      */
     Integer totalMyTasksPartyAOrB(Map qIn);
+
+    /**
+     * 删除一个任务
+     * @param taskId
+     */
+    void deleteTask(String taskId);
 }

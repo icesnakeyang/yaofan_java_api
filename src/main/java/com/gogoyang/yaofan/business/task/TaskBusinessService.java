@@ -297,9 +297,9 @@ public class TaskBusinessService implements ITaskBusinessService {
         /**
          * 不能接自己创建的任务
          */
-        if (task.getCreateUserId().equals(userInfo.getUserId())) {
-            throw new Exception("10019");
-        }
+//        if (task.getCreateUserId().equals(userInfo.getUserId())) {
+//            throw new Exception("10019");
+//        }
 
         /**
          * 任务必须是自己的团队的任务
@@ -676,6 +676,36 @@ public class TaskBusinessService implements ITaskBusinessService {
          */
 
         return out;
+    }
+
+    /**
+     * 用户删除一个任务
+     * @param in
+     * @throws Exception
+     */
+    @Override
+    public void deleteTask(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String taskId=in.get("taskId").toString();
+
+        /**
+         * 1、读取用户
+         * 2、读取任务
+         * 3、检查任务是否Grab
+         * 4、是就删除
+         */
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        Task task=iCommonBusinessService.getTaskByTaskId(taskId);
+
+        if(!task.getStatus().equals(GogoStatus.GRABBING.toString())){
+            throw new Exception("20015");
+        }
+
+        if(!task.getCreateUserId().equals(userInfo.getUserId())){
+            throw new Exception("20016");
+        }
+
+        iTaskService.deleteTask(taskId);
     }
 
     private Integer totalTaskPartyA(String userId) throws Exception {

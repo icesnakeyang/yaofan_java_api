@@ -1,15 +1,16 @@
 package com.gogoyang.yaofan.business.stop;
 
+import com.gogoyang.yaofan.meta.point.entity.PointLedger;
+import com.gogoyang.yaofan.meta.point.service.IPointService;
 import com.gogoyang.yaofan.meta.stop.entity.TaskStop;
 import com.gogoyang.yaofan.meta.stop.service.ITaskStopService;
 import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.task.service.ITaskService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
+import com.gogoyang.yaofan.utility.GogoActType;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
-import org.omg.PortableServer.THREAD_POLICY_ID;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +23,16 @@ public class TaskStopBusinessService implements ITaskStopBusinessService {
     private final ITaskStopService iTaskStopService;
     private final ICommonBusinessService iCommonBusinessService;
     private final ITaskService iTaskService;
+    private final IPointService iPointService;
 
     public TaskStopBusinessService(ITaskStopService iTaskStopService,
                                    ICommonBusinessService iCommonBusinessService,
-                                   ITaskService iTaskService) {
+                                   ITaskService iTaskService,
+                                   IPointService iPointService) {
         this.iTaskStopService = iTaskStopService;
         this.iCommonBusinessService = iCommonBusinessService;
         this.iTaskService = iTaskService;
+        this.iPointService = iPointService;
     }
 
     /**
@@ -58,6 +62,11 @@ public class TaskStopBusinessService implements ITaskStopBusinessService {
             throw new Exception("20012");
         }
 
+        if(task.getStatus().equals(GogoStatus.GRABBING.toString())){
+            //不能终止等待抢单的任务
+            throw new Exception("20017");
+        }
+
         //创建taskStop日志
         TaskStop taskStop = new TaskStop();
         taskStop.setCreateTime(new Date());
@@ -70,6 +79,26 @@ public class TaskStopBusinessService implements ITaskStopBusinessService {
         //修改任务状态为终止Stop
         task.setStatus(GogoStatus.STOP.toString());
         iTaskService.updateTaskStatus(task);
+
+        /**
+         * 终止任务后，把point收回
+         * 1、增加甲方的pointIn
+         * 2、乙方pointOut
+         */
+        PointLedger pointLedger=new PointLedger();
+        pointLedger.setUserId(task.getCreateUserId());
+        pointLedger.setTaskId(taskId);
+        pointLedger.setPointIn(task.getPoint());
+        pointLedger.setCreateTime(new Date());
+        pointLedger.setActType(GogoActType.STOP_TASK.toString());
+        pointLedger.setPointLedgerId(GogoTools.UUID().toString());
+        iPointService.createPointLedger(pointLedger);
+
+        pointLedger.setUserId(task.getPartyBId());
+        pointLedger.setPointIn(null);
+        pointLedger.setPointOut(task.getPoint());
+        pointLedger.setPointLedgerId(GogoTools.UUID().toString());
+        iPointService.createPointLedger(pointLedger);
     }
 
     /**

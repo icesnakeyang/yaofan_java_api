@@ -84,14 +84,14 @@ limit #{offset},#{size}
     </select>
 
     <!--统计用户积分-->
-    <select id="totalPointAccept" parameterType="map" resultType="map">
-        select sum(point_in) as total_in, sum(point_out) as total_out from point_ledger
+    <select id="totalPointAccept" parameterType="map" resultType="java.lang.Double">
+        select sum(point) as total_point from point_ledger
         left join task on point_ledger.task_id=task.task_id
         where 1=1
         and status='ACCEPT'
         <![CDATA[
-        and create_user_id<>#{partyAId}
+        and create_user_id<>#{userId}
         ]]>
-        and party_b_id=#{partyBId}
+        and party_b_id=#{userId}
     </select>
 </mapper>

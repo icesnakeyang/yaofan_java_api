@@ -4,10 +4,12 @@ import com.gogoyang.yaofan.business.statistic.IStatisticBusinessService;
 import com.gogoyang.yaofan.meta.point.entity.PointLedger;
 import com.gogoyang.yaofan.meta.point.service.IPointService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
+import com.gogoyang.yaofan.meta.withdraw.service.IWithdrawService;
 import com.gogoyang.yaofan.utility.GogoActType;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,64 +20,16 @@ public class PointBusinessService implements IPointBusinessService {
     private final IPointService iPointService;
     private final ICommonBusinessService iCommonBusinessService;
     private final IStatisticBusinessService iStatisticBusinessService;
+    private final IWithdrawService iWithdrawService;
 
     public PointBusinessService(IPointService iPointService,
                                 ICommonBusinessService iCommonBusinessService,
-                                IStatisticBusinessService iStatisticBusinessService) {
+                                IStatisticBusinessService iStatisticBusinessService,
+                                IWithdrawService iWithdrawService) {
         this.iPointService = iPointService;
         this.iCommonBusinessService = iCommonBusinessService;
         this.iStatisticBusinessService = iStatisticBusinessService;
-    }
-
-    /**
-     * 用户申请一次兑换积分
-     * 把积分兑换掉
-     * 创建一个积分兑换记录，后台管理员处理兑换申请。
-     *
-     * @param in
-     * @throws Exception
-     */
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public void applyPointWithdraw(Map in) throws Exception {
-        String token = in.get("token").toString();
-        Double point = (Double) in.get("point");
-        String remark = (String) in.get("remark");
-
-        if (point == null) {
-            throw new Exception("10021");
-        }
-
-        /**
-         * 读取用户
-         */
-        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
-
-        /**
-         * 检查用户积分余额
-         */
-
-        Double pointBalance = iStatisticBusinessService.calPointBalance(userInfo.getUserId());
-
-        if (point > pointBalance) {
-            //积分余额不足
-            throw new Exception("10022");
-        }
-
-        /**
-         * 创建积分兑换申请
-         * 先扣除用户积分，也可以说是暂时冻结
-         */
-        PointLedger pointLedger = new PointLedger();
-
-        pointLedger.setActType(GogoActType.POINT_WITHDRAW.toString());
-        pointLedger.setCreateTime(new Date());
-        pointLedger.setPointOut(point);
-        pointLedger.setUserId(userInfo.getUserId());
-        pointLedger.setRemark(remark);
-        pointLedger.setPointLedgerId(GogoTools.UUID().toString());
-
-        iPointService.createPointLedger(pointLedger);
+        this.iWithdrawService = iWithdrawService;
     }
 
     @Override
@@ -132,6 +86,7 @@ public class PointBusinessService implements IPointBusinessService {
 
     /**
      * 统计用户积分
+     *
      * @param in
      * @return
      * @throws Exception
@@ -147,40 +102,39 @@ public class PointBusinessService implements IPointBusinessService {
         Map map = iPointService.totalUserPoint(qIn);
 
         //计算用户的进账和出账积分
-        Map out=new HashMap();
-        if(map==null){
+        Map out = new HashMap();
+        if (map == null) {
             out.put("pointIn", 0);
             out.put("pointOut", 0);
             out.put("pointBalance", 0);
-        }else{
-            Double pIn=(Double)map.get("total_point_in");
-            if(pIn==null){
-                pIn=0.0;
+        } else {
+            Double pIn = (Double) map.get("total_point_in");
+            if (pIn == null) {
+                pIn = 0.0;
             }
-            Double pOut=(Double)map.get("total_point_out");
-            if(pOut==null){
-                pOut=0.0;
+            Double pOut = (Double) map.get("total_point_out");
+            if (pOut == null) {
+                pOut = 0.0;
             }
-            Double balance=pIn-pOut;
+            Double balance = pIn - pOut;
             out.put("pointIn", pIn);
             out.put("pointOut", pOut);
             out.put("pointBalance", balance);
         }
 
         //计算用户可以取现的积分
-        qIn=new HashMap();
-        qIn.put("partyAId", userInfo.getUserId());
-        qIn.put("partyBId", userInfo.getUserId());
-        Map map1=iPointService.totalPointAccept(qIn);
-        if(map1==null){
-            out.put("withdrawAble", 0);
-        }else{
-            Double withdrawAble=(Double)map1.get("total_in");
-            if(withdrawAble==null){
-                withdrawAble=0.0;
-            }
-            out.put("withdrawAble", withdrawAble);
+        qIn = new HashMap();
+        qIn.put("userId", userInfo.getUserId());
+        Double withdrawAble = iPointService.totalPointAccept(qIn);
+        if(withdrawAble==null){
+            withdrawAble=0.0;
         }
+        Double unprocessPoint = iWithdrawService.sumWithdrawUnprocess(userInfo.getUserId());
+        if(unprocessPoint==null){
+            unprocessPoint=0.0;
+        }
+        withdrawAble -= unprocessPoint;
+        out.put("withdrawAble", withdrawAble);
 
         return out;
     }

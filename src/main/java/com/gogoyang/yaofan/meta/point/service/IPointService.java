@@ -33,10 +33,9 @@ public interface IPointService {
     /**
      * 统计用户可以取现的积分
      * @param qIn
-     * partyAId
-     * partyBId
+     * userId
      * @return
      */
-    Map totalPointAccept(Map qIn);
+    Double totalPointAccept(Map qIn);
 
 }

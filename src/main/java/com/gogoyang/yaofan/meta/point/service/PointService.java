@@ -57,13 +57,12 @@ public class PointService implements IPointService {
     /**
      * 统计用户可以取现的积分
      * @param qIn
-     * partyAId
-     * partyBId
+     * userId
      * @return
      */
     @Override
-    public Map totalPointAccept(Map qIn) {
-        Map out=pointDao.totalPointAccept(qIn);
-        return out;
+    public Double totalPointAccept(Map qIn) {
+        Double point=pointDao.totalPointAccept(qIn);
+        return point;
     }
 }

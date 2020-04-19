@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gogoyang.yaofan.meta.withdraw.dao.WithdrawDao">
+
+    <resultMap id="withdrawMap" type="com.gogoyang.yaofan.meta.withdraw.entity.Withdraw">
+        <result property="withdrawId" column="withdraw_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="readTime" column="read_time"/>
+        <result property="processResult" column="process_result"/>
+        <result property="processRemark" column="process_remark"/>
+        <result property="processUserId" column="process_user_id"/>
+        <result property="processTime" column="process_time"/>
+        <result property="processReadTime" column="process_read_time"/>
+
+        <result property="userName" column="create_user_name"/>
+        <result property="processUserName" column="process_user_name"/>
+    </resultMap>
+
+    <!--创建一个取现日志-->
+    <insert id="createWithdraw"
+            useGeneratedKeys="true"
+            keyProperty="ids"
+            parameterType="com.gogoyang.yaofan.meta.withdraw.entity.Withdraw">
+      insert into point_withdraw
+      (withdraw_id, point, user_id, create_time, remark)
+      values
+      (#{withdrawId}, #{point}, #{userId}, #{createTime}, #{remark})
+    </insert>
+
+    <!--读取用户的取现申请列表-->
+    <select id="listWithdraw" parameterType="map" resultMap="withdrawMap">
+        select point_withdraw.ids,
+        withdraw_id,
+        point,
+        create_user.user_id,
+        create_user.name as create_user_name,
+        point_withdraw.create_time,
+        remark,
+        read_time,
+        process_result,
+        process_remark,
+        process_user_id,
+        process_user.name as process_user_name,
+        process_time,
+        process_read_time
+        from point_withdraw
+        left join user_info create_user on point_withdraw.user_id=create_user.user_id
+        left join user_info process_user on process_user_id=process_user.user_id
+        where 1=1
+        <choose>
+            <when test="userId!=null">
+                and point_withdraw.user_id=#{userId}
+            </when>
+        </choose>
+        <choose>
+            <when test="unRead!=null">
+                and read_time is null
+            </when>
+        </choose>
+        <choose>
+            <when test="unProcess!=null">
+                and process_result is null
+            </when>
+        </choose>
+        <choose>
+            <when test="unReadProcess!=null">
+                and process_read_time is null
+            </when>
+        </choose>
+        <choose>
+            <when test="processResult!=null">
+                and process_result=#{processResult}
+            </when>
+        </choose>
+    </select>
+
+    <!--汇总用户已申请还未处理的取现总积分-->
+    <select id="sumWithdrawUnprocess" parameterType="java.lang.String" resultType="java.lang.Double">
+        select sum(point) as point from point_withdraw
+        where user_id=#{userId}
+        and process_result is null
+    </select>
+
+    <!--统计用户的取现申请总数-->
+    <select id="totalWithdraw" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(*) from point_withdraw
+        where user_id=#{userId}
+    </select>
+
+</mapper>

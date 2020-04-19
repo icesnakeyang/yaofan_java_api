@@ -29,41 +29,6 @@ public class PointController {
     }
 
     @ResponseBody
-    @PostMapping("/applyPointWithdraw")
-    public Response applyPointWithdraw(@RequestBody PointRequest request,
-                                       HttpServletRequest httpServletRequest) {
-        Response response = new Response();
-        Map in = new HashMap();
-        Map logMap = new HashMap();
-        Map memoMap = new HashMap();
-        try {
-            String token = httpServletRequest.getHeader("token");
-            in.put("token", token);
-            in.put("point", request.getPoint());
-            in.put("remark", request.getRemark());
-            logMap.put("token", token);
-            logMap.put("GogoActType", GogoActType.POINT_WITHDRAW);
-            memoMap.put("point", request.getPoint());
-            iPointBusinessService.applyPointWithdraw(in);
-        } catch (Exception ex) {
-            try {
-                response.setCode(Integer.parseInt(ex.getMessage()));
-            } catch (Exception ex2) {
-                response.setCode(10001);
-                logger.error(ex.getMessage());
-            }
-            memoMap.put("error", ex.getMessage());
-        }
-        try {
-            logMap.put("memo", memoMap);
-            iCommonBusinessService.createUserActLog(logMap);
-        } catch (Exception ex3) {
-            logger.error(ex3.getMessage());
-        }
-        return response;
-    }
-
-    @ResponseBody
     @PostMapping("listUnProcessWithdraw")
     public Response listUnProcessWithdraw(@RequestBody PointRequest request,
                                           HttpServletRequest httpServletRequest) {

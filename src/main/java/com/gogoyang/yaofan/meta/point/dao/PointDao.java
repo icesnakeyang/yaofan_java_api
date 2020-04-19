@@ -34,10 +34,10 @@ public interface PointDao {
     /**
      * 统计用户可以取现的积分
      * @param qIn
-     * partyAId
-     * partyBId
+     * userId
      * @return
+     * total_point
      */
-    Map totalPointAccept(Map qIn);
+    Double totalPointAccept(Map qIn);
 
 }

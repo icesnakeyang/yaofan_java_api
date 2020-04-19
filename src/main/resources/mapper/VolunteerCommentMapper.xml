@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gogoyang.yaofan.meta.volunteer.comment.dao.VolunteerCommentDao">
+
+    <resultMap id="volunteerCommentMap" type="com.gogoyang.yaofan.meta.volunteer.comment.entity.VolunteerComment">
+        <result property="volunteerApplyId" column="volunteer_apply_id"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <!--创建一个义工任务评价-->
+    <insert id="createVolunteerComment"
+            useGeneratedKeys="true"
+            keyProperty="ids"
+            parameterType="com.gogoyang.yaofan.meta.volunteer.comment.entity.VolunteerComment">
+      insert into volunteer_comment
+      (volunteer_apply_id, comment, score, create_time)
+      values
+      (#{volunteerApplyId}, #{comment}, #{score}, #{createTime})
+    </insert>
+</mapper>

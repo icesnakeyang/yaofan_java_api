@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gogoyang.yaofan.meta.volunteer.apply.dao.VolunteerApplyDao">
+
+    <resultMap id="volunteerApplyMap" type="com.gogoyang.yaofan.meta.volunteer.apply.entity.VolunteerApply">
+        <result property="volunteerApplyId" column="volunteer_apply_id"/>
+        <result property="volunteerTaskId" column="volunteer_task_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="applyUserId" column="apply_user_id"/>
+        <result property="readTime" column="read_time"/>
+        <result property="processResult" column="process_result"/>
+        <result property="processTime" column="process_time"/>
+        <result property="processRemark" column="process_remark"/>
+        <result property="processUserId" column="process_user_id"/>
+        <result property="processReadTime" column="process_read_time"/>
+    </resultMap>
+
+    <!--创建一个义工任务申请-->
+    <insert id="createVolunteerApply"
+            useGeneratedKeys="true"
+            keyProperty="ids"
+            parameterType="com.gogoyang.yaofan.meta.volunteer.apply.entity.VolunteerApply">
+      insert into volunteer_apply
+      (volunteer_apply_id, volunteer_task_id, create_time, apply_user_id, remark)
+      values
+      (#{volunteerApplyId}, #{volunteerTaskId}, #{createTime}, #{applyUserId}, #{remark})
+    </insert>
+</mapper>

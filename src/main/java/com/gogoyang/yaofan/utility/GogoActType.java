@@ -44,5 +44,6 @@ public enum GogoActType {
     WX_LOGIN,
     DELETE_TASK,
     DELETE_TASK_LOG,
-    ACCEPT_TASK
+    ACCEPT_TASK,
+    CREATE_VOLUNTEER_TASK
 }

@@ -19,4 +19,7 @@ public class VolunteerTask {
     private String pid;
     private Integer views;
     private Integer applies;
+    private String status;
+
+    private String createUserName;
 }

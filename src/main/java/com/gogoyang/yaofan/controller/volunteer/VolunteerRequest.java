@@ -12,4 +12,7 @@ public class VolunteerRequest {
     private String pid;
     private String theDate;
     private String theTime;
+    private Integer pageIndex;
+    private Integer pageSize;
+    private String volunteerTaskId;
 }

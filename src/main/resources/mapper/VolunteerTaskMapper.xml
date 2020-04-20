@@ -7,6 +7,7 @@
         <result property="createTime" column="create_time"/>
         <result property="createUserId" column="create_user_id"/>
         <result property="startTime" column="start_time"/>
+        <result property="createUserName" column="create_user_name"/>
     </resultMap>
 
     <!--创建一个义工任务-->
@@ -21,4 +22,55 @@
       (#{volunteerTaskId}, #{createTime}, #{createUserId}, #{title},
        #{content}, #{startTime}, #{pid})
     </insert>
+
+    <!--读取义工任务列表-->
+    <select id="listVolunteerTask" parameterType="map" resultMap="volunteerTaskMap">
+        select volunteer_task.ids,
+        volunteer_task_id,
+        volunteer_task.create_time,
+        create_user_id,
+        name as create_user_name,
+        title,
+        content,
+        start_time,
+        pid,
+        views,
+        applies,
+        volunteer_task.status
+        from volunteer_task
+        left join user_info create_user on create_user_id=user_id
+        where 1=1
+        <choose>
+            <when test="createUserId!=null">
+                and create_user_id=#{createUserId}
+            </when>
+        </choose>
+        <choose>
+            <when test="status!=null">
+                and volunteer_task.status=#{status}
+            </when>
+        </choose>
+        order by create_user.ids desc
+        limit #{offset},#{size}
+    </select>
+
+    <!--根据volunteerTaskId查询义工任务详情-->
+    <select id="getVolunteerTaskDetail" parameterType="java.lang.String"
+            resultMap="volunteerTaskMap">
+        select volunteer_task.ids,
+       volunteer_task_id,
+       volunteer_task.create_time,
+       create_user_id,
+       name as create_user_name,
+       title,
+      content,
+       start_time,
+       pid,
+       views,
+       applies,
+       volunteer_task.status
+       from volunteer_task
+left join user_info create_user on create_user_id=user_id
+where volunteer_task_id=#{volunteerTaskId}
+    </select>
 </mapper>

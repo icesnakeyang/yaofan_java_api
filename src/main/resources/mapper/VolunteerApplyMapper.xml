@@ -7,12 +7,16 @@
         <result property="volunteerTaskId" column="volunteer_task_id"/>
         <result property="createTime" column="create_time"/>
         <result property="applyUserId" column="apply_user_id"/>
+        <result property="applyUserName" column="apply_user_name"/>
         <result property="readTime" column="read_time"/>
         <result property="processResult" column="process_result"/>
         <result property="processTime" column="process_time"/>
         <result property="processRemark" column="process_remark"/>
         <result property="processUserId" column="process_user_id"/>
+        <result property="processUserName" column="process_user_name"/>
         <result property="processReadTime" column="process_read_time"/>
+        <result property="taskCreateUserName" column="task_create_user_name"/>
+        <result property="taskCreateUserId" column="task_create_user_id"/>
     </resultMap>
 
     <!--创建一个义工任务申请-->
@@ -25,4 +29,79 @@
       values
       (#{volunteerApplyId}, #{volunteerTaskId}, #{createTime}, #{applyUserId}, #{remark})
     </insert>
+
+    <!--查询义工任务申请列表-->
+    <select id="listVolunteerApply" parameterType="map" resultMap="volunteerApplyMap">
+        select volunteer_apply.ids,
+        volunteer_apply_id,
+        volunteer_task.volunteer_task_id,
+        title,
+        volunteer_apply.create_time,
+        apply_user_id,
+        apply_user.name as apply_user_name,
+        remark,
+        read_time,
+        process_result,
+        process_time,
+        process_remark,
+        process_user_id,
+        process_user.name as process_user_name,
+        process_read_time,
+        title
+        from volunteer_apply
+        left join volunteer_task on volunteer_apply.volunteer_task_id=volunteer_task.volunteer_task_id
+        left join user_info apply_user on apply_user_id=user_id
+        left join user_info process_user on process_user_id=process_user.user_id
+        where 1=1
+        <choose>
+            <when test="createUserId!=null">
+                and create_user_id=#{createUserId}
+            </when>
+        </choose>
+        <choose>
+            <when test="applyUserId!=null">
+                and apply_user_id=#{applyUserId}
+            </when>
+        </choose>
+        order by volunteer_apply.ids desc
+    </select>
+
+    <!--查询义工任务申请详情-->
+    <select id="getVolunteerApply" parameterType="java.lang.String"
+            resultMap="volunteerApplyMap">
+        select volunteer_apply.ids,
+        volunteer_apply_id,
+        volunteer_task.volunteer_task_id,
+        title,
+        volunteer_apply.create_time,
+        apply_user_id,
+        apply_user.name as apply_user_name,
+        remark,
+        read_time,
+        process_result,
+        process_time,
+        process_remark,
+        process_user_id,
+        process_user.name as process_user_name,
+        process_read_time,
+        title,
+       create_user_id as task_create_user_id,
+       task_create_user.name as task_create_user_name
+        from volunteer_apply
+        left join volunteer_task on volunteer_apply.volunteer_task_id=volunteer_task.volunteer_task_id
+        left join user_info apply_user on apply_user_id=user_id
+        left join user_info process_user on process_user_id=process_user.user_id
+left join user_info task_create_user on create_user_id=task_create_user.user_id
+        where volunteer_apply_id=#{volunteerApplyId}
+    </select>
+
+    <!--处理义工任务申请-->
+    <update id="processVolunteerApply" parameterType="map">
+        update volunteer_apply set
+        process_result=#{processResult},
+        process_time=#{processTime},
+        process_remark=#{processRemark},
+        process_user_id=#{processUserId}
+        where volunteer_apply_id=#{volunteerApplyId}
+    </update>
 </mapper>

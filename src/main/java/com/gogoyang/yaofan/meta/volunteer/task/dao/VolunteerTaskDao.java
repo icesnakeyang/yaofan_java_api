@@ -32,4 +32,10 @@ public interface VolunteerTaskDao {
      */
     VolunteerTask getVolunteerTaskDetail(String volunteerTaskId);
 
+    /**
+     * 根据volunteerTaskId查询义工任务，不包括详情
+     * @param volunteerTaskId
+     * @return
+     */
+    VolunteerTask getVolunteerTaskTiny(String volunteerTaskId);
 }

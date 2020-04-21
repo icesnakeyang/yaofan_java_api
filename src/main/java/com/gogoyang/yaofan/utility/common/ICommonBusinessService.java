@@ -3,6 +3,7 @@ package com.gogoyang.yaofan.utility.common;
 import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.team.entity.Team;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
+import com.gogoyang.yaofan.meta.volunteer.task.entity.VolunteerTask;
 
 import java.util.Map;
 
@@ -33,4 +34,6 @@ public interface ICommonBusinessService {
      * @throws Exception
      */
     void checkTaskMember(UserInfo user, Task task) throws Exception;
+
+    VolunteerTask getVolunteerTask(String volunteerTaskId) throws Exception;
 }

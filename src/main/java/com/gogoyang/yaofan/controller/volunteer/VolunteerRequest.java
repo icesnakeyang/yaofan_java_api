@@ -15,4 +15,6 @@ public class VolunteerRequest {
     private Integer pageIndex;
     private Integer pageSize;
     private String volunteerTaskId;
+    private String remark;
+    private String volunteerApplyId;
 }

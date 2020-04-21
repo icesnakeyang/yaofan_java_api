@@ -12,7 +12,7 @@ public class VolunteerApply {
     private Integer ids;
     private String volunteerApplyId;
     private String volunteerTaskId;
-    private Date create_time;
+    private Date createTime;
     private String applyUserId;
     private String remark;
     private Date readTime;
@@ -21,4 +21,10 @@ public class VolunteerApply {
     private String processRemark;
     private String processUserId;
     private Date processReadTime;
+
+    private String applyUserName;
+    private String processUserName;
+    private String title;
+    private String taskCreateUserId;
+    private String taskCreateUserName;
 }

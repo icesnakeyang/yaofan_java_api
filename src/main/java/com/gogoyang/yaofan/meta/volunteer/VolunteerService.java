@@ -32,7 +32,7 @@ public class VolunteerService implements IVolunteerService {
      * @param volunteerTask
      */
     @Override
-    public void createVolunteerTask(VolunteerTask volunteerTask) {
+    public void createVolunteerTask(VolunteerTask volunteerTask) throws Exception {
         volunteerTaskDao.createVolunteerTask(volunteerTask);
     }
 
@@ -42,7 +42,7 @@ public class VolunteerService implements IVolunteerService {
      * @param volunteerApply
      */
     @Override
-    public void createVolunteerApply(VolunteerApply volunteerApply) {
+    public void createVolunteerApply(VolunteerApply volunteerApply) throws Exception {
         volunteerApplyDao.createVolunteerApply(volunteerApply);
     }
 
@@ -52,33 +52,86 @@ public class VolunteerService implements IVolunteerService {
      * @param volunteerComment
      */
     @Override
-    public void createVolunteerComment(VolunteerComment volunteerComment) {
+    public void createVolunteerComment(VolunteerComment volunteerComment) throws Exception {
         volunteerCommentDao.createVolunteerComment(volunteerComment);
     }
 
     /**
      * 读取义工任务列表
-     * @param qIn
-     * createUserId
-     * status
-     * offset
-     * size
+     *
+     * @param qIn createUserId
+     *            status
+     *            offset
+     *            size
      * @return
      */
     @Override
-    public ArrayList<VolunteerTask> listVolunteerTask(Map qIn) {
+    public ArrayList<VolunteerTask> listVolunteerTask(Map qIn) throws Exception {
         ArrayList<VolunteerTask> volunteerTasks = volunteerTaskDao.listVolunteerTask(qIn);
         return volunteerTasks;
     }
 
     /**
      * 根据volunteerTaskId查询义工任务详情
+     *
      * @param volunteerTaskId
      * @return
      */
     @Override
-    public VolunteerTask getVolunteerTaskDetail(String volunteerTaskId) {
-        VolunteerTask volunteerTask=volunteerTaskDao.getVolunteerTaskDetail(volunteerTaskId);
+    public VolunteerTask getVolunteerTaskDetail(String volunteerTaskId) throws Exception {
+        VolunteerTask volunteerTask = volunteerTaskDao.getVolunteerTaskDetail(volunteerTaskId);
         return volunteerTask;
+    }
+
+    /**
+     * 根据volunteerTaskId查询义工任务，不包括详情
+     *
+     * @param volunteerTaskId
+     * @return
+     */
+    @Override
+    public VolunteerTask getVolunteerTaskTiny(String volunteerTaskId) throws Exception {
+        VolunteerTask volunteerTask = volunteerTaskDao.getVolunteerTaskTiny(volunteerTaskId);
+        return volunteerTask;
+    }
+
+    /**
+     * 查询义工任务申请列表
+     *
+     * @param qIn
+     * createUserId
+     * applyUserId
+     * @return
+     */
+    @Override
+    public ArrayList<VolunteerApply> listVolunteerApply(Map qIn) throws Exception {
+        ArrayList<VolunteerApply> volunteerApplies = volunteerApplyDao.listVolunteerApply(qIn);
+        return volunteerApplies;
+    }
+
+    /**
+     * 查询义工任务申请详情
+     *
+     * @param volunteerApplyId
+     * @return
+     */
+    @Override
+    public VolunteerApply getVolunteerApply(String volunteerApplyId) throws Exception {
+        VolunteerApply volunteerApply = volunteerApplyDao.getVolunteerApply(volunteerApplyId);
+        return volunteerApply;
+    }
+
+    /**
+     * 处理义工任务申请
+     * @param qIn
+     * processResult
+     * processTime
+     * processRemark
+     * processUserId
+     * @throws Exception
+     */
+    @Override
+    public void processVolunteerApply(Map qIn) throws Exception {
+        volunteerApplyDao.processVolunteerApply(qIn);
     }
 }

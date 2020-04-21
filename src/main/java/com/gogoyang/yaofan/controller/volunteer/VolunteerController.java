@@ -161,4 +161,252 @@ public class VolunteerController {
         }
         return  response;
     }
+
+    /**
+     * 报名申请义工任务
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/applyVolunteerTask")
+    public Response applyVolunteerTask(@RequestBody VolunteerRequest request,
+                                       HttpServletRequest httpServletRequest){
+        Response response=new Response();
+        Map in=new HashMap();
+        Map logMap=new HashMap();
+        Map memoMap=new HashMap();
+        try {
+            String token=httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("remark", request.getRemark());
+            in.put("volunteerTaskId", request.getVolunteerTaskId());
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.APPLY_VOLUNTEER_TASK);
+            memoMap.put("volunteerTaskId", request.getVolunteerTaskId());
+            iVolunteerBusinessService.applyVolunteerTask(in);
+            memoMap.put("result", GogoStatus.SUCCESS);
+        }catch (Exception ex){
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            }catch (Exception ex2){
+                response.setCode(10001);
+                logger.error(ex2.getMessage());
+            }
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        }catch (Exception ex3){
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * 查询申请我的义工任务人员列表
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/listMyVolunteerTaskApply")
+    public Response listMyVolunteerTaskApply(@RequestBody VolunteerRequest request,
+                                       HttpServletRequest httpServletRequest){
+        Response response=new Response();
+        Map in=new HashMap();
+        Map logMap=new HashMap();
+        Map memoMap=new HashMap();
+        try {
+            String token=httpServletRequest.getHeader("token");
+            in.put("token", token);
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.LIST_VOLUNTEER_APPLY);
+            Map out=iVolunteerBusinessService.listMyVolunteerTaskApply(in);
+            response.setData(out);
+            memoMap.put("result", GogoStatus.SUCCESS);
+        }catch (Exception ex){
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            }catch (Exception ex2){
+                response.setCode(10001);
+                logger.error(ex2.getMessage());
+            }
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        }catch (Exception ex3){
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * 查询我申请的义工列表
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/listMyVolunteerTaskApplyJoin")
+    public Response listMyVolunteerTaskApplyJoin(@RequestBody VolunteerRequest request,
+                                             HttpServletRequest httpServletRequest){
+        Response response=new Response();
+        Map in=new HashMap();
+        Map logMap=new HashMap();
+        Map memoMap=new HashMap();
+        try {
+            String token=httpServletRequest.getHeader("token");
+            in.put("token", token);
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.LIST_VOLUNTEER_APPLY);
+            Map out=iVolunteerBusinessService.listMyVolunteerTaskApplyJoin(in);
+            response.setData(out);
+            memoMap.put("result", GogoStatus.SUCCESS);
+        }catch (Exception ex){
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            }catch (Exception ex2){
+                response.setCode(10001);
+                logger.error(ex2.getMessage());
+            }
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        }catch (Exception ex3){
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * 查询义工任务申请详情
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/getVolunteerApply")
+    public Response getVolunteerApply(@RequestBody VolunteerRequest request,
+                                     HttpServletRequest httpServletRequest){
+        Response response=new Response();
+        Map in=new HashMap();
+        Map logMap=new HashMap();
+        Map memoMap=new HashMap();
+        try {
+            String token=httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("volunteerApplyId", request.getVolunteerApplyId());
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.GET_VOLUNTEER_APPLY);
+            Map out=iVolunteerBusinessService.getVolunteerApply(in);
+            response.setData(out);
+            logMap.put("result", GogoStatus.SUCCESS);
+        }catch (Exception ex){
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            }catch (Exception ex2){
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("result", GogoStatus.FAILED);
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        }catch (Exception ex3){
+            logger.error(ex3.getMessage());
+        }
+        return  response;
+    }
+
+    /**
+     * 拒绝义工任务申请
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/rejectVolunteerApply")
+    public Response rejectVolunteerApply(@RequestBody VolunteerRequest request,
+                                     HttpServletRequest httpServletRequest){
+        Response response=new Response();
+        Map in=new HashMap();
+        Map logMap=new HashMap();
+        Map memoMap=new HashMap();
+        try {
+            String token=httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("volunteerApplyId", request.getVolunteerApplyId());
+            in.put("remark", request.getRemark());
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.REJECT_VOLUNTEER_APPLY);
+            iVolunteerBusinessService.rejectVolunteerApply(in);
+            logMap.put("result", GogoStatus.SUCCESS);
+        }catch (Exception ex){
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            }catch (Exception ex2){
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("result", GogoStatus.FAILED);
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        }catch (Exception ex3){
+            logger.error(ex3.getMessage());
+        }
+        return  response;
+    }
+
+    /**
+     * 同意义工任务申请
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/agreeVolunteerApply")
+    public Response agreeVolunteerApply(@RequestBody VolunteerRequest request,
+                                     HttpServletRequest httpServletRequest){
+        Response response=new Response();
+        Map in=new HashMap();
+        Map logMap=new HashMap();
+        Map memoMap=new HashMap();
+        try {
+            String token=httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("volunteerApplyId", request.getVolunteerApplyId());
+            in.put("remark", request.getRemark());
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.AGREE_VOLUNTEER_APPLY);
+            iVolunteerBusinessService.agreeVolunteerApply(in);
+            logMap.put("result", GogoStatus.SUCCESS);
+        }catch (Exception ex){
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            }catch (Exception ex2){
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("result", GogoStatus.FAILED);
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        }catch (Exception ex3){
+            logger.error(ex3.getMessage());
+        }
+        return  response;
+    }
 }

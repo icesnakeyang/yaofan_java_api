@@ -9,9 +9,12 @@ import com.gogoyang.yaofan.meta.user.entity.UserInfo;
 import com.gogoyang.yaofan.meta.user.service.IUserInfoService;
 import com.gogoyang.yaofan.meta.userActLog.entity.UserActLog;
 import com.gogoyang.yaofan.meta.userActLog.service.IUserActLogService;
+import com.gogoyang.yaofan.meta.volunteer.IVolunteerService;
+import com.gogoyang.yaofan.meta.volunteer.task.entity.VolunteerTask;
 import com.gogoyang.yaofan.utility.GogoActType;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,15 +29,18 @@ public class CommonBusinessService implements ICommonBusinessService {
     private final IUserInfoService iUserInfoService;
     private final ITaskService iTaskService;
     private final ITeamService iTeamService;
+    private final IVolunteerService iVolunteerService;
 
     public CommonBusinessService(IUserActLogService iUserActLogService,
                                  IUserInfoService iUserInfoService,
                                  ITaskService iTaskService,
-                                 ITeamService iTeamService) {
+                                 ITeamService iTeamService,
+                                 IVolunteerService iVolunteerService) {
         this.iUserActLogService = iUserActLogService;
         this.iUserInfoService = iUserInfoService;
         this.iTaskService = iTaskService;
         this.iTeamService = iTeamService;
+        this.iVolunteerService = iVolunteerService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -163,6 +169,21 @@ public class CommonBusinessService implements ICommonBusinessService {
         if (cc == 0) {
             throw new Exception("10020");
         }
+    }
+
+    /**
+     * 查询义工任务简要信息
+     * @param volunteerTaskId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public VolunteerTask getVolunteerTask(String volunteerTaskId) throws Exception {
+        VolunteerTask volunteerTask=iVolunteerService.getVolunteerTaskTiny(volunteerTaskId);
+        if(volunteerTask==null){
+            throw new Exception("20020");
+        }
+        return volunteerTask;
     }
 
     public UserInfo getUserByUserId(String userId) throws Exception {

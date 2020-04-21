@@ -2,12 +2,14 @@ package com.gogoyang.yaofan.business.volunteer;
 
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
 import com.gogoyang.yaofan.meta.volunteer.IVolunteerService;
+import com.gogoyang.yaofan.meta.volunteer.apply.entity.VolunteerApply;
 import com.gogoyang.yaofan.meta.volunteer.task.entity.VolunteerTask;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,6 +50,7 @@ public class VolunteerBusinessService implements IVolunteerBusinessService{
         volunteerTask.setStartTime(startTime);
         volunteerTask.setTitle(title);
         volunteerTask.setVolunteerTaskId(GogoTools.UUID().toString());
+        volunteerTask.setStatus(GogoStatus.ACTIVE.toString());
 
         iVolunteerService.createVolunteerTask(volunteerTask);
     }
@@ -82,6 +85,131 @@ public class VolunteerBusinessService implements IVolunteerBusinessService{
 
         Map out=new HashMap();
         out.put("volunteerTask", volunteerTask);
+
+        return out;
+    }
+
+    /**
+     * 用户报名申请义工任务
+     * @param in
+     * @throws Exception
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void applyVolunteerTask(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String volunteerTaskId=in.get("volunteerTaskId").toString();
+        String remark=in.get("remark").toString();
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+
+        VolunteerTask volunteerTask=iVolunteerService.getVolunteerTaskTiny(volunteerTaskId);
+
+        if(!volunteerTask.getStatus().equals(GogoStatus.ACTIVE.toString())){
+            throw new Exception("20021");
+        }
+
+        if(volunteerTask.getCreateUserId().equals(userInfo.getUserId())){
+            throw new Exception("20023");
+        }
+
+        VolunteerApply volunteerApply=new VolunteerApply();
+        volunteerApply.setApplyUserId(userInfo.getUserId());
+        volunteerApply.setCreateTime(new Date());
+        volunteerApply.setRemark(remark);
+        volunteerApply.setVolunteerApplyId(GogoTools.UUID().toString());
+        volunteerApply.setVolunteerTaskId(volunteerTaskId);
+        iVolunteerService.createVolunteerApply(volunteerApply);
+    }
+
+    @Override
+    public Map listMyVolunteerTaskApply(Map in) throws Exception {
+        String token=in.get("token").toString();
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        Map qIn=new HashMap();
+        qIn.put("createUserId", userInfo.getUserId());
+        ArrayList<VolunteerApply> volunteerApplies=iVolunteerService.listVolunteerApply(qIn);
+
+        Map out=new HashMap();
+        out.put("volunteerApplies", volunteerApplies);
+
+        return out;
+    }
+
+    @Override
+    public Map getVolunteerApply(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String volunteerApplyId=in.get("volunteerApplyId").toString();
+
+        VolunteerApply volunteerApply=iVolunteerService.getVolunteerApply(volunteerApplyId);
+
+        Map out=new HashMap();
+        out.put("volunteerApply",volunteerApply);
+
+        return out;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void rejectVolunteerApply(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String volunteerApplyId=in.get("volunteerApplyId").toString();
+        String remark=in.get("remark").toString();
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+
+        VolunteerApply volunteerApply=iVolunteerService.getVolunteerApply(volunteerApplyId);
+
+        if(!volunteerApply.getTaskCreateUserId().equals(userInfo.getUserId())){
+            throw new Exception("20022");
+        }
+
+        Map qIn=new HashMap();
+        qIn.put("processResult", GogoStatus.REJECT.toString());
+        qIn.put("processTime", new Date());
+        qIn.put("processRemark", remark);
+        qIn.put("processUserId", userInfo.getUserId());
+        qIn.put("volunteerApplyId", volunteerApplyId);
+        iVolunteerService.processVolunteerApply(qIn);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void agreeVolunteerApply(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String volunteerApplyId=in.get("volunteerApplyId").toString();
+        String remark=in.get("remark").toString();
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+
+        VolunteerApply volunteerApply=iVolunteerService.getVolunteerApply(volunteerApplyId);
+
+        if(!volunteerApply.getTaskCreateUserId().equals(userInfo.getUserId())){
+            throw new Exception("20022");
+        }
+
+        Map qIn=new HashMap();
+        qIn.put("processResult", GogoStatus.AGREE.toString());
+        qIn.put("processTime", new Date());
+        qIn.put("processRemark", remark);
+        qIn.put("processUserId", userInfo.getUserId());
+        qIn.put("volunteerApplyId", volunteerApplyId);
+        iVolunteerService.processVolunteerApply(qIn);
+    }
+
+    @Override
+    public Map listMyVolunteerTaskApplyJoin(Map in) throws Exception {
+        String token=in.get("token").toString();
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+
+        Map qIn=new HashMap();
+        qIn.put("applyUserId", userInfo.getUserId());
+        ArrayList<VolunteerApply> volunteerApplies=iVolunteerService.listVolunteerApply(qIn);
+
+        Map out=new HashMap();
+        out.put("volunteerApplies", volunteerApplies);
 
         return out;
     }

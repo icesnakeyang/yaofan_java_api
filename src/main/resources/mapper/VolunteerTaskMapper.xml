@@ -17,10 +17,10 @@
             parameterType="com.gogoyang.yaofan.meta.volunteer.task.entity.VolunteerTask">
       insert into volunteer_task
       (volunteer_task_id, create_time, create_user_id, title,
-       content, start_time, pid)
+       content, start_time, pid, status)
       values
       (#{volunteerTaskId}, #{createTime}, #{createUserId}, #{title},
-       #{content}, #{startTime}, #{pid})
+       #{content}, #{startTime}, #{pid}, #{status})
     </insert>
 
     <!--读取义工任务列表-->
@@ -72,5 +72,12 @@
        from volunteer_task
 left join user_info create_user on create_user_id=user_id
 where volunteer_task_id=#{volunteerTaskId}
+    </select>
+
+    <!--根据volunteerTaskId查询义工任务，不包括详情-->
+    <select id="getVolunteerTaskTiny" parameterType="java.lang.String"
+            resultMap="volunteerTaskMap">
+        select * from volunteer_task
+        where volunteer_task_id=#{volunteerTaskId}
     </select>
 </mapper>

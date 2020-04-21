@@ -63,6 +63,16 @@
                 and apply_user_id=#{applyUserId}
             </when>
         </choose>
+        <choose>
+            <when test="volunteerTaskId!=null">
+                and volunteer_task.volunteer_task_id=#{volunteerTaskId}
+            </when>
+        </choose>
+        <choose>
+            <when test="status!=null">
+                and process_result=#{status}
+            </when>
+        </choose>
         order by volunteer_apply.ids desc
     </select>
 
@@ -104,4 +114,28 @@ left join user_info task_create_user on create_user_id=task_create_user.user_id
         process_user_id=#{processUserId}
         where volunteer_apply_id=#{volunteerApplyId}
     </update>
+
+    <!--查询所有已经通过审核的义工-->
+    <select id="listMyVolunteerAgree" parameterType="map" resultMap="volunteerApplyMap">
+        select volunteer_apply.ids,
+           volunteer_apply_id,
+           volunteer_apply.volunteer_task_id,
+           volunteer_apply.create_time,
+           apply_user_id,
+           apply_user.name as apply_user_name,
+           process_user_id,
+           process_user.name as process_user_name,
+           title,
+           create_user_id
+        from volunteer_apply
+        left join volunteer_task on volunteer_apply.volunteer_task_id=volunteer_task.volunteer_task_id
+        left join user_info apply_user on volunteer_apply.apply_user_id = apply_user.user_id
+        left join user_info process_user on process_user_id=process_user.user_id
+        where 1=1
+        and create_user_id=#{createUserId}
+        and volunteer_task.status='ACTIVE'
+        and process_result='AGREE'
+        order by ids desc
+        limit #{offset}, #{size}
+    </select>
 </mapper>

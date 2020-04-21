@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class VolunteerBusinessService implements IVolunteerBusinessService{
+public class VolunteerBusinessService implements IVolunteerBusinessService {
     private final IVolunteerService iVolunteerService;
     private final ICommonBusinessService iCommonBusinessService;
 
@@ -29,20 +29,21 @@ public class VolunteerBusinessService implements IVolunteerBusinessService{
 
     /**
      * 创建义工任务
+     *
      * @param in
      * @throws Exception
      */
     @Override
     public void createVolunteerTask(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String content=in.get("content").toString();
-        String pid=(String)in.get("pid");
-        Date startTime=(Date)in.get("startTime");
-        String title=in.get("title").toString();
+        String token = in.get("token").toString();
+        String content = in.get("content").toString();
+        String pid = (String) in.get("pid");
+        Date startTime = (Date) in.get("startTime");
+        String title = in.get("title").toString();
 
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        VolunteerTask volunteerTask=new VolunteerTask();
+        VolunteerTask volunteerTask = new VolunteerTask();
         volunteerTask.setContent(content);
         volunteerTask.setCreateTime(new Date());
         volunteerTask.setCreateUserId(userInfo.getUserId());
@@ -57,20 +58,20 @@ public class VolunteerBusinessService implements IVolunteerBusinessService{
 
     @Override
     public Map listVolunteerTask(Map in) throws Exception {
-        String token=in.get("token").toString();
-        Integer pageIndex=(Integer)in.get("pageIndex");
-        Integer pageSize=(Integer)in.get("pageSize");
+        String token = in.get("token").toString();
+        Integer pageIndex = (Integer) in.get("pageIndex");
+        Integer pageSize = (Integer) in.get("pageSize");
 
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        Map qIn=new HashMap();
-        Integer offset=(pageIndex-1)*pageSize;
+        Map qIn = new HashMap();
+        Integer offset = (pageIndex - 1) * pageSize;
         qIn.put("offset", offset);
         qIn.put("size", pageSize);
         qIn.put("status", GogoStatus.ACTIVE);
-        ArrayList<VolunteerTask> volunteerTasks=iVolunteerService.listVolunteerTask(qIn);
+        ArrayList<VolunteerTask> volunteerTasks = iVolunteerService.listVolunteerTask(qIn);
 
-        Map out=new HashMap();
+        Map out = new HashMap();
         out.put("volunteerTasks", volunteerTasks);
 
         return out;
@@ -78,42 +79,75 @@ public class VolunteerBusinessService implements IVolunteerBusinessService{
 
     @Override
     public Map getVolunteerTask(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String volunteerTaskId=in.get("volunteerTaskId").toString();
+        String token = in.get("token").toString();
+        String volunteerTaskId = in.get("volunteerTaskId").toString();
 
-        VolunteerTask volunteerTask=iVolunteerService.getVolunteerTaskDetail(volunteerTaskId);
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        Map out=new HashMap();
+        VolunteerTask volunteerTask = iVolunteerService.getVolunteerTaskDetail(volunteerTaskId);
+
+        Map out = new HashMap();
         out.put("volunteerTask", volunteerTask);
+
+        /**
+         * 检查当前用户是否已经通过了该任务的义工
+         */
+        Map qIn = new HashMap();
+        qIn.put("applyUserId", userInfo.getUserId());
+        qIn.put("volunteerTaskId", volunteerTaskId);
+        ArrayList<VolunteerApply> volunteerApplies = iVolunteerService.listVolunteerApply(qIn);
+        int cc = 0;
+        if (volunteerApplies.size() > 0) {
+            //当前用户已经申请了该义工任务
+            for (int i = 0; i < volunteerApplies.size(); i++) {
+                VolunteerApply apply = volunteerApplies.get(i);
+                if (apply.getProcessResult() == null) {
+                    //未处理
+                    cc++;
+                    out.put("isPending", true);
+                } else {
+                    if (apply.getProcessResult().equals(GogoStatus.AGREE.toString())) {
+                        //已通过
+                        cc++;
+                        out.put("isAgree", true);
+                    }
+                }
+            }
+        }
+        if (cc == 0) {
+            //当前用户可以申请
+            out.put("canApply", true);
+        }
 
         return out;
     }
 
     /**
      * 用户报名申请义工任务
+     *
      * @param in
      * @throws Exception
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void applyVolunteerTask(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String volunteerTaskId=in.get("volunteerTaskId").toString();
-        String remark=in.get("remark").toString();
+        String token = in.get("token").toString();
+        String volunteerTaskId = in.get("volunteerTaskId").toString();
+        String remark = in.get("remark").toString();
 
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        VolunteerTask volunteerTask=iVolunteerService.getVolunteerTaskTiny(volunteerTaskId);
+        VolunteerTask volunteerTask = iVolunteerService.getVolunteerTaskTiny(volunteerTaskId);
 
-        if(!volunteerTask.getStatus().equals(GogoStatus.ACTIVE.toString())){
+        if (!volunteerTask.getStatus().equals(GogoStatus.ACTIVE.toString())) {
             throw new Exception("20021");
         }
 
-        if(volunteerTask.getCreateUserId().equals(userInfo.getUserId())){
+        if (volunteerTask.getCreateUserId().equals(userInfo.getUserId())) {
             throw new Exception("20023");
         }
 
-        VolunteerApply volunteerApply=new VolunteerApply();
+        VolunteerApply volunteerApply = new VolunteerApply();
         volunteerApply.setApplyUserId(userInfo.getUserId());
         volunteerApply.setCreateTime(new Date());
         volunteerApply.setRemark(remark);
@@ -124,14 +158,14 @@ public class VolunteerBusinessService implements IVolunteerBusinessService{
 
     @Override
     public Map listMyVolunteerTaskApply(Map in) throws Exception {
-        String token=in.get("token").toString();
+        String token = in.get("token").toString();
 
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
-        Map qIn=new HashMap();
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+        Map qIn = new HashMap();
         qIn.put("createUserId", userInfo.getUserId());
-        ArrayList<VolunteerApply> volunteerApplies=iVolunteerService.listVolunteerApply(qIn);
+        ArrayList<VolunteerApply> volunteerApplies = iVolunteerService.listVolunteerApply(qIn);
 
-        Map out=new HashMap();
+        Map out = new HashMap();
         out.put("volunteerApplies", volunteerApplies);
 
         return out;
@@ -139,13 +173,13 @@ public class VolunteerBusinessService implements IVolunteerBusinessService{
 
     @Override
     public Map getVolunteerApply(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String volunteerApplyId=in.get("volunteerApplyId").toString();
+        String token = in.get("token").toString();
+        String volunteerApplyId = in.get("volunteerApplyId").toString();
 
-        VolunteerApply volunteerApply=iVolunteerService.getVolunteerApply(volunteerApplyId);
+        VolunteerApply volunteerApply = iVolunteerService.getVolunteerApply(volunteerApplyId);
 
-        Map out=new HashMap();
-        out.put("volunteerApply",volunteerApply);
+        Map out = new HashMap();
+        out.put("volunteerApply", volunteerApply);
 
         return out;
     }
@@ -153,19 +187,19 @@ public class VolunteerBusinessService implements IVolunteerBusinessService{
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void rejectVolunteerApply(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String volunteerApplyId=in.get("volunteerApplyId").toString();
-        String remark=in.get("remark").toString();
+        String token = in.get("token").toString();
+        String volunteerApplyId = in.get("volunteerApplyId").toString();
+        String remark = in.get("remark").toString();
 
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        VolunteerApply volunteerApply=iVolunteerService.getVolunteerApply(volunteerApplyId);
+        VolunteerApply volunteerApply = iVolunteerService.getVolunteerApply(volunteerApplyId);
 
-        if(!volunteerApply.getTaskCreateUserId().equals(userInfo.getUserId())){
+        if (!volunteerApply.getTaskCreateUserId().equals(userInfo.getUserId())) {
             throw new Exception("20022");
         }
 
-        Map qIn=new HashMap();
+        Map qIn = new HashMap();
         qIn.put("processResult", GogoStatus.REJECT.toString());
         qIn.put("processTime", new Date());
         qIn.put("processRemark", remark);
@@ -177,19 +211,19 @@ public class VolunteerBusinessService implements IVolunteerBusinessService{
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void agreeVolunteerApply(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String volunteerApplyId=in.get("volunteerApplyId").toString();
-        String remark=in.get("remark").toString();
+        String token = in.get("token").toString();
+        String volunteerApplyId = in.get("volunteerApplyId").toString();
+        String remark = in.get("remark").toString();
 
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        VolunteerApply volunteerApply=iVolunteerService.getVolunteerApply(volunteerApplyId);
+        VolunteerApply volunteerApply = iVolunteerService.getVolunteerApply(volunteerApplyId);
 
-        if(!volunteerApply.getTaskCreateUserId().equals(userInfo.getUserId())){
+        if (!volunteerApply.getTaskCreateUserId().equals(userInfo.getUserId())) {
             throw new Exception("20022");
         }
 
-        Map qIn=new HashMap();
+        Map qIn = new HashMap();
         qIn.put("processResult", GogoStatus.AGREE.toString());
         qIn.put("processTime", new Date());
         qIn.put("processRemark", remark);
@@ -200,16 +234,37 @@ public class VolunteerBusinessService implements IVolunteerBusinessService{
 
     @Override
     public Map listMyVolunteerTaskApplyJoin(Map in) throws Exception {
-        String token=in.get("token").toString();
+        String token = in.get("token").toString();
 
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        Map qIn=new HashMap();
+        Map qIn = new HashMap();
         qIn.put("applyUserId", userInfo.getUserId());
-        ArrayList<VolunteerApply> volunteerApplies=iVolunteerService.listVolunteerApply(qIn);
+        ArrayList<VolunteerApply> volunteerApplies = iVolunteerService.listVolunteerApply(qIn);
 
-        Map out=new HashMap();
+        Map out = new HashMap();
         out.put("volunteerApplies", volunteerApplies);
+
+        return out;
+    }
+
+    @Override
+    public Map listMyVolunteerAgree(Map in) throws Exception {
+        String token = in.get("token").toString();
+        Integer pageIndex = (Integer) in.get("pageIndex");
+        Integer pageSize = (Integer) in.get("pageSize");
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        Map qIn = new HashMap();
+        qIn.put("createUserId", userInfo.getUserId());
+        Integer offset = (pageIndex - 1) * pageSize;
+        qIn.put("offset", offset);
+        qIn.put("size", pageSize);
+        ArrayList<VolunteerApply> volunteers = iVolunteerService.listMyVolunteerAgree(qIn);
+
+        Map out = new HashMap();
+        out.put("volunteers", volunteers);
 
         return out;
     }

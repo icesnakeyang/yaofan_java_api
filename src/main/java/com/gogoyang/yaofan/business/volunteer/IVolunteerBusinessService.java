@@ -20,4 +20,6 @@ public interface IVolunteerBusinessService {
     void agreeVolunteerApply(Map in) throws Exception;
 
     Map listMyVolunteerTaskApplyJoin(Map in) throws Exception;
+
+    Map listMyVolunteerAgree(Map in) throws Exception;
 }

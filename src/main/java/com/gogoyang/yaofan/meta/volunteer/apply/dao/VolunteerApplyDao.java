@@ -19,6 +19,8 @@ public interface VolunteerApplyDao {
      * @param qIn
      * createUserId
      * applyUserId
+     * volunteerTaskId
+     * status
      * @return
      */
     ArrayList<VolunteerApply> listVolunteerApply(Map qIn);
@@ -40,4 +42,14 @@ public interface VolunteerApplyDao {
      * volunteerApplyId
      */
     void processVolunteerApply(Map qIn);
+
+    /**
+     * 查询所有已经通过审核的义工
+     * @param qIn
+     * createUserId
+     * offset
+     * size
+     * @return
+     */
+    ArrayList<VolunteerApply> listMyVolunteerAgree(Map qIn);
 }

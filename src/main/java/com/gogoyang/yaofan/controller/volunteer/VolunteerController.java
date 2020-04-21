@@ -409,4 +409,34 @@ public class VolunteerController {
         }
         return  response;
     }
+
+    /**
+     * 查询我的已经通过审核的义工
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/listMyVolunteerAgree")
+    public Response listMyVolunteerAgree(@RequestBody VolunteerRequest request,
+                                     HttpServletRequest httpServletRequest){
+        Response response=new Response();
+        Map in=new HashMap();
+        try {
+            String token=httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("pageIndex", request.getPageIndex());
+            in.put("pageSize", request.getPageSize());
+            Map out=iVolunteerBusinessService.listMyVolunteerAgree(in);
+            response.setData(out);
+        }catch (Exception ex){
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            }catch (Exception ex2){
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+        }
+        return  response;
+    }
 }

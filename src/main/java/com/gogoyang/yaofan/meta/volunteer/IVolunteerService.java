@@ -56,6 +56,8 @@ public interface IVolunteerService {
      * @param qIn
      * createUserId
      * applyUserId
+     * volunteerTaskId
+     * status
      * @return
      */
     ArrayList<VolunteerApply> listVolunteerApply(Map qIn) throws Exception;
@@ -77,4 +79,14 @@ public interface IVolunteerService {
      * volunteerApplyId
      */
     void processVolunteerApply(Map qIn) throws Exception;
+
+    /**
+     * 查询所有已经通过审核的义工
+     * @param qIn
+     * createUserId
+     * offset
+     * size
+     * @return
+     */
+    ArrayList<VolunteerApply> listMyVolunteerAgree(Map qIn);
 }

@@ -101,6 +101,8 @@ public class VolunteerService implements IVolunteerService {
      * @param qIn
      * createUserId
      * applyUserId
+     * volunteerTaskId
+     * status
      * @return
      */
     @Override
@@ -133,5 +135,19 @@ public class VolunteerService implements IVolunteerService {
     @Override
     public void processVolunteerApply(Map qIn) throws Exception {
         volunteerApplyDao.processVolunteerApply(qIn);
+    }
+
+    /**
+     * 查询所有已经通过审核的义工
+     * @param qIn
+     * createUserId
+     * offset
+     * size
+     * @return
+     */
+    @Override
+    public ArrayList<VolunteerApply> listMyVolunteerAgree(Map qIn) {
+        ArrayList<VolunteerApply> volunteerApplies=volunteerApplyDao.listMyVolunteerAgree(qIn);
+        return volunteerApplies;
     }
 }

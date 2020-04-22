@@ -62,13 +62,10 @@ public class VolunteerBusinessService implements IVolunteerBusinessService {
         Integer pageIndex = (Integer) in.get("pageIndex");
         Integer pageSize = (Integer) in.get("pageSize");
 
-        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
-
         Map qIn = new HashMap();
         Integer offset = (pageIndex - 1) * pageSize;
         qIn.put("offset", offset);
         qIn.put("size", pageSize);
-        qIn.put("status", GogoStatus.ACTIVE);
         ArrayList<VolunteerTask> volunteerTasks = iVolunteerService.listVolunteerTask(qIn);
 
         Map out = new HashMap();
@@ -265,6 +262,44 @@ public class VolunteerBusinessService implements IVolunteerBusinessService {
 
         Map out = new HashMap();
         out.put("volunteers", volunteers);
+
+        return out;
+    }
+
+    @Override
+    public Map totalMyVolunteer(Map in) throws Exception {
+        String token=in.get("token").toString();
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+
+        Map qIn=new HashMap();
+        qIn.put("createUserId", userInfo.getUserId());
+        qIn.put("applyUserId", userInfo.getUserId());
+        Integer total=iVolunteerService.totalMyVolunteerTasks(qIn);
+
+        Map out=new HashMap();
+        out.put("totalVolunteerTasks", total);
+
+        return out;
+    }
+
+    @Override
+    public Map listMyVolunteerTask(Map in) throws Exception {
+        String token=in.get("token").toString();
+        Integer pageIndex=(Integer)in.get("pageIndex");
+        Integer pageSize=(Integer)in.get("pageSize");
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+
+        Map qIn=new HashMap();
+        qIn.put("userId", userInfo.getUserId());
+        Integer offset=(pageIndex-1)*pageSize;
+        qIn.put("offset", offset);
+        qIn.put("size", pageSize);
+        ArrayList<VolunteerTask> volunteerTasks=iVolunteerService.listMyVolunteerTask(qIn);
+
+        Map out=new HashMap();
+        out.put("volunteerTasks", volunteerTasks);
 
         return out;
     }

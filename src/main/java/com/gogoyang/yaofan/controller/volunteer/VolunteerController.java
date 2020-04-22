@@ -121,6 +121,50 @@ public class VolunteerController {
     }
 
     /**
+     * 读取我的义工任务列表
+     * 包括我创建的，和我承接的
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/listMyVolunteerTask")
+    public Response listMyVolunteerTask(@RequestBody VolunteerRequest request,
+                                        HttpServletRequest httpServletRequest){
+        Response response=new Response();
+        Map in=new HashMap();
+        Map logMap=new HashMap();
+        Map memoMap=new HashMap();
+        try {
+            String token=httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("pageIndex", request.getPageIndex());
+            in.put("pageSize", request.getPageSize());
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.LIST_VOLUNTEER_TASK);
+            Map out=iVolunteerBusinessService.listMyVolunteerTask(in);
+            response.setData(out);
+            logMap.put("result", GogoStatus.SUCCESS);
+        }catch (Exception ex){
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            }catch (Exception ex2){
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            memoMap.put("result", GogoStatus.FAILED);
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        }catch (Exception ex3){
+            logger.error(ex3.getMessage());
+        }
+        return  response;
+    }
+
+    /**
      * 根据volunteerTaskId查询义工任务详情
      * @param request
      * @param httpServletRequest
@@ -428,6 +472,34 @@ public class VolunteerController {
             in.put("pageIndex", request.getPageIndex());
             in.put("pageSize", request.getPageSize());
             Map out=iVolunteerBusinessService.listMyVolunteerAgree(in);
+            response.setData(out);
+        }catch (Exception ex){
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            }catch (Exception ex2){
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+        }
+        return  response;
+    }
+
+    /**
+     * 统计我的义工任务总数
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/totalMyVolunteer")
+    public Response totalMyVolunteer(@RequestBody VolunteerRequest request,
+                                     HttpServletRequest httpServletRequest){
+        Response response=new Response();
+        Map in=new HashMap();
+        try {
+            String token=httpServletRequest.getHeader("token");
+            in.put("token", token);
+            Map out=iVolunteerBusinessService.totalMyVolunteer(in);
             response.setData(out);
         }catch (Exception ex){
             try {

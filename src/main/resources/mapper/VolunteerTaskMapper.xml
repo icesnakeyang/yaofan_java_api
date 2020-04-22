@@ -40,17 +40,43 @@
         from volunteer_task
         left join user_info create_user on create_user_id=user_id
         where 1=1
+and volunteer_task.status='ACTIVE'
+order by create_user.ids desc
+        limit #{offset},#{size}
+    </select>
+
+    <!--读取我的义工任务列表-->
+    <select id="listMyVolunteerTask" parameterType="map" resultMap="volunteerTaskMap">
+        select task.ids,
+        task.volunteer_task_id,
+        task.create_time,
+        create_user_id,
+        name as create_user_name,
+        title,
+        content,
+        start_time,
+        pid,
+        views,
+        applies,
+        task.status,
+        apply_user_id,
+        process_result
+        from volunteer_task task
+        left join user_info create_user on create_user_id=user_id
+        left join volunteer_apply apply on task.volunteer_task_id=apply.volunteer_task_id
+        where 1=1
         <choose>
-            <when test="createUserId!=null">
-                and create_user_id=#{createUserId}
+            <when test="userId!=null">
+                and (create_user_id=#{userId}
+                or apply_user_id=#{userId})
             </when>
         </choose>
         <choose>
             <when test="status!=null">
-                and volunteer_task.status=#{status}
+                and process_result=#{status}
             </when>
         </choose>
-        order by create_user.ids desc
+        order by ids desc
         limit #{offset},#{size}
     </select>
 
@@ -79,5 +105,15 @@ where volunteer_task_id=#{volunteerTaskId}
             resultMap="volunteerTaskMap">
         select * from volunteer_task
         where volunteer_task_id=#{volunteerTaskId}
+    </select>
+
+    <!--统计我的所有义工任务数量-->
+    <select id="totalMyVolunteerTasks" parameterType="map" resultType="java.lang.Integer">
+        select count(*) as total from volunteer_task task
+        left join volunteer_apply apply on task.volunteer_task_id=apply.volunteer_task_id
+        where 1=1
+        and (create_user_id=#{createUserId}
+        or apply_user_id=#{applyUserId})
+        and process_result='AGREE'
     </select>
 </mapper>

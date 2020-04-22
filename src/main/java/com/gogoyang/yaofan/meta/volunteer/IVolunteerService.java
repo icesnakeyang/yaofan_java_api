@@ -28,8 +28,10 @@ public interface IVolunteerService {
 
     /**
      * 读取义工任务列表
+     * 包括我创建的，和我承接的义工任务
      * @param qIn
      * createUserId
+     * applyUserId
      * status
      * offset
      * size
@@ -89,4 +91,24 @@ public interface IVolunteerService {
      * @return
      */
     ArrayList<VolunteerApply> listMyVolunteerAgree(Map qIn);
+
+    /**
+     * 统计我的所有义工任务数量
+     *
+     * @param qIn createUserId
+     *            applyUserId
+     * @return
+     */
+    Integer totalMyVolunteerTasks(Map qIn);
+
+    /**
+     * 读取我的义工任务列表
+     * @param qIn
+     * userId
+     * status
+     * offset
+     * size
+     * @return
+     */
+    ArrayList<VolunteerTask> listMyVolunteerTask(Map qIn);
 }

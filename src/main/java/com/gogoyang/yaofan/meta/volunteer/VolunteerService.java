@@ -58,8 +58,9 @@ public class VolunteerService implements IVolunteerService {
 
     /**
      * 读取义工任务列表
-     *
+     *包括我创建的，和我承接的义工任务
      * @param qIn createUserId
+     *            applyUserId
      *            status
      *            offset
      *            size
@@ -149,5 +150,32 @@ public class VolunteerService implements IVolunteerService {
     public ArrayList<VolunteerApply> listMyVolunteerAgree(Map qIn) {
         ArrayList<VolunteerApply> volunteerApplies=volunteerApplyDao.listMyVolunteerAgree(qIn);
         return volunteerApplies;
+    }
+
+    /**
+     * 统计我的所有义工任务数量
+     * @param qIn createUserId
+     *            applyUserId
+     * @return
+     */
+    @Override
+    public Integer totalMyVolunteerTasks(Map qIn) {
+        Integer total=volunteerTaskDao.totalMyVolunteerTasks(qIn);
+        return total;
+    }
+
+    /**
+     *
+     * @param qIn
+     * userId
+     * status
+     * offset
+     * size
+     * @return
+     */
+    @Override
+    public ArrayList<VolunteerTask> listMyVolunteerTask(Map qIn) {
+        ArrayList<VolunteerTask> volunteerTasks=volunteerTaskDao.listMyVolunteerTask(qIn);
+        return volunteerTasks;
     }
 }

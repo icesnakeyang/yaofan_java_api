@@ -22,4 +22,9 @@ public interface IVolunteerBusinessService {
     Map listMyVolunteerTaskApplyJoin(Map in) throws Exception;
 
     Map listMyVolunteerAgree(Map in) throws Exception;
+
+    Map totalMyVolunteer(Map in) throws Exception;
+
+    Map listMyVolunteerTask(Map in) throws Exception;
+
 }

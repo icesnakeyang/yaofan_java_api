@@ -1,5 +1,7 @@
 package com.gogoyang.yaofan.utility.common;
 
+import com.gogoyang.yaofan.meta.admin.entity.AdminInfo;
+import com.gogoyang.yaofan.meta.admin.service.IAdminInfoService;
 import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.task.service.ITaskService;
 import com.gogoyang.yaofan.meta.team.entity.Team;
@@ -14,7 +16,6 @@ import com.gogoyang.yaofan.meta.volunteer.task.entity.VolunteerTask;
 import com.gogoyang.yaofan.utility.GogoActType;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,17 +31,20 @@ public class CommonBusinessService implements ICommonBusinessService {
     private final ITaskService iTaskService;
     private final ITeamService iTeamService;
     private final IVolunteerService iVolunteerService;
+    private final IAdminInfoService iAdminInfoService;
 
     public CommonBusinessService(IUserActLogService iUserActLogService,
                                  IUserInfoService iUserInfoService,
                                  ITaskService iTaskService,
                                  ITeamService iTeamService,
-                                 IVolunteerService iVolunteerService) {
+                                 IVolunteerService iVolunteerService,
+                                 IAdminInfoService iAdminInfoService) {
         this.iUserActLogService = iUserActLogService;
         this.iUserInfoService = iUserInfoService;
         this.iTaskService = iTaskService;
         this.iTeamService = iTeamService;
         this.iVolunteerService = iVolunteerService;
+        this.iAdminInfoService = iAdminInfoService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -84,6 +88,17 @@ public class CommonBusinessService implements ICommonBusinessService {
             throw new Exception("10004");
         }
         return userInfo;
+    }
+
+    @Override
+    public AdminInfo getAdminByToken(String token) throws Exception {
+        Map qIn=new HashMap();
+        qIn.put("token", token);
+        AdminInfo adminInfo=iAdminInfoService.getAdminInfo(qIn);
+        if(adminInfo==null){
+            throw new Exception("20024");
+        }
+        return adminInfo;
     }
 
     /**
@@ -188,6 +203,7 @@ public class CommonBusinessService implements ICommonBusinessService {
 
     public UserInfo getUserByUserId(String userId) throws Exception {
         UserInfo userInfo = iUserInfoService.getUserInfoByUserId(userId);
+        userInfo.setPassword(null);
         if (userInfo == null) {
             throw new Exception("10005");
         }

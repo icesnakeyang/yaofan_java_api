@@ -1,5 +1,6 @@
 package com.gogoyang.yaofan.utility.common;
 
+import com.gogoyang.yaofan.meta.admin.entity.AdminInfo;
 import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.team.entity.Team;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
@@ -11,6 +12,8 @@ public interface ICommonBusinessService {
     void createUserActLog(Map in) throws Exception;
 
     UserInfo getUserByToken(String token) throws Exception;
+
+    AdminInfo getAdminByToken(String token) throws Exception;
 
     UserInfo getUserByUserId(String userId) throws Exception;
 

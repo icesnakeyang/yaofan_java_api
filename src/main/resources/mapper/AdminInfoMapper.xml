@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gogoyang.yaofan.meta.admin.dao.AdminInfoDao">
+
+    <resultMap id="adminInfoMap" type="com.gogoyang.yaofan.meta.admin.entity.AdminInfo">
+        <result property="adminInfoId" column="admin_info_id"/>
+        <result property="loginName" column="login_name"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <!--创建管理员-->
+    <insert id="createAdminInfo"
+            useGeneratedKeys="true"
+            keyProperty="ids"
+            parameterType="com.gogoyang.yaofan.meta.admin.entity.AdminInfo">
+      insert into admin_info
+      (admin_info_id, login_name, password,
+      create_time, role, status,
+      token, token_time)
+      values
+      (#{adminInfoId}, #{loginName}, #{password},
+       #{createTime}, #{role}, #{status},
+       #{token}, #{tokenTime})
+    </insert>
+    
+    <select id="getAdminInfo" parameterType="map" resultMap="adminInfoMap">
+        select * from admin_info
+        where 1=1
+        <choose>
+            <when test="loginName!=null">
+                and login_name=#{loginName}
+            </when>
+        </choose>
+        <choose>
+            <when test="password!=null">
+                and password=#{password}
+            </when>
+        </choose>
+        <choose>
+            <when test="adminInfoId!=null">
+                and admin_info_id=#{adminInfoId}
+            </when>
+        </choose>
+        <choose>
+            <when test="token!=null">
+                and token=#{token}
+            </when>
+        </choose>
+    </select>
+</mapper>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gogoyang.yaofan.meta.admin.dao.AdminUserActionDao">
+
+    <resultMap id="userActionMap" type="com.gogoyang.yaofan.meta.userActLog.entity.UserActLog">
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <!--查询用户的行为日志-->
+    <select id="listUserAction" parameterType="map" resultMap="userActionMap">
+        select user_act_log.ids,
+        uuid,
+        user_act_log.user_id,
+        name as user_name,
+        action,
+        user_act_log.create_time,
+        memo
+        from user_act_log
+        left join user_info on user_act_log.user_id=user_info.user_id
+        where 1=1
+        <choose>
+            <when test="userId!=null">
+                and user_act_log.user_id=#{userId}
+            </when>
+        </choose>
+        order by ids desc
+        limit #{offset}, #{size}
+    </select>
+
+    <!--统计用户行为总数-->
+    <select id="totalUserAction" parameterType="map" resultType="java.lang.Integer">
+        select count(*) as total from user_act_log
+        where 1=1
+        <choose>
+            <when test="userId!=null">
+                and user_id=#{userId}
+            </when>
+        </choose>
+        <choose>
+            <when test="action!=null">
+                and action=#{action}
+            </when>
+        </choose>
+    </select>
+</mapper>

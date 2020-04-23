@@ -48,4 +48,7 @@ public class UserActLog {
      * 需要记录的信息
      */
     private String memo;
+
+    private String userName;
+
 }

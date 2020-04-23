@@ -6,7 +6,6 @@ import com.gogoyang.yaofan.meta.volunteer.comment.dao.VolunteerCommentDao;
 import com.gogoyang.yaofan.meta.volunteer.comment.entity.VolunteerComment;
 import com.gogoyang.yaofan.meta.volunteer.task.dao.VolunteerTaskDao;
 import com.gogoyang.yaofan.meta.volunteer.task.entity.VolunteerTask;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -177,5 +176,50 @@ public class VolunteerService implements IVolunteerService {
     public ArrayList<VolunteerTask> listMyVolunteerTask(Map qIn) {
         ArrayList<VolunteerTask> volunteerTasks=volunteerTaskDao.listMyVolunteerTask(qIn);
         return volunteerTasks;
+    }
+
+    /**
+     * 设置义工任务状态
+     * @param qIn
+     * status
+     */
+    @Override
+    public void setVolunteerTaskStatus(Map qIn) {
+        volunteerTaskDao.setVolunteerTaskStatus(qIn);
+    }
+
+    /**
+     * 统计我创建的义工任务的未读义工申请
+     * @param qIn
+     * userId (必填，创建用户Id)
+     * volunteerTaskId (选填，任务id，如果不填就是统计用户所有任务的未读)
+     * @return
+     */
+    @Override
+    public Integer totalMyVolunteerApplyUnread(Map qIn) throws Exception{
+        Integer total=volunteerApplyDao.totalMyVolunteerApplyUnread(qIn);
+        return total;
+    }
+
+    /**
+     * 统计我申请的义工任务已处理但未阅读的总数
+     * @param userId
+     * @return
+     */
+    @Override
+    public Integer totalMyVolunteerApplyProcessUnread(String userId) {
+        Integer total=volunteerApplyDao.totalMyVolunteerApplyProcessUnread(userId);
+        return total;
+    }
+
+    /**
+     * 设置义工任务申请的阅读时间
+     * @param qIn
+     * readTime （选填）
+     * processReadTime （选填）
+     */
+    @Override
+    public void setReadTime(Map qIn) {
+        volunteerApplyDao.setReadTime(qIn);
     }
 }

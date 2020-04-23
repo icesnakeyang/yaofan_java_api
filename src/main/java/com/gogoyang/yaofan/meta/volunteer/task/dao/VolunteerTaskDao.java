@@ -62,4 +62,12 @@ public interface VolunteerTaskDao {
      * @return
      */
     ArrayList<VolunteerTask> listMyVolunteerTask(Map qIn);
+
+    /**
+     * 设置义工任务状态
+     * @param qIn
+     * status
+     * volunteerTaskId
+     */
+    void setVolunteerTaskStatus(Map qIn);
 }

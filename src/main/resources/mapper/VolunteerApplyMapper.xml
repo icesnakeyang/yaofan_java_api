@@ -17,6 +17,7 @@
         <result property="processReadTime" column="process_read_time"/>
         <result property="taskCreateUserName" column="task_create_user_name"/>
         <result property="taskCreateUserId" column="task_create_user_id"/>
+        <result property="taskCreateUserId" column="task_create_user_id"/>
     </resultMap>
 
     <!--创建一个义工任务申请-->
@@ -47,7 +48,7 @@
         process_user_id,
         process_user.name as process_user_name,
         process_read_time,
-        title
+        create_user_id as task_create_user_id
         from volunteer_apply
         left join volunteer_task on volunteer_apply.volunteer_task_id=volunteer_task.volunteer_task_id
         left join user_info apply_user on apply_user_id=user_id
@@ -138,4 +139,40 @@ left join user_info task_create_user on create_user_id=task_create_user.user_id
         order by ids desc
         limit #{offset}, #{size}
     </select>
+
+    <!--统计我创建的义工任务的未读义工申请-->
+    <select id="totalMyVolunteerApplyUnread" parameterType="map" resultType="java.lang.Integer">
+        select count(*) as total from volunteer_apply apply
+        left join volunteer_task task on apply.volunteer_task_id=task.volunteer_task_id
+        where read_time is null
+        and create_user_id = #{userId}
+        <choose>
+            <when test="volunteerTaskId!=null">
+                and apply.volunteer_task_id=#{volunteerTaskId}
+            </when>
+        </choose>
+    </select>
+
+    <!--统计我申请的义工任务已处理但未阅读的总数-->
+    <select id="totalMyVolunteerApplyProcessUnread" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(*) as total from volunteer_apply apply
+        left join volunteer_task task on apply.volunteer_task_id=task.volunteer_task_id
+        where process_read_time is null
+        and process_result is not null
+        and apply_user_id = #{userId}
+    </select>
+
+    <!--设置义工任务申请的阅读时间-->
+    <update id="setReadTime" parameterType="map">
+        update volunteer_apply
+        <set>
+            <if test="readTime!=null">
+                read_time=#{readTime},
+            </if>
+            <if test="processReadTime!=null">
+                process_read_time=#{processReadTime}
+            </if>
+        </set>
+        where volunteer_apply_id=#{volunteerApplyId}
+    </update>
 </mapper>

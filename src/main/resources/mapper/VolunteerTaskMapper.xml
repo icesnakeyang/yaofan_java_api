@@ -116,4 +116,11 @@ where volunteer_task_id=#{volunteerTaskId}
         or apply_user_id=#{applyUserId})
         and process_result='AGREE'
     </select>
+
+    <!--设置义工任务状态-->
+    <update id="setVolunteerTaskStatus" parameterType="map">
+        update volunteer_task set
+        status=#{status}
+        where volunteer_task_id=#{volunteerTaskId}
+    </update>
 </mapper>

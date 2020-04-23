@@ -27,4 +27,5 @@ public interface IVolunteerBusinessService {
 
     Map listMyVolunteerTask(Map in) throws Exception;
 
+    void stopVolunteerTask(Map in) throws Exception;
 }

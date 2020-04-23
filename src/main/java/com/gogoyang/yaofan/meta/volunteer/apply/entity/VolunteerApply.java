@@ -27,4 +27,6 @@ public class VolunteerApply {
     private String title;
     private String taskCreateUserId;
     private String taskCreateUserName;
+
+    private boolean isUnread;
 }

@@ -129,6 +129,8 @@ public class AdminBusinessService implements IAdminBusinessService {
         String userId=(String)in.get("userId");
         Integer pageIndex=(Integer)in.get("pageIndex");
         Integer pageSize=(Integer)in.get("pageSize");
+        Date startTime=(Date)in.get("startTime");
+        Date endTime=(Date)in.get("endTime");
 
         AdminInfo adminInfo=iCommonBusinessService.getAdminByToken(token);
 
@@ -138,6 +140,8 @@ public class AdminBusinessService implements IAdminBusinessService {
         qIn.put("userId", userId);
         qIn.put("offset", offset);
         qIn.put("size", pageSize);
+        qIn.put("startDate", startTime);
+        qIn.put("endDate", endTime);
         ArrayList<UserActLog> userActLogs=iAdminUserActionService.listUserAction(qIn);
 
         Map out=new HashMap();
@@ -161,10 +165,16 @@ public class AdminBusinessService implements IAdminBusinessService {
         Map qIn=new HashMap();
         qIn.put("userId", userId);
 
-        //login
+        //统计总共的微信登录次数
         qIn.put("action", GogoActType.WX_LOGIN);
         Integer total_WX_LOGIN=iAdminUserActionService.totalUserAction(qIn);
         out.put("total_WX_LOGIN", total_WX_LOGIN);
+
+        //统计总共创建的任务总数
+        qIn.put("action", GogoActType.CREATE_TASK);
+        Integer total_CREATE_TASK=iAdminUserActionService.totalUserAction(qIn);
+        out.put("total_CREATE_TASK",total_CREATE_TASK);
+
         //今天，昨天，前天
         Date theDate1=new Date();
         Date theDate2=GogoTools.dateStartOfThisMonth();
@@ -179,18 +189,16 @@ public class AdminBusinessService implements IAdminBusinessService {
 
         theDate2 = calendar.getTime();
 
+        //统计今天的登录人数
         qIn.put("startDate", new Date());
         qIn.put("endDate", new Date());
-        Integer total_WX_LOGIN_TODAY=iAdminUserActionService.totalUserAction(qIn);
-        ArrayList<UserActLog> userActLogs=iAdminUserActionService.listUserAction(qIn);
-        out.put("total_WX_LOGIN_TODAY", total_WX_LOGIN_TODAY);
-        out.put("userActLogs", userActLogs);
-
+        Integer total_WX_LOGIN_today=iAdminUserActionService.totalUserAction(qIn);
+        out.put("total_WX_LOGIN_today", total_WX_LOGIN_today);
 
 
         qIn.put("action", GogoActType.CREATE_TASK);
-        Integer total_CREATE_TASK=iAdminUserActionService.totalUserAction(qIn);
-        out.put("total_CREATE_TASK", total_CREATE_TASK);
+        Integer total_CREATE_TASK_today=iAdminUserActionService.totalUserAction(qIn);
+        out.put("total_CREATE_TASK_today", total_CREATE_TASK_today);
 
 
         return out;

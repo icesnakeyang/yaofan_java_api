@@ -2,6 +2,8 @@ package com.gogoyang.yaofan.controller.admin;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class AdminRequest {
     private String loginName;
@@ -9,4 +11,6 @@ public class AdminRequest {
     private Integer pageIndex;
     private Integer pageSize;
     private String userId;
+    private Date startTime;
+    private Date endTime;
 }

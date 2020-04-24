@@ -101,7 +101,7 @@ public class WXController {
 
                 memoMap.put("result", true);
                 memoMap.put("openId", openid);
-                memoMap.put("userId", ((UserInfo) out.get("userInfo")).getUserId());
+                logMap.put("userId", ((UserInfo) out.get("userInfo")).getUserId());
             } else {
                 throw new Exception("20014");
             }

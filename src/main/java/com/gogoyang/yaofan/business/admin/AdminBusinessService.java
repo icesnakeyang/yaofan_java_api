@@ -16,10 +16,8 @@ import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class AdminBusinessService implements IAdminBusinessService {
@@ -167,6 +165,28 @@ public class AdminBusinessService implements IAdminBusinessService {
         qIn.put("action", GogoActType.WX_LOGIN);
         Integer total_WX_LOGIN=iAdminUserActionService.totalUserAction(qIn);
         out.put("total_WX_LOGIN", total_WX_LOGIN);
+        //今天，昨天，前天
+        Date theDate1=new Date();
+        Date theDate2=GogoTools.dateStartOfThisMonth();
+
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(theDate1);
+        int day=calendar.get(Calendar.DATE);
+        //                      此处修改为+1则是获取后一天
+        calendar.set(Calendar.DATE,day-1);
+
+        theDate2 = calendar.getTime();
+
+        qIn.put("startDate", new Date());
+        qIn.put("endDate", new Date());
+        Integer total_WX_LOGIN_TODAY=iAdminUserActionService.totalUserAction(qIn);
+        ArrayList<UserActLog> userActLogs=iAdminUserActionService.listUserAction(qIn);
+        out.put("total_WX_LOGIN_TODAY", total_WX_LOGIN_TODAY);
+        out.put("userActLogs", userActLogs);
+
+
 
         qIn.put("action", GogoActType.CREATE_TASK);
         Integer total_CREATE_TASK=iAdminUserActionService.totalUserAction(qIn);

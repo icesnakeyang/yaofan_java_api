@@ -25,8 +25,22 @@
                 and user_act_log.user_id=#{userId}
             </when>
         </choose>
+        <choose>
+            <when test="action!=null">
+                and action=#{action}
+            </when>
+        </choose>
+        <![CDATA[
+        and DATE_FORMAT(user_act_log.create_time,'%Y-%m-%d')>=DATE_FORMAT(#{startDate},'%Y-%m-%d')
+
+        and DATE_FORMAT(user_act_log.create_time,'%Y-%m-%d')<=DATE_FORMAT(#{endDate},'%Y-%m-%d')
+]]>
         order by ids desc
-        limit #{offset}, #{size}
+        <choose>
+            <when test="offset!=null">
+                limit #{offset}, #{size}
+            </when>
+        </choose>
     </select>
 
     <!--统计用户行为总数-->
@@ -43,5 +57,8 @@
                 and action=#{action}
             </when>
         </choose>
+
+            <![CDATA[ and DATE_FORMAT(create_time, '%Y-%m-%d')>=DATE_FORMAT(#{startDate}, '%Y-%m-%d')   ]]>
+
     </select>
 </mapper>

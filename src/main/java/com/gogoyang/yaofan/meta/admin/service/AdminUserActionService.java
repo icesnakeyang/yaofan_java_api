@@ -39,6 +39,7 @@ public class AdminUserActionService implements IAdminUserActionService{
      */
     @Override
     public Integer totalUserAction(Map qIn) {
-        return adminUserActionDao.totalUserAction(qIn);
+        Integer total= adminUserActionDao.totalUserAction(qIn);
+        return total;
     }
 }

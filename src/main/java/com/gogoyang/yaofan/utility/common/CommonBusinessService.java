@@ -64,6 +64,10 @@ public class CommonBusinessService implements ICommonBusinessService {
         } else {
             if (token != null) {
                 userInfo = getUserByToken(token);
+            }else{
+                if(memoMap!=null){
+                    String memoStr=GogoTools.convertMapToString(memoMap);
+                }
             }
         }
 

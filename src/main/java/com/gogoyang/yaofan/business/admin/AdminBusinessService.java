@@ -11,6 +11,7 @@ import com.gogoyang.yaofan.utility.GogoRole;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
+import org.hibernate.validator.constraints.br.CNPJ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.stereotype.Service;
@@ -82,26 +83,26 @@ public class AdminBusinessService implements IAdminBusinessService {
 
     @Override
     public Map listRegisterUser(Map in) throws Exception {
-        String token=in.get("token").toString();
-        Integer pageIndex=(Integer)in.get("pageIndex");
-        Integer pageSize=(Integer)in.get("pageSize");
+        String token = in.get("token").toString();
+        Integer pageIndex = (Integer) in.get("pageIndex");
+        Integer pageSize = (Integer) in.get("pageSize");
 
-        AdminInfo adminInfo=iCommonBusinessService.getAdminByToken(token);
+        AdminInfo adminInfo = iCommonBusinessService.getAdminByToken(token);
 
-        Map qIn=new HashMap();
-        Integer offset=(pageIndex-1)*pageSize;
+        Map qIn = new HashMap();
+        Integer offset = (pageIndex - 1) * pageSize;
         qIn.put("offset", offset);
         qIn.put("size", pageSize);
-        ArrayList<UserInfo> list=iAdminUserService.listRegisterUser(qIn);
+        ArrayList<UserInfo> list = iAdminUserService.listRegisterUser(qIn);
 
-        Map out=new HashMap();
+        Map out = new HashMap();
 
         out.put("userInfos", list);
 
         /**
          * 统计注册用户总数
          */
-        Integer totalRegisterUser=iAdminUserService.totalRegisterUser(qIn);
+        Integer totalRegisterUser = iAdminUserService.totalRegisterUser(qIn);
         out.put("totalRegisterUser", totalRegisterUser);
 
         return out;
@@ -109,14 +110,14 @@ public class AdminBusinessService implements IAdminBusinessService {
 
     @Override
     public Map getUser(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String userId=in.get("userId").toString();
+        String token = in.get("token").toString();
+        String userId = in.get("userId").toString();
 
-        AdminInfo adminInfo=iCommonBusinessService.getAdminByToken(token);
+        AdminInfo adminInfo = iCommonBusinessService.getAdminByToken(token);
 
-        UserInfo userInfo=iCommonBusinessService.getUserByUserId(userId);
+        UserInfo userInfo = iCommonBusinessService.getUserByUserId(userId);
 
-        Map out=new HashMap();
+        Map out = new HashMap();
         out.put("userInfo", userInfo);
 
         return out;
@@ -125,29 +126,54 @@ public class AdminBusinessService implements IAdminBusinessService {
 
     @Override
     public Map listUserAction(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String userId=(String)in.get("userId");
-        Integer pageIndex=(Integer)in.get("pageIndex");
-        Integer pageSize=(Integer)in.get("pageSize");
-        Date startTime=(Date)in.get("startTime");
-        Date endTime=(Date)in.get("endTime");
+        String token = in.get("token").toString();
+        String userId = (String) in.get("userId");
+        Integer pageIndex = (Integer) in.get("pageIndex");
+        Integer pageSize = (Integer) in.get("pageSize");
+        Date startTime = (Date) in.get("startTime");
+        Date endTime = (Date) in.get("endTime");
 
-        AdminInfo adminInfo=iCommonBusinessService.getAdminByToken(token);
+        AdminInfo adminInfo = iCommonBusinessService.getAdminByToken(token);
 
-        Map qIn=new HashMap();
+        Map qIn = new HashMap();
 
-        Integer offset=(pageIndex-1)*pageSize;
+        Integer offset = (pageIndex - 1) * pageSize;
         qIn.put("userId", userId);
         qIn.put("offset", offset);
         qIn.put("size", pageSize);
+
+        if (startTime != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(startTime);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            startTime = calendar.getTime();
+
+            int day=calendar.get(Calendar.DATE);
+            calendar.set(Calendar.DATE, +2);
+            endTime=calendar.getTime();
+        }
+
+//        if (endTime != null) {
+//            Calendar calendar= Calendar.getInstance();
+//            calendar = Calendar.getInstance();
+//            calendar.setTime(endTime);
+//            calendar.set(Calendar.HOUR_OF_DAY, 0);
+//            calendar.set(Calendar.MINUTE, 0);
+//            calendar.set(Calendar.SECOND, 0);
+//            endTime = calendar.getTime();
+//        }
+
         qIn.put("startDate", startTime);
         qIn.put("endDate", endTime);
-        ArrayList<UserActLog> userActLogs=iAdminUserActionService.listUserAction(qIn);
+        ArrayList<UserActLog> userActLogs = iAdminUserActionService.listUserAction(qIn);
 
-        Map out=new HashMap();
+
+        Map out = new HashMap();
         out.put("userActLogs", userActLogs);
 
-        Integer total=iAdminUserActionService.totalUserAction(qIn);
+        Integer total = iAdminUserActionService.totalUserAction(qIn);
         out.put("totalUserAction", total);
 
         return out;
@@ -155,49 +181,64 @@ public class AdminBusinessService implements IAdminBusinessService {
 
     @Override
     public Map totalUserActionType(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String  userId=(String)in.get("userId");
+        String token = in.get("token").toString();
+        String userId = (String) in.get("userId");
 
-        AdminInfo adminInfo=iCommonBusinessService.getAdminByToken(token);
+        AdminInfo adminInfo = iCommonBusinessService.getAdminByToken(token);
 
-        Map out=new HashMap();
+        Map out = new HashMap();
 
-        Map qIn=new HashMap();
+        Map qIn = new HashMap();
         qIn.put("userId", userId);
 
         //统计总共的微信登录次数
         qIn.put("action", GogoActType.WX_LOGIN);
-        Integer total_WX_LOGIN=iAdminUserActionService.totalUserAction(qIn);
+        Integer total_WX_LOGIN = iAdminUserActionService.totalUserAction(qIn);
         out.put("total_WX_LOGIN", total_WX_LOGIN);
 
         //统计总共创建的任务总数
         qIn.put("action", GogoActType.CREATE_TASK);
-        Integer total_CREATE_TASK=iAdminUserActionService.totalUserAction(qIn);
-        out.put("total_CREATE_TASK",total_CREATE_TASK);
+        Integer total_CREATE_TASK = iAdminUserActionService.totalUserAction(qIn);
+        out.put("total_CREATE_TASK", total_CREATE_TASK);
 
         //今天，昨天，前天
-        Date theDate1=new Date();
-        Date theDate2=GogoTools.dateStartOfThisMonth();
+        Date today = new Date();
+        Date theDate2 = GogoTools.dateStartOfThisMonth();
 
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(theDate1);
-        int day=calendar.get(Calendar.DATE);
+        calendar.setTime(today);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        today=calendar.getTime();
+
+        int day = calendar.get(Calendar.DATE);
         //                      此处修改为+1则是获取后一天
-        calendar.set(Calendar.DATE,day-1);
+
+        //明天
+        calendar.set(Calendar.DATE, day+1);
+        Date nextDay=calendar.getTime();
+
+        //昨天
+        calendar.set(Calendar.DATE, day - 1);
+        Date lastDay=calendar.getTime();
+
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
 
         theDate2 = calendar.getTime();
 
         //统计今天的登录人数
-        qIn.put("startDate", new Date());
-        qIn.put("endDate", new Date());
-        Integer total_WX_LOGIN_today=iAdminUserActionService.totalUserAction(qIn);
+        qIn.put("startDate", today);
+        qIn.put("endDate", nextDay);
+        Integer total_WX_LOGIN_today = iAdminUserActionService.totalUserAction(qIn);
         out.put("total_WX_LOGIN_today", total_WX_LOGIN_today);
+        ArrayList<UserActLog> userActLogs = iAdminUserActionService.listUserAction(qIn);
 
 
         qIn.put("action", GogoActType.CREATE_TASK);
-        Integer total_CREATE_TASK_today=iAdminUserActionService.totalUserAction(qIn);
+        Integer total_CREATE_TASK_today = iAdminUserActionService.totalUserAction(qIn);
         out.put("total_CREATE_TASK_today", total_CREATE_TASK_today);
 
 

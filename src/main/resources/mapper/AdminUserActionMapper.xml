@@ -32,7 +32,10 @@
         </choose>
         <choose>
             <when test="startDate!=null">
+                <![CDATA[
                 and DATE_FORMAT(user_act_log.create_time,'%Y-%m-%d')>=DATE_FORMAT(#{startDate},'%Y-%m-%d')
+                and DATE_FORMAT(user_act_log.create_time,'%Y-%m-%d')<=DATE_FORMAT(#{endDate},'%Y-%m-%d')
+                ]]>
             </when>
         </choose>
         <choose>
@@ -66,13 +69,15 @@
         </choose>
         <choose>
             <when test="startDate!=null">
+                <![CDATA[
                 and DATE_FORMAT(create_time, '%Y-%m-%d')>=DATE_FORMAT(#{startDate}, '%Y-%m-%d')
+                ]]>
             </when>
         </choose>
         <choose>
             <when test="endDate!=null">
                 <![CDATA[
-                    and DATE_FORMAT(create_time, '%Y-%m-%d')<=DATE_FORMAT(#{endDate}, '%Y-%m-%d')
+                and DATE_FORMAT(create_time, '%Y-%m-%d')<=DATE_FORMAT(#{endDate}, '%Y-%m-%d')
                 ]]>
             </when>
         </choose>

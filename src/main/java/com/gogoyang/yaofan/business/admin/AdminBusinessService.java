@@ -151,7 +151,7 @@ public class AdminBusinessService implements IAdminBusinessService {
             startTime = calendar.getTime();
 
             int day=calendar.get(Calendar.DATE);
-            calendar.set(Calendar.DATE, +2);
+            calendar.add(Calendar.DATE, +3);
             endTime=calendar.getTime();
         }
 
@@ -230,16 +230,32 @@ public class AdminBusinessService implements IAdminBusinessService {
         theDate2 = calendar.getTime();
 
         //统计今天的登录人数
+        qIn.put("action", GogoActType.WX_LOGIN);
         qIn.put("startDate", today);
         qIn.put("endDate", nextDay);
         Integer total_WX_LOGIN_today = iAdminUserActionService.totalUserAction(qIn);
         out.put("total_WX_LOGIN_today", total_WX_LOGIN_today);
         ArrayList<UserActLog> userActLogs = iAdminUserActionService.listUserAction(qIn);
 
+        //统计昨天的登录人数
+        qIn.put("startDate", lastDay);
+        qIn.put("endDate", nextDay);
+        Integer total_WX_LOGIN_lastday=iAdminUserActionService.totalUserAction(qIn);
+        out.put("total_WX_LOGIN_lastday", total_WX_LOGIN_lastday);
 
+        //今日任务数
         qIn.put("action", GogoActType.CREATE_TASK);
         Integer total_CREATE_TASK_today = iAdminUserActionService.totalUserAction(qIn);
         out.put("total_CREATE_TASK_today", total_CREATE_TASK_today);
+
+        //昨日任务数
+        qIn.put("startDate", lastDay);
+        qIn.put("endDate", nextDay);
+        Integer total_CREATE_TASK_lastday=iAdminUserActionService.totalUserAction(qIn);
+        out.put("total_CREATE_TASK_lastday", total_CREATE_TASK_lastday);
+
+
+
 
 
         return out;

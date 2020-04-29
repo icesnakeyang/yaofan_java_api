@@ -41,10 +41,11 @@ public class TaskController {
         try {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
-            logMap.put("GogoActType", GogoActType.CREATE_TASK);
             in.put("detail", request.getDetail());
-            logMap.put("title", request.getTitle());
             in.put("title", request.getTitle());
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.CREATE_TASK);
+            memoMap.put("title", request.getTitle());
             String endDateStr = (String) request.getEndDateWx();
             String endTimeStr = (String) request.getEndTimeWx();
             if (endDateStr != null && endTimeStr != null) {
@@ -55,6 +56,7 @@ public class TaskController {
             in.put("point", request.getPoint());
             in.put("teamId", request.getTeamId());
             iTaskBusinessService.createTask(in);
+            memoMap.put("result", GogoStatus.SUCCESS);
             logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {

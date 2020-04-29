@@ -3,6 +3,7 @@ package com.gogoyang.yaofan.controller.point;
 import com.gogoyang.yaofan.business.point.IPointBusinessService;
 import com.gogoyang.yaofan.controller.vo.Response;
 import com.gogoyang.yaofan.utility.GogoActType;
+import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +74,7 @@ public class PointController {
             logMap.put("GogoActType", GogoActType.LIST_MY_POINT);
             Map out = iPointBusinessService.listMyPointLedger(in);
             response.setData(out);
-            memoMap.put("result", "success");
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -81,7 +82,7 @@ public class PointController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", "fail");
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -114,7 +115,7 @@ public class PointController {
             logMap.put("GogoActType", GogoActType.TOTAL_USER_POINT);
             Map out = iPointBusinessService.totalUserPoint(in);
             response.setData(out);
-            memoMap.put("result", "success");
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -122,7 +123,7 @@ public class PointController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", "fail");
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {

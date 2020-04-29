@@ -4,6 +4,7 @@ import com.gogoyang.yaofan.business.team.ITeamBusinessService;
 import com.gogoyang.yaofan.controller.vo.Response;
 import com.gogoyang.yaofan.meta.team.entity.Team;
 import com.gogoyang.yaofan.utility.GogoActType;
+import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,25 +40,26 @@ public class TeamController {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
             logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.CREATE_TEAM);
             in.put("name", request.getName());
             memoMap.put("name", request.getName());
             in.put("description", request.getDescription());
             out = iTeamBusinessService.createTeam(in);
             Team team = (Team) out.get("team");
             response.setData(team);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
-                memoMap.put("error", ex.getMessage());
             } catch (Exception ex2) {
                 response.setCode(10001);
-                memoMap.put("error", ex.getMessage());
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
+            memoMap.put("error", ex.getMessage());
         }
         try {
             logMap.put("memo", memoMap);
-            logMap.put("GogoActType", GogoActType.CREATE_TEAM);
             iCommonBusinessService.createUserActLog(logMap);
         } catch (Exception ex3) {
             logger.error(ex3.getMessage());
@@ -82,6 +84,7 @@ public class TeamController {
             logMap.put("GogoActType", GogoActType.LIST_TEAM);
             Map out = iTeamBusinessService.listMyTeam(in);
             response.setData(out);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -89,6 +92,7 @@ public class TeamController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         logMap.put("memo", memoMap);
@@ -117,6 +121,7 @@ public class TeamController {
             memoMap.put("search_key", request.getName());
             Map out = iTeamBusinessService.searchTeam(in);
             response.setData(out);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -124,6 +129,7 @@ public class TeamController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -152,6 +158,7 @@ public class TeamController {
             memoMap.put("teamId", request.getTeamId());
             Map out = iTeamBusinessService.getTeamByTeamId(in);
             response.setData(out);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -159,6 +166,7 @@ public class TeamController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -186,6 +194,7 @@ public class TeamController {
             in.put("teamId", request.getTeamId());
             logMap.put("GogoActType", GogoActType.APPLY_TEAM);
             iTeamBusinessService.applyTeam(in);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -193,6 +202,7 @@ public class TeamController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -207,6 +217,7 @@ public class TeamController {
     /**
      * 读取我申请的团队日志
      * 包括已处理和未处理的
+     *
      * @param request
      * @param httpServletRequest
      * @return
@@ -214,7 +225,7 @@ public class TeamController {
     @ResponseBody
     @PostMapping("/listTeamApplyLogMyApply")
     public Response listTeamApplyLogMyApply(@RequestBody TeamRequest request,
-                                  HttpServletRequest httpServletRequest) {
+                                            HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
         Map logMap = new HashMap();
@@ -228,6 +239,7 @@ public class TeamController {
             logMap.put("GogoActType", GogoActType.LIST_APPLY_TEAM);
             Map out = iTeamBusinessService.listTeamApplyLogMyApply(in);
             response.setData(out);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -235,6 +247,7 @@ public class TeamController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -249,6 +262,7 @@ public class TeamController {
     /**
      * 读取申请我的团队日志
      * 包括已处理和未处理的
+     *
      * @param request
      * @param httpServletRequest
      * @return
@@ -256,7 +270,7 @@ public class TeamController {
     @ResponseBody
     @PostMapping("/listTeamApplyLogApplyUser")
     public Response listTeamApplyLogApplyUser(@RequestBody TeamRequest request,
-                                  HttpServletRequest httpServletRequest) {
+                                              HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
         Map logMap = new HashMap();
@@ -270,6 +284,7 @@ public class TeamController {
             logMap.put("GogoActType", GogoActType.LIST_APPLY_TEAM);
             Map out = iTeamBusinessService.listTeamApplyLogApplyUser(in);
             response.setData(out);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -277,6 +292,7 @@ public class TeamController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -291,7 +307,7 @@ public class TeamController {
     @ResponseBody
     @PostMapping("getTeamApplyLog")
     public Response getTeamApplyLog(@RequestBody TeamRequest request,
-                                 HttpServletRequest httpServletRequest) {
+                                    HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map logMap = new HashMap();
         Map in = new HashMap();
@@ -305,6 +321,7 @@ public class TeamController {
             memoMap.put("teamApplyLogId", request.getTeamApplyLogId());
             Map out = iTeamBusinessService.getTeamApplyLog(in);
             response.setData(out);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -312,6 +329,7 @@ public class TeamController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -340,6 +358,7 @@ public class TeamController {
             in.put("teamApplyLogId", request.getTeamApplyLogId());
             memoMap.put("teamApplyLogId", request.getTeamApplyLogId());
             iTeamBusinessService.rejectApplyTeam(in);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -347,6 +366,7 @@ public class TeamController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -375,6 +395,7 @@ public class TeamController {
             in.put("teamApplyLogId", request.getTeamApplyLogId());
             memoMap.put("teamApplyLogId", request.getTeamApplyLogId());
             iTeamBusinessService.agreeApplyTeam(in);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -382,6 +403,7 @@ public class TeamController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -418,7 +440,7 @@ public class TeamController {
             in.put("name", request.getName());
             in.put("description", request.getDescription());
             iTeamBusinessService.updateMyTeam(in);
-            memoMap.put("result", "success");
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -426,7 +448,7 @@ public class TeamController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", "fail");
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -461,6 +483,7 @@ public class TeamController {
             logMap.put("GogoActType", GogoActType.DELETE_TEAM.toString());
             in.put("teamId", request.getTeamId());
             iTeamBusinessService.deleteMyTeam(in);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -468,6 +491,7 @@ public class TeamController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -517,19 +541,19 @@ public class TeamController {
     @ResponseBody
     @PostMapping("/cancelTeamApplyLog")
     public Response cancelTeamApplyLog(@RequestBody TeamRequest request,
-            HttpServletRequest httpServletRequest) {
+                                       HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
-        Map logMap=new HashMap();
+        Map logMap = new HashMap();
         try {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
             in.put("teamApplyLogId", request.getTeamApplyLogId());
             logMap.put("token", token);
             logMap.put("GogoActType", GogoActType.CANCEL_TEAM_APPLY);
-            logMap.put("memo", "teamApplyLog:"+request.getTeamApplyLogId());
+            logMap.put("memo", "teamApplyLog:" + request.getTeamApplyLogId());
             iTeamBusinessService.cancelTeamApplyLog(in);
-            logMap.put("result", true);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -537,12 +561,12 @@ public class TeamController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            logMap.put("result", false);
-            logMap.put("memo", "teamApplyLog:"+request.getTeamApplyLogId()+"/error:"+ex.getMessage());
+            logMap.put("result", GogoStatus.FAILED);
+            logMap.put("memo", "teamApplyLog:" + request.getTeamApplyLogId() + "/error:" + ex.getMessage());
         }
         try {
             iCommonBusinessService.createUserActLog(logMap);
-        }catch (Exception ex3){
+        } catch (Exception ex3) {
             logger.error(ex3.getMessage());
         }
         return response;
@@ -551,17 +575,18 @@ public class TeamController {
     /**
      * 退出一个团队
      * 创建一个退团申请，等待团队管理员确认
+     *
      * @param httpServletRequest
      * @return
      */
     @ResponseBody
     @PostMapping("/quitTeam")
     public Response quitTeam(@RequestBody TeamRequest request,
-            HttpServletRequest httpServletRequest) {
+                             HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
-        Map logMap=new HashMap();
-        Map memoMap=new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
         try {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
@@ -571,7 +596,7 @@ public class TeamController {
             logMap.put("GogoActType", GogoActType.QUIT_TEAM);
             memoMap.put("teamId", request.getTeamId());
             iTeamBusinessService.quitTeam(in);
-            memoMap.put("result", "success");
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -579,13 +604,13 @@ public class TeamController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", "fail");
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
             logMap.put("memo", memoMap);
             iCommonBusinessService.createUserActLog(logMap);
-        }catch (Exception ex3){
+        } catch (Exception ex3) {
             logger.error(ex3.getMessage());
         }
         return response;
@@ -600,11 +625,11 @@ public class TeamController {
     @ResponseBody
     @PostMapping("/listTeamQuitLogApply")
     public Response listTeamQuitLogApply(@RequestBody TeamRequest request,
-            HttpServletRequest httpServletRequest) {
+                                         HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
-        Map logMap=new HashMap();
-        Map memoMap=new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
         try {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
@@ -612,9 +637,9 @@ public class TeamController {
             in.put("pageSize", request.getPageSize());
             logMap.put("token", token);
             logMap.put("GogoActType", GogoActType.LIST_TEAM_QUIT_LOG);
-            Map out=iTeamBusinessService.listTeamQuitLogApply(in);
+            Map out = iTeamBusinessService.listTeamQuitLogApply(in);
             response.setData(out);
-            memoMap.put("result", "success");
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -622,13 +647,13 @@ public class TeamController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", "fail");
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
             logMap.put("memo", memoMap);
             iCommonBusinessService.createUserActLog(logMap);
-        }catch (Exception ex3){
+        } catch (Exception ex3) {
             logger.error(ex3.getMessage());
         }
         return response;
@@ -636,6 +661,7 @@ public class TeamController {
 
     /**
      * 查询我收到的退团申请列表
+     *
      * @param request
      * @param httpServletRequest
      * @return
@@ -643,11 +669,11 @@ public class TeamController {
     @ResponseBody
     @PostMapping("/listTeamQuitLogProcess")
     public Response listTeamQuitLogProcess(@RequestBody TeamRequest request,
-                                    HttpServletRequest httpServletRequest) {
+                                           HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
-        Map logMap=new HashMap();
-        Map memoMap=new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
         try {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
@@ -655,9 +681,9 @@ public class TeamController {
             in.put("pageSize", request.getPageSize());
             logMap.put("token", token);
             logMap.put("GogoActType", GogoActType.LIST_TEAM_QUIT_LOG);
-            Map out=iTeamBusinessService.listTeamQuitLogProcess(in);
+            Map out = iTeamBusinessService.listTeamQuitLogProcess(in);
             response.setData(out);
-            memoMap.put("result", "success");
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -665,13 +691,13 @@ public class TeamController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", "fail");
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
             logMap.put("memo", memoMap);
             iCommonBusinessService.createUserActLog(logMap);
-        }catch (Exception ex3){
+        } catch (Exception ex3) {
             logger.error(ex3.getMessage());
         }
         return response;
@@ -679,6 +705,7 @@ public class TeamController {
 
     /**
      * 查询退团申请详情
+     *
      * @param request
      * @param httpServletRequest
      * @return
@@ -686,20 +713,20 @@ public class TeamController {
     @ResponseBody
     @PostMapping("/getTeamQuitLog")
     public Response getTeamQuitLog(@RequestBody TeamRequest request,
-                                    HttpServletRequest httpServletRequest) {
+                                   HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
-        Map logMap=new HashMap();
-        Map memoMap=new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
         try {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
             in.put("teamQuitLogId", request.getTeamQuitLogId());
             logMap.put("token", token);
             logMap.put("GogoActType", GogoActType.GET_TEAM_QUIT);
-            Map out=iTeamBusinessService.getTeamQuitLog(in);
+            Map out = iTeamBusinessService.getTeamQuitLog(in);
             response.setData(out);
-            memoMap.put("result", "success");
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -707,13 +734,13 @@ public class TeamController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", "fail");
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
             logMap.put("memo", memoMap);
             iCommonBusinessService.createUserActLog(logMap);
-        }catch (Exception ex3){
+        } catch (Exception ex3) {
             logger.error(ex3.getMessage());
         }
         return response;
@@ -721,6 +748,7 @@ public class TeamController {
 
     /**
      * 取消退团申请
+     *
      * @param request
      * @param httpServletRequest
      * @return
@@ -728,11 +756,11 @@ public class TeamController {
     @ResponseBody
     @PostMapping("/cancelTeamQuitLog")
     public Response cancelTeamQuitLog(@RequestBody TeamRequest request,
-                                    HttpServletRequest httpServletRequest) {
+                                      HttpServletRequest httpServletRequest) {
         Response response = new Response();
         Map in = new HashMap();
-        Map logMap=new HashMap();
-        Map memoMap=new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
         try {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
@@ -740,7 +768,7 @@ public class TeamController {
             logMap.put("token", token);
             logMap.put("GogoActType", GogoActType.CANCEL_TEAM_QUIT_LOG);
             iTeamBusinessService.cancelTeamQuitLog(in);
-            memoMap.put("result", "success");
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -748,13 +776,13 @@ public class TeamController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", "fail");
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
             logMap.put("memo", memoMap);
             iCommonBusinessService.createUserActLog(logMap);
-        }catch (Exception ex3){
+        } catch (Exception ex3) {
             logger.error(ex3.getMessage());
         }
         return response;

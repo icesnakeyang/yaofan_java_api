@@ -99,7 +99,7 @@ public class WXController {
 
                 response.setData(out);
 
-                memoMap.put("result", true);
+                logMap.put("result", GogoStatus.SUCCESS);
                 memoMap.put("openId", openid);
                 logMap.put("userId", ((UserInfo) out.get("userInfo")).getUserId());
             } else {
@@ -112,7 +112,7 @@ public class WXController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", GogoStatus.FAILED);
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {

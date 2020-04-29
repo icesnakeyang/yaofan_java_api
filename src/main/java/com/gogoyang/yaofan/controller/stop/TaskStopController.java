@@ -3,6 +3,7 @@ package com.gogoyang.yaofan.controller.stop;
 import com.gogoyang.yaofan.business.stop.ITaskStopBusinessService;
 import com.gogoyang.yaofan.controller.vo.Response;
 import com.gogoyang.yaofan.utility.GogoActType;
+import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,7 @@ public class TaskStopController {
             logMap.put("GogoActType", GogoActType.STOP_TASK);
             memoMap.put("taskId", request.getTaskId());
             iTaskStopBusinessService.stopTask(in);
-            memoMap.put("result", "success");
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -58,7 +59,7 @@ public class TaskStopController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", "fail");
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -93,7 +94,7 @@ public class TaskStopController {
             memoMap.put("taskId", request.getTaskId());
             Map out = iTaskStopBusinessService.getTaskStop(in);
             response.setData(out);
-            memoMap.put("result", "success");
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -101,7 +102,7 @@ public class TaskStopController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", "fail");
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {

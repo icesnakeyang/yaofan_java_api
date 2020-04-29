@@ -4,6 +4,7 @@ import com.gogoyang.yaofan.business.user.IUserBusinessService;
 import com.gogoyang.yaofan.controller.vo.Response;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
 import com.gogoyang.yaofan.utility.GogoActType;
+import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,22 +39,23 @@ public class UserController {
             in.put("phone", request.getPhone());
             memoMap.put("phone", request.getPhone());
             in.put("password", request.getPassword());
-            in.put("realName",request.getUsername());
+            in.put("realName", request.getUsername());
             Map out = iUserBusinessService.register(in);
             response.setData(out);
             UserInfo userInfo = (UserInfo) out.get("userInfo");
             if (userInfo != null) {
                 logMap.put("userId", userInfo.getUserId());
             }
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
-                memoMap.put("error", ex.getMessage());
             } catch (Exception ex2) {
                 response.setCode(10001);
-                memoMap.put("error", ex.getMessage());
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
+            memoMap.put("error", ex.getMessage());
         }
         try {
             logMap.put("memo", memoMap);
@@ -82,15 +84,16 @@ public class UserController {
                 logMap.put("userId", userInfo.getUserId());
             }
             response.setData(out);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
-                memoMap.put("error", ex.getMessage());
             } catch (Exception ex2) {
                 response.setCode(10001);
-                memoMap.put("error", ex.getMessage());
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.SUCCESS);
+            memoMap.put("error", ex.getMessage());
         }
         try {
             logMap.put("memo", memoMap);
@@ -116,6 +119,7 @@ public class UserController {
             memoMap.put("token", token);
             Map out = iUserBusinessService.loginByToken(in);
             response.setData(out);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -123,10 +127,11 @@ public class UserController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
-        logMap.put("memo", memoMap);
         try {
+            logMap.put("memo", memoMap);
             iCommonBusinessService.createUserActLog(logMap);
         } catch (Exception ex3) {
             logger.error(ex3.getMessage());
@@ -149,8 +154,9 @@ public class UserController {
             in.put("username", request.getUsername());
             in.put("idCard", request.getIdCard());
             memoMap.put("username", request.getUsername());
-            Map out=iUserBusinessService.updateUsername(in);
+            Map out = iUserBusinessService.updateUsername(in);
             response.setData(out);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -158,10 +164,11 @@ public class UserController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
-        logMap.put("memo", memoMap);
         try {
+        logMap.put("memo", memoMap);
             iCommonBusinessService.createUserActLog(logMap);
         } catch (Exception ex3) {
             logger.error(ex3.getMessage());

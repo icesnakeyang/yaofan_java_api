@@ -65,7 +65,7 @@ public class VolunteerController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", GogoStatus.FAILED);
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -108,7 +108,7 @@ public class VolunteerController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", GogoStatus.FAILED);
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -152,7 +152,7 @@ public class VolunteerController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", GogoStatus.FAILED);
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -194,7 +194,7 @@ public class VolunteerController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", GogoStatus.FAILED);
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -229,7 +229,7 @@ public class VolunteerController {
             logMap.put("GogoActType", GogoActType.APPLY_VOLUNTEER_TASK);
             memoMap.put("volunteerTaskId", request.getVolunteerTaskId());
             iVolunteerBusinessService.applyVolunteerTask(in);
-            memoMap.put("result", GogoStatus.SUCCESS);
+            logMap.put("result", GogoStatus.SUCCESS);
         }catch (Exception ex){
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -237,6 +237,7 @@ public class VolunteerController {
                 response.setCode(10001);
                 logger.error(ex2.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -269,7 +270,7 @@ public class VolunteerController {
             logMap.put("GogoActType", GogoActType.LIST_VOLUNTEER_APPLY);
             Map out=iVolunteerBusinessService.listMyVolunteerTaskApply(in);
             response.setData(out);
-            memoMap.put("result", GogoStatus.SUCCESS);
+            logMap.put("result", GogoStatus.SUCCESS);
         }catch (Exception ex){
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -277,6 +278,7 @@ public class VolunteerController {
                 response.setCode(10001);
                 logger.error(ex2.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -309,7 +311,7 @@ public class VolunteerController {
             logMap.put("GogoActType", GogoActType.LIST_VOLUNTEER_APPLY);
             Map out=iVolunteerBusinessService.listMyVolunteerTaskApplyJoin(in);
             response.setData(out);
-            memoMap.put("result", GogoStatus.SUCCESS);
+            logMap.put("result", GogoStatus.SUCCESS);
         }catch (Exception ex){
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -317,6 +319,7 @@ public class VolunteerController {
                 response.setCode(10001);
                 logger.error(ex2.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -358,7 +361,7 @@ public class VolunteerController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", GogoStatus.FAILED);
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -400,7 +403,7 @@ public class VolunteerController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", GogoStatus.FAILED);
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -442,7 +445,7 @@ public class VolunteerController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", GogoStatus.FAILED);
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -533,7 +536,7 @@ public class VolunteerController {
             logMap.put("token", token);
             logMap.put("GogoActType", GogoActType.STOP_VOLUNTEER_TASK);
             iVolunteerBusinessService.stopVolunteerTask(in);
-            memoMap.put("result", GogoStatus.SUCCESS);
+            logMap.put("result", GogoStatus.SUCCESS);
         }catch (Exception ex){
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -541,7 +544,7 @@ public class VolunteerController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", GogoStatus.FAILED);
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {

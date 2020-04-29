@@ -3,6 +3,7 @@ package com.gogoyang.yaofan.controller.complete;
 import com.gogoyang.yaofan.business.complete.ICompleteBusinessService;
 import com.gogoyang.yaofan.controller.vo.Response;
 import com.gogoyang.yaofan.utility.GogoActType;
+import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,7 @@ public class TaskCompleteController {
             in.put("taskId", request.getTaskId());
             in.put("content", request.getContent());
             iCompleteBusinessService.createComplete(in);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -48,6 +50,7 @@ public class TaskCompleteController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -76,6 +79,7 @@ public class TaskCompleteController {
             memoMap.put("taskId", request.getTaskId());
             Map out = iCompleteBusinessService.listTaskComplete(in);
             response.setData(out);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -83,6 +87,7 @@ public class TaskCompleteController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -118,7 +123,7 @@ public class TaskCompleteController {
             in.put("taskId", request.getTaskId());
             memoMap.put("taskId", request.getTaskId());
             iCompleteBusinessService.cancelComplete(in);
-            memoMap.put("result", "success");
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -126,7 +131,7 @@ public class TaskCompleteController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", "fail");
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -162,7 +167,7 @@ public class TaskCompleteController {
             in.put("taskId", request.getTaskId());
             memoMap.put("taskId", request.getTaskId());
             iCompleteBusinessService.rejectComplete(in);
-            memoMap.put("result", "success");
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -170,7 +175,7 @@ public class TaskCompleteController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", "fail");
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -206,7 +211,7 @@ public class TaskCompleteController {
             in.put("taskId", request.getTaskId());
             memoMap.put("taskId", request.getTaskId());
             iCompleteBusinessService.acceptComplete(in);
-            memoMap.put("result", "success");
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -214,7 +219,7 @@ public class TaskCompleteController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
-            memoMap.put("result", "fail");
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {

@@ -201,9 +201,9 @@ public class AdminBusinessService implements IAdminBusinessService {
         Integer total_CREATE_TASK = iAdminUserActionService.totalUserAction(qIn);
         out.put("total_CREATE_TASK", total_CREATE_TASK);
 
-        //今天，昨天，前天
+        //今天
         Date today = new Date();
-        Date theDate2 = GogoTools.dateStartOfThisMonth();
+
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(today);
@@ -227,8 +227,6 @@ public class AdminBusinessService implements IAdminBusinessService {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
 
-        theDate2 = calendar.getTime();
-
         //统计今天的登录人数
         qIn.put("action", GogoActType.WX_LOGIN);
         qIn.put("startDate", today);
@@ -237,25 +235,48 @@ public class AdminBusinessService implements IAdminBusinessService {
         out.put("total_WX_LOGIN_today", total_WX_LOGIN_today);
         ArrayList<UserActLog> userActLogs = iAdminUserActionService.listUserAction(qIn);
 
-        //统计昨天的登录人数
-        qIn.put("startDate", lastDay);
-        qIn.put("endDate", nextDay);
-        Integer total_WX_LOGIN_lastday=iAdminUserActionService.totalUserAction(qIn);
-        out.put("total_WX_LOGIN_lastday", total_WX_LOGIN_lastday);
-
         //今日任务数
         qIn.put("action", GogoActType.CREATE_TASK);
         Integer total_CREATE_TASK_today = iAdminUserActionService.totalUserAction(qIn);
         out.put("total_CREATE_TASK_today", total_CREATE_TASK_today);
 
-        //昨日任务数
+        //统计昨天的登录人数
+        qIn.put("action", GogoActType.WX_LOGIN);
         qIn.put("startDate", lastDay);
         qIn.put("endDate", nextDay);
+        Integer total_WX_LOGIN_lastday=iAdminUserActionService.totalUserAction(qIn);
+        out.put("total_WX_LOGIN_lastday", total_WX_LOGIN_lastday);
+
+        //昨日任务数
+        qIn.put("action", GogoActType.CREATE_TASK);
         Integer total_CREATE_TASK_lastday=iAdminUserActionService.totalUserAction(qIn);
         out.put("total_CREATE_TASK_lastday", total_CREATE_TASK_lastday);
 
+        //统计本周登录
+        Date week1=GogoTools.getBeginDayOfWeek();
+        Date week2=GogoTools.getEndDayOfWeek();
+        qIn.put("startDate", week1);
+        qIn.put("endDate",today);
+        qIn.put("action", GogoActType.WX_LOGIN);
+        Integer total_WX_LOGIN_thisweek=iAdminUserActionService.totalUserAction(qIn);
+        out.put("total_WX_LOGIN_thisweek",total_WX_LOGIN_thisweek);
 
+        //本周任务
+        qIn.put("action", GogoActType.CREATE_TASK);
+        Integer total_CREATE_TASK_thisweek=iAdminUserActionService.totalUserAction(qIn);
+        out.put("total_CREATE_TASK_thisweek", total_CREATE_TASK_thisweek);
 
+        //统计本月
+        //本月任务
+        Date month1 = GogoTools.dateStartOfThisMonth();
+        qIn.put("startDate", month1);
+        Integer total_CREATE_TASK_thismonth=iAdminUserActionService.totalUserAction(qIn);
+        out.put("total_CREATE_TASK_thismonth", total_CREATE_TASK_thismonth);
+
+        //本月登录
+        qIn.put("action", GogoActType.WX_LOGIN);
+        Integer total_WX_LOGIN_thismonth=iAdminUserActionService.totalUserAction(qIn);
+        out.put("total_WX_LOGIN_thismonth", total_WX_LOGIN_thismonth);
 
 
         return out;

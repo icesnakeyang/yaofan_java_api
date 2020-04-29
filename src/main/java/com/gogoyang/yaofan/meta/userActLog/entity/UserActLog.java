@@ -43,6 +43,8 @@ public class UserActLog {
      */
     private String action;
 
+    private String result;
+
 
     /**
      * 需要记录的信息

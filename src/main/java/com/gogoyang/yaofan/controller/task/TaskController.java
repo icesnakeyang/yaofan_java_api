@@ -55,6 +55,7 @@ public class TaskController {
             in.put("point", request.getPoint());
             in.put("teamId", request.getTeamId());
             iTaskBusinessService.createTask(in);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -62,6 +63,7 @@ public class TaskController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -99,6 +101,7 @@ public class TaskController {
             in.put("teamId", request.getTeamId());
             in.put("taskId", request.getTaskId());
             iTaskBusinessService.updateTask(in);
+            logMap.put("result",GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -106,6 +109,7 @@ public class TaskController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result",GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -132,6 +136,7 @@ public class TaskController {
             logMap.put("GogoActType", GogoActType.LIST_GRABBING_TASKS.toString());
             Map out = iTaskBusinessService.listBiddingTasks(in);
             response.setData(out);
+            logMap.put("result",GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -139,6 +144,7 @@ public class TaskController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result",GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -167,6 +173,7 @@ public class TaskController {
             memoMap.put("taskId", request.getTaskId());
             Map out = iTaskBusinessService.getTaskByTaskId(in);
             response.setData(out);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -174,6 +181,7 @@ public class TaskController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -208,6 +216,7 @@ public class TaskController {
             logMap.put("GogoActType", GogoActType.LIST_MY_TASKS);
             Map out = iTaskBusinessService.listMyTasks(in);
             response.setData(out);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -215,6 +224,7 @@ public class TaskController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -250,6 +260,7 @@ public class TaskController {
             logMap.put("GogoActType", GogoActType.LIST_MY_TASKS);
             Map out = iTaskBusinessService.listMyTasksDetail(in);
             response.setData(out);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -257,6 +268,7 @@ public class TaskController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -292,6 +304,7 @@ public class TaskController {
             logMap.put("GogoActType", GogoActType.LIST_MY_TASKS);
             Map out = iTaskBusinessService.listMyPartyATasksDetail(in);
             response.setData(out);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -299,6 +312,7 @@ public class TaskController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -334,6 +348,7 @@ public class TaskController {
             logMap.put("GogoActType", GogoActType.LIST_MY_TASKS);
             Map out = iTaskBusinessService.listMyPartyBTasksDetail(in);
             response.setData(out);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -341,6 +356,7 @@ public class TaskController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -376,6 +392,7 @@ public class TaskController {
             logMap.put("GogoActType", GogoActType.LIST_GRABBING_TASKS);
             Map out = iTaskBusinessService.listTaskGrabbingTeam(in);
             response.setData(out);
+            logMap.put("result",GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -383,6 +400,7 @@ public class TaskController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result",GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {

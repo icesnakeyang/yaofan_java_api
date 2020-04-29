@@ -3,6 +3,7 @@ package com.gogoyang.yaofan.controller.statistic;
 import com.gogoyang.yaofan.business.statistic.IStatisticBusinessService;
 import com.gogoyang.yaofan.controller.vo.Response;
 import com.gogoyang.yaofan.utility.GogoActType;
+import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ public class StatisticController {
 
             Map out = iStatisticBusinessService.dashboard(in);
             response.setData(out);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -50,6 +52,7 @@ public class StatisticController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {

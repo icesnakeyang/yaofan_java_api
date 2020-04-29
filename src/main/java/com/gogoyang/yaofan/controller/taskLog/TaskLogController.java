@@ -3,6 +3,7 @@ package com.gogoyang.yaofan.controller.taskLog;
 import com.gogoyang.yaofan.business.taskLog.ITaskLogBusinessService;
 import com.gogoyang.yaofan.controller.vo.Response;
 import com.gogoyang.yaofan.utility.GogoActType;
+import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,7 @@ public class TaskLogController {
             memoMap.put("taskId", request.getTaskId());
             logMap.put("GogoActType", GogoActType.CREATE_TASK_LOG);
             iTaskLogBusinessService.createTaskLog(in);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -51,6 +53,7 @@ public class TaskLogController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -74,10 +77,12 @@ public class TaskLogController {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
             in.put("taskId", request.getTaskId());
+            logMap.put("token", token);
             memoMap.put("taskId", request.getTaskId());
             logMap.put("GogoActType", GogoActType.LIST_TASK_LOG);
             Map out = iTaskLogBusinessService.listTaskLog(in);
             response.setData(out);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -85,6 +90,7 @@ public class TaskLogController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {
@@ -118,6 +124,7 @@ public class TaskLogController {
             memoMap.put("taskLogId", request.getTaskLogId());
             logMap.put("GogoActType", GogoActType.DELETE_TASK_LOG);
             iTaskLogBusinessService.deleteTaskLog(in);
+            logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -125,6 +132,7 @@ public class TaskLogController {
                 response.setCode(10001);
                 logger.error(ex.getMessage());
             }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {

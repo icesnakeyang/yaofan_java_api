@@ -43,6 +43,7 @@ public class WXController {
 
     /**
      * 微信登录、注册
+     *
      * @param request
      * @return
      */
@@ -56,8 +57,12 @@ public class WXController {
             String code = request.getCode();
             String encryptedData = request.getEncryptedData();
             String iv = request.getIv();
+            String phone = request.getPhone();
+            String os = request.getOs();
 
             logMap.put("GogoActType", GogoActType.WX_LOGIN);
+            logMap.put("device", phone);
+            logMap.put("os", os);
 
             if (code == null || code.length() == 0) {
                 throw new Exception("20013");

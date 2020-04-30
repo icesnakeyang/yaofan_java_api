@@ -12,8 +12,8 @@
     <insert id="createUserActLog"
             parameterType="com.gogoyang.yaofan.meta.userActLog.entity.UserActLog">
       insert into user_act_log
-      (uuid, user_id, action, create_time, memo, ip_address, device, os)
+      (uuid, user_id, action, create_time, memo, ip_address, device, os, result)
       values
-      (#{uuid}, #{userId}, #{action}, #{createTime}, #{memo}, #{ipAddress}, #{device}, #{os})
+      (#{uuid}, #{userId}, #{action}, #{createTime}, #{memo}, #{ipAddress}, #{device}, #{os}, #{result})
     </insert>
 </mapper>

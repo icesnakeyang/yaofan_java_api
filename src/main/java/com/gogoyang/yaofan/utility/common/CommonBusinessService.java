@@ -57,7 +57,7 @@ public class CommonBusinessService implements ICommonBusinessService {
         HashMap memoMap = (HashMap) in.get("memo");
         String os = (String) in.get("os");
         String token = (String) in.get("token");
-        String result=(String)in.get("result");
+        GogoStatus result=(GogoStatus)in.get("result");
 
         UserInfo userInfo = null;
         if (userId != null) {
@@ -83,7 +83,7 @@ public class CommonBusinessService implements ICommonBusinessService {
         userActLog.setMemo(GogoTools.convertMapToString(memoMap));
         userActLog.setOs(os);
         userActLog.setUuid(GogoTools.UUID().toString());
-        userActLog.setResult(result);
+        userActLog.setResult(result.toString());
         iUserActLogService.createUserActLog(userActLog);
     }
 

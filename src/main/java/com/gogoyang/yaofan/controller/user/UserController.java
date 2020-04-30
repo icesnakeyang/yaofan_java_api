@@ -116,7 +116,7 @@ public class UserController {
         try {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
-            memoMap.put("token", token);
+            logMap.put("token", token);
             Map out = iUserBusinessService.loginByToken(in);
             response.setData(out);
             logMap.put("result", GogoStatus.SUCCESS);

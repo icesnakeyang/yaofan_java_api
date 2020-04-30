@@ -132,6 +132,7 @@ public class AdminBusinessService implements IAdminBusinessService {
         Integer pageSize = (Integer) in.get("pageSize");
         Date startTime = (Date) in.get("startTime");
         Date endTime = (Date) in.get("endTime");
+        String action = (String) in.get("action");
 
         AdminInfo adminInfo = iCommonBusinessService.getAdminByToken(token);
 
@@ -155,18 +156,9 @@ public class AdminBusinessService implements IAdminBusinessService {
             endTime=calendar.getTime();
         }
 
-//        if (endTime != null) {
-//            Calendar calendar= Calendar.getInstance();
-//            calendar = Calendar.getInstance();
-//            calendar.setTime(endTime);
-//            calendar.set(Calendar.HOUR_OF_DAY, 0);
-//            calendar.set(Calendar.MINUTE, 0);
-//            calendar.set(Calendar.SECOND, 0);
-//            endTime = calendar.getTime();
-//        }
-
         qIn.put("startDate", startTime);
         qIn.put("endDate", endTime);
+        qIn.put("action", action);
         ArrayList<UserActLog> userActLogs = iAdminUserActionService.listUserAction(qIn);
 
 

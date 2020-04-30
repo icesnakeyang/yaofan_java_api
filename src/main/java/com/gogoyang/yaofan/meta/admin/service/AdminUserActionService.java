@@ -20,6 +20,9 @@ public class AdminUserActionService implements IAdminUserActionService{
      * 查询用户的行为日志
      * @param qIn
      * userId
+     * action
+     * startDate
+     * endDate
      * offset
      * size
      * @return

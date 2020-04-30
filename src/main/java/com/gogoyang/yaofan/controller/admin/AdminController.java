@@ -140,6 +140,7 @@ public class AdminController {
             in.put("pageSize", request.getPageSize());
             in.put("startTime", request.getStartTime());
             in.put("endTime", request.getEndTime());
+            in.put("action", request.getAction());
             Map out=iAdminBusinessService.listUserAction(in);
             response.setData(out);
         } catch (Exception ex) {

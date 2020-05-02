@@ -270,7 +270,68 @@ public class AdminBusinessService implements IAdminBusinessService {
         Integer total_WX_LOGIN_thismonth=iAdminUserActionService.totalUserAction(qIn);
         out.put("total_WX_LOGIN_thismonth", total_WX_LOGIN_thismonth);
 
+        //获取本月每天的日期
+        Date lastDate=GogoTools.getBeginDayOfLastMonth();
+        ArrayList dateList=listDateOfMonth(lastDate);
+
+        qIn=new HashMap();
+        qIn.put("action", GogoActType.WX_LOGIN);
+        ArrayList monthDays=new ArrayList();
+        for(int i=0;i<dateList.size();i++) {
+            qIn.put("startDate", dateList.get(i));
+            if(i<dateList.size()-1) {
+                qIn.put("endDate", dateList.get(i + 1));
+            }else {
+                calendar.setTime((Date)dateList.get(i));
+                calendar.add(Calendar.DATE,1);
+                Date endDate=GogoTools.setDateTimeTo0(calendar.getTime());
+                qIn.put("endDate", endDate);
+            }
+            Integer t=iAdminUserActionService.totalUserAction(qIn);
+            Map monthdayTotalMap=new HashMap();
+            monthdayTotalMap.put("day"+String.valueOf(i).toString(), t);
+            monthDays.add(monthdayTotalMap);
+        }
+        out.put("monthDays", monthDays);
+
 
         return out;
+    }
+
+    private ArrayList listDateOfMonth(Date date) throws Exception{
+        //获取指定月的开始日期
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.DATE,1);
+        Date startDate=calendar.getTime();
+
+        /**
+         * 获取指定月的结束日期
+         * 如果是本月，就截止今天，如果不是，就到该月最后一天
+         */
+        //首先计算该月最后一天
+        calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        Date endDate = calendar.getTime();
+        int endDay=calendar.get(Calendar.DATE);
+        int theMonth=calendar.get(Calendar.MONTH);
+        ArrayList dateList=new ArrayList();
+
+        Date theDate=startDate;
+        int theDay=1;
+        while (theDay<=endDay){
+            calendar.setTime(theDate);
+            theDate=GogoTools.setDateTimeTo0(theDate);
+            dateList.add(theDate);
+            calendar.add(Calendar.DATE,1);
+            if(calendar.get(Calendar.MONTH)!=theMonth){
+                break;
+            }
+            theDate=calendar.getTime();
+            theDay=calendar.get(Calendar.DATE);
+        }
+
+        return dateList;
     }
 }

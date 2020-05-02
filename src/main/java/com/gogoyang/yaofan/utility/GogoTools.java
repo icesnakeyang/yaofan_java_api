@@ -353,8 +353,8 @@ public class GogoTools {
         cal.add(Calendar.DATE, 2 - dayofweek);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND,0);
-        date=cal.getTime();
+        cal.set(Calendar.SECOND, 0);
+        date = cal.getTime();
         return date;
     }
 
@@ -363,9 +363,9 @@ public class GogoTools {
         Calendar cal = Calendar.getInstance();
         cal.setTime(getBeginDayOfWeek());
         cal.add(Calendar.DAY_OF_WEEK, 6);
-        cal.set(Calendar.HOUR_OF_DAY,0);
-        cal.set(Calendar.MINUTE,0);
-        cal.set(Calendar.SECOND,0);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
         Date weekEndSta = cal.getTime();
         return weekEndSta;
     }
@@ -510,7 +510,7 @@ public class GogoTools {
 
     // 返回某月该季度的第一个月
     public static Date getFirstSeasonDate(Date date) {
-        final int[] SEASON = { 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4 };
+        final int[] SEASON = {1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4};
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         int sean = SEASON[cal.get(Calendar.MONTH)];
@@ -535,7 +535,7 @@ public class GogoTools {
     }
 
     // 获取某年某月到某年某月按天的切片日期集合(间隔天数的集合)
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static List getTimeList(int beginYear, int beginMonth, int endYear,
                                    int endMonth, int k) {
         List list = new ArrayList();
@@ -562,7 +562,7 @@ public class GogoTools {
     }
 
     // 获取某年某月按天切片日期集合(某个月间隔多少天的日期集合)
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static List getTimeList(int beginYear, int beginMonth, int k) {
         List list = new ArrayList();
         Calendar begincal = new GregorianCalendar(beginYear, beginMonth, 1);
@@ -574,5 +574,21 @@ public class GogoTools {
         begincal = new GregorianCalendar(beginYear, beginMonth, max);
         list.add(begincal.getTime());
         return list;
+    }
+
+    /**
+     * 把一个日期的小时、分、秒部分设置为0
+     * @param date
+     * @return
+     * @throws Exception
+     */
+    public static Date setDateTimeTo0(Date date) throws Exception {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        Date date1 = calendar.getTime();
+        return date1;
     }
 }

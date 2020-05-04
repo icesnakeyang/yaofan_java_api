@@ -302,6 +302,23 @@ public class AdminBusinessService implements IAdminBusinessService {
         return out;
     }
 
+    @Override
+    public Map getUserAction(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String actionId=in.get("actionId").toString();
+
+        AdminInfo adminInfo=iCommonBusinessService.getAdminByToken(token);
+
+        Map qIn=new HashMap();
+        qIn.put("actionId", actionId);
+        UserActLog userActLog=iAdminUserActionService.getUserAction(qIn);
+
+        Map out=new HashMap();
+        out.put("action", userActLog);
+
+        return out;
+    }
+
     private ArrayList listDateOfMonth(Date date) throws Exception{
         //获取指定月的开始日期
         Calendar calendar=Calendar.getInstance();

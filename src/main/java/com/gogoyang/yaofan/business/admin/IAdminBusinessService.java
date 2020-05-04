@@ -14,4 +14,6 @@ public interface IAdminBusinessService {
     Map listUserAction(Map in) throws Exception;
 
     Map totalUserActionType(Map in) throws Exception;
+
+    Map getUserAction(Map in) throws Exception;
 }

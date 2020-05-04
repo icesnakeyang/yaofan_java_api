@@ -30,4 +30,12 @@ public interface AdminUserActionDao {
      * @return
      */
     Integer totalUserAction(Map qIn);
+
+    /**
+     * 读取用户行为日志的详情信息
+     * @param qIn
+     * actionId
+     * @return
+     */
+    UserActLog getUserAction(Map qIn);
 }

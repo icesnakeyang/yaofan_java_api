@@ -14,4 +14,5 @@ public class AdminRequest {
     private Date startTime;
     private Date endTime;
     private String action;
+    private String actionId;
 }

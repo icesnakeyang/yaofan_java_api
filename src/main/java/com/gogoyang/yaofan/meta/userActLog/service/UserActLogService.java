@@ -5,6 +5,8 @@ import com.gogoyang.yaofan.meta.userActLog.entity.UserActLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 public class UserActLogService implements IUserActLogService {
     final

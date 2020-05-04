@@ -35,7 +35,6 @@
             <when test="startDate!=null">
                 <![CDATA[
                 and DATE_FORMAT(user_act_log.create_time,'%Y-%m-%d')>=DATE_FORMAT(#{startDate},'%Y-%m-%d')
-                and DATE_FORMAT(user_act_log.create_time,'%Y-%m-%d')<=DATE_FORMAT(#{endDate},'%Y-%m-%d')
                 ]]>
             </when>
         </choose>
@@ -82,5 +81,33 @@
                 ]]>
             </when>
         </choose>
+    </select>
+
+    <!--读取用户行为日志的详情信息-->
+    <select id="getUserAction" parameterType="map" resultMap="userActionMap">
+        select user_act_log.ids,
+           uuid,
+           user_info.user_id,
+           action,
+           user_act_log.create_time,
+           memo,
+           ip_address,
+           device,
+           os,
+           result,
+           user_info.create_time as register_time,
+           status as user_info_status,
+           name as user_name,
+           open_id,
+           nick_name,
+           gender,
+           city,
+           province,
+           country,
+           id_card
+        from user_act_log
+        left join user_info on user_act_log.user_id=user_info.user_id
+        where 1=1
+        and uuid=#{actionId}
     </select>
 </mapper>

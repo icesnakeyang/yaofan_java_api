@@ -182,4 +182,33 @@ public class AdminController {
         }
         return response;
     }
+
+    /**
+     * 查询用户行为日志详情
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/getUserAction")
+    public Response getUserAction(@RequestBody AdminRequest request,
+                                     HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        try {
+            String token=httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("actionId", request.getActionId());
+            Map out=iAdminBusinessService.getUserAction(in);
+            response.setData(out);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+        }
+        return response;
+    }
 }

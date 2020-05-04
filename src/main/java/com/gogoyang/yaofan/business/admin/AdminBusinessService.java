@@ -150,9 +150,13 @@ public class AdminBusinessService implements IAdminBusinessService {
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.SECOND, 0);
             startTime = calendar.getTime();
-
-            int day=calendar.get(Calendar.DATE);
-            calendar.add(Calendar.DATE, +3);
+        }
+        if(endTime!=null){
+            Calendar calendar=Calendar.getInstance();
+            calendar.setTime(endTime);
+            calendar.set(Calendar.HOUR_OF_DAY,0);
+            calendar.set(Calendar.MINUTE,0);
+            calendar.set(Calendar.SECOND,0);
             endTime=calendar.getTime();
         }
 

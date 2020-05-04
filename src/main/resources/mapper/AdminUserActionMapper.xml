@@ -16,7 +16,8 @@
         name as user_name,
         action,
         user_act_log.create_time,
-        memo
+        memo,
+        result
         from user_act_log
         left join user_info on user_act_log.user_id=user_info.user_id
         where 1=1

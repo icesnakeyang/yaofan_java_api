@@ -4,6 +4,8 @@ import com.gogoyang.yaofan.meta.admin.entity.AdminInfo;
 import com.gogoyang.yaofan.meta.admin.service.IAdminInfoService;
 import com.gogoyang.yaofan.meta.admin.service.IAdminUserActionService;
 import com.gogoyang.yaofan.meta.admin.service.IAdminUserService;
+import com.gogoyang.yaofan.meta.task.entity.Task;
+import com.gogoyang.yaofan.meta.task.service.ITaskService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
 import com.gogoyang.yaofan.meta.userActLog.entity.UserActLog;
 import com.gogoyang.yaofan.utility.GogoActType;
@@ -26,15 +28,18 @@ public class AdminBusinessService implements IAdminBusinessService {
     private final ICommonBusinessService iCommonBusinessService;
     private final IAdminUserService iAdminUserService;
     private final IAdminUserActionService iAdminUserActionService;
+    private final ITaskService iTaskService;
 
     public AdminBusinessService(IAdminInfoService iAdminInfoService,
                                 ICommonBusinessService iCommonBusinessService,
                                 IAdminUserService iAdminUserService,
-                                IAdminUserActionService iAdminUserActionService) {
+                                IAdminUserActionService iAdminUserActionService,
+                                ITaskService iTaskService) {
         this.iAdminInfoService = iAdminInfoService;
         this.iCommonBusinessService = iCommonBusinessService;
         this.iAdminUserService = iAdminUserService;
         this.iAdminUserActionService = iAdminUserActionService;
+        this.iTaskService = iTaskService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -317,6 +322,21 @@ public class AdminBusinessService implements IAdminBusinessService {
         out.put("action", userActLog);
 
         return out;
+    }
+
+    @Override
+    public Map getTask(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String taskId=in.get("taskId").toString();
+
+        AdminInfo adminInfo=iCommonBusinessService.getAdminByToken(token);
+        Task task=iTaskService.getTaskByTaskId(taskId);
+
+        Map out=new HashMap();
+        out.put("task", task);
+
+        return out;
+
     }
 
     private ArrayList listDateOfMonth(Date date) throws Exception{

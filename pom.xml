@@ -12,8 +12,8 @@
     <artifactId>yaofan</artifactId>
     <version>0.0.1</version>
     <packaging>jar</packaging>
-    <name>LifeCapsule</name>
-    <description>Life Capsule Pass To Feature</description>
+    <name>Yaofan</name>
+    <description>Life is hard, better yaofan now</description>
 
     <properties>
         <java.version>1.8</java.version>

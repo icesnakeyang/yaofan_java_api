@@ -54,7 +54,7 @@ public class TaskBusinessService implements ITaskBusinessService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void createTask(Map in) throws Exception {
+    public Map createTask(Map in) throws Exception {
         String token = in.get("token").toString();
         String detail = (String) in.get("detail");
         String title = in.get("title").toString();
@@ -110,6 +110,11 @@ public class TaskBusinessService implements ITaskBusinessService {
             throw new Exception("10013");
         }
         iTaskService.createTask(task);
+
+        Map out=new HashMap();
+        out.put("taskId", task.getTaskId());
+
+        return out;
     }
 
     /**

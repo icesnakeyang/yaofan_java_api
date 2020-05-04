@@ -4,7 +4,7 @@ package com.gogoyang.yaofan.business.task;
 import java.util.Map;
 
 public interface ITaskBusinessService {
-    void createTask(Map in) throws Exception;
+    Map createTask(Map in) throws Exception;
 
     /**
      * 查询我可以抢单的任务

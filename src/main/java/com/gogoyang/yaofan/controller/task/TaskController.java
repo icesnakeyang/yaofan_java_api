@@ -55,8 +55,8 @@ public class TaskController {
             in.put("endTime", request.getEndTime());
             in.put("point", request.getPoint());
             in.put("teamId", request.getTeamId());
-            iTaskBusinessService.createTask(in);
-            memoMap.put("result", GogoStatus.SUCCESS);
+            Map out=iTaskBusinessService.createTask(in);
+            memoMap.put("taskId", out.get("taskId"));
             logMap.put("result", GogoStatus.SUCCESS);
         } catch (Exception ex) {
             try {

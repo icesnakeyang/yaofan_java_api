@@ -15,4 +15,5 @@ public class AdminRequest {
     private Date endTime;
     private String action;
     private String actionId;
+    private String taskId;
 }

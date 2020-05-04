@@ -211,4 +211,33 @@ public class AdminController {
         }
         return response;
     }
+
+    /**
+     * 读取任务详情
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("getTask")
+    public Response getTask(@RequestBody AdminRequest request,
+                            HttpServletRequest httpServletRequest){
+        Response response=new Response();
+        Map in=new HashMap();
+        try {
+            String token=httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("taskId", request.getTaskId());
+            Map out=iAdminBusinessService.getTask(in);
+            response.setData(out);
+        }catch (Exception ex){
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            }catch (Exception ex2){
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+        }
+        return response;
+    }
 }

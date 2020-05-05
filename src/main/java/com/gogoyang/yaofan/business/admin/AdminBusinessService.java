@@ -6,6 +6,8 @@ import com.gogoyang.yaofan.meta.admin.service.IAdminUserActionService;
 import com.gogoyang.yaofan.meta.admin.service.IAdminUserService;
 import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.task.service.ITaskService;
+import com.gogoyang.yaofan.meta.taskLog.entity.TaskLog;
+import com.gogoyang.yaofan.meta.taskLog.service.ITaskLogService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
 import com.gogoyang.yaofan.meta.userActLog.entity.UserActLog;
 import com.gogoyang.yaofan.utility.GogoActType;
@@ -29,17 +31,20 @@ public class AdminBusinessService implements IAdminBusinessService {
     private final IAdminUserService iAdminUserService;
     private final IAdminUserActionService iAdminUserActionService;
     private final ITaskService iTaskService;
+    private final ITaskLogService iTaskLogService;
 
     public AdminBusinessService(IAdminInfoService iAdminInfoService,
                                 ICommonBusinessService iCommonBusinessService,
                                 IAdminUserService iAdminUserService,
                                 IAdminUserActionService iAdminUserActionService,
-                                ITaskService iTaskService) {
+                                ITaskService iTaskService,
+                                ITaskLogService iTaskLogService) {
         this.iAdminInfoService = iAdminInfoService;
         this.iCommonBusinessService = iCommonBusinessService;
         this.iAdminUserService = iAdminUserService;
         this.iAdminUserActionService = iAdminUserActionService;
         this.iTaskService = iTaskService;
+        this.iTaskLogService = iTaskLogService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -334,6 +339,12 @@ public class AdminBusinessService implements IAdminBusinessService {
 
         Map out=new HashMap();
         out.put("task", task);
+
+        //查询任务日志
+        Map qIn=new HashMap();
+        qIn.put("taskId", task.getTaskId());
+        ArrayList<TaskLog> taskLogs=iTaskLogService.listTaskLog(qIn);
+        out.put("taskLogs", taskLogs);
 
         return out;
 

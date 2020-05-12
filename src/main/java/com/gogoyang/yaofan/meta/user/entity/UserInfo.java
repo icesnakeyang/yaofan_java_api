@@ -27,4 +27,5 @@ public class UserInfo {
     private String city;
     private String province;
     private String country;
+    private String avatarUrl;
 }

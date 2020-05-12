@@ -127,6 +127,7 @@ public class UserBusinessService implements IUserBusinessService {
         String city = in.get("city").toString();
         String province = in.get("province").toString();
         String country = in.get("country").toString();
+        String avatarUrl = (String)in.get("avatarUrl");
 
         /**
          * 通过openId查询用户记录
@@ -149,6 +150,7 @@ public class UserBusinessService implements IUserBusinessService {
             userInfo.setProvince(province);
             userInfo.setCountry(country);
             userInfo.setOpenId(openId);
+            userInfo.setAvatarUrl(avatarUrl);
             iUserInfoService.createUserInfo(userInfo);
         }
 

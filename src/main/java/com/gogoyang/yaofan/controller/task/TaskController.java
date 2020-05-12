@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.PastOrPresent;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,6 +59,7 @@ public class TaskController {
             Map out=iTaskBusinessService.createTask(in);
             memoMap.put("taskId", out.get("taskId"));
             logMap.put("result", GogoStatus.SUCCESS);
+            response.setData(out);
         } catch (Exception ex) {
             try {
                 response.setCode(Integer.parseInt(ex.getMessage()));
@@ -512,6 +514,49 @@ public class TaskController {
                 logger.error(ex.getMessage());
             }
             memoMap.put("result", GogoStatus.FAILED);
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        }catch (Exception ex3){
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * 把任务转移到任务广场，重新让团队成员承接
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/transferTask")
+    public Response transferTask(@RequestBody TaskRequest request,
+                                 HttpServletRequest httpServletRequest){
+        Response response=new Response();
+        Map in=new HashMap();
+        Map logMap=new HashMap();
+        Map memoMap=new HashMap();
+        try {
+            String token=httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("point", request.getPoint());
+            in.put("detail", request.getDetail());
+            in.put("taskId", request.getTaskId());
+            iTaskBusinessService.transferTask(in);
+            logMap.put("token", token);
+            logMap.put("GogoActType", GogoActType.TRANSFER_TASK);
+            logMap.put("result", GogoStatus.SUCCESS);
+        }catch (Exception ex){
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            }catch (Exception ex2){
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            logMap.put("result", GogoStatus.FAILED);
             memoMap.put("error", ex.getMessage());
         }
         try {

@@ -56,4 +56,6 @@ public interface ITaskBusinessService {
     Map totalTasks(Map in) throws Exception;
 
     void deleteTask(Map in) throws Exception;
+
+    void transferTask(Map in) throws Exception;
 }

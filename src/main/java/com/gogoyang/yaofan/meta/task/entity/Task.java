@@ -21,4 +21,6 @@ public class Task {
     private String status;
     private String teamId;
     private String teamName;
+    //该任务的上一个任务版本
+    private String prevTaskId;
 }

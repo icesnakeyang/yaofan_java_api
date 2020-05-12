@@ -59,6 +59,7 @@ public class WXController {
             String iv = request.getIv();
             String phone = request.getPhone();
             String os = request.getOs();
+            String avatarUrl=request.getAvatarUrl();
 
             logMap.put("GogoActType", GogoActType.WX_LOGIN);
             logMap.put("device", phone);

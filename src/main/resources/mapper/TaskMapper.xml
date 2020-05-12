@@ -14,6 +14,7 @@
         <result property="status" column="task_status"/>
         <result property="teamId" column="team_id"/>
         <result property="teamName" column="team_name"/>
+        <result property="prevTaskId" column="prev_task_id"/>
     </resultMap>
 
     <!--创建一个任务-->
@@ -22,9 +23,11 @@
             keyProperty="ids"
             parameterType="com.gogoyang.yaofan.meta.task.entity.Task">
       insert into task
-      (task_id, create_user_id, point, title, detail, create_time, end_time, status, team_id)
+      (task_id, create_user_id, point, title, detail,
+      create_time, end_time, status, team_id, prev_task_id)
       values
-      (#{taskId}, #{createUserId}, #{point}, #{title}, #{detail}, #{createTime}, #{endTime},#{status}, #{teamId})
+      (#{taskId}, #{createUserId}, #{point}, #{title}, #{detail},
+       #{createTime}, #{endTime},#{status}, #{teamId}, #{prevTaskId})
     </insert>
 
     <select id="listBiddingTasks" parameterType="map" resultMap="taskMap">

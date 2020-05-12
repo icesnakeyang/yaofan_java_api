@@ -171,6 +171,14 @@ public class TeamBusinessService implements ITeamBusinessService {
             }
         }
 
+        /**
+         * 读取团队成员信息
+         */
+        qIn=new HashMap();
+        qIn.put("teamId", teamId);
+        ArrayList<TeamUser> teamUsers= iTeamService.listTeamUser(qIn);
+        out.put("teamUsers", teamUsers);
+
         return out;
     }
 

@@ -12,6 +12,7 @@ public enum  GogoStatus {
     GRABBING,
     CANCEL,
     ACCEPT,
-    STOP
+    STOP,
+    TRANSFERRED
 
 }

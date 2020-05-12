@@ -9,6 +9,7 @@
         <result property="openId" column="open_id"/>
         <result property="nickName" column="nick_name"/>
         <result property="idCard" column="id_card"/>
+        <result property="avatarUrl" column="avatar_url"/>
     </resultMap>
 
     <insert id="createUserInfo"
@@ -17,10 +18,12 @@
             parameterType="com.gogoyang.yaofan.meta.user.entity.UserInfo">
       insert into user_info
       (user_id, phone, password, token, token_time, create_time, status, name,
-      open_id, nick_name, gender, city, province, country)
+      open_id, nick_name, gender, city, province, country,
+      avatar_url)
       values
       (#{userId}, #{phone}, #{password}, #{token}, #{tokenTime}, #{createTime}, #{status}, #{name},
-      #{openId}, #{nickName}, #{gender}, #{city}, #{province}, #{country})
+      #{openId}, #{nickName}, #{gender}, #{city}, #{province}, #{country},
+      #{avatarUrl})
     </insert>
 
     <select id="getUserInfoByPhone" parameterType="java.lang.String"

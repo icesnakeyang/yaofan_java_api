@@ -63,6 +63,8 @@ public class TaskBusinessService implements ITaskBusinessService {
         String pointStr = (String) in.get("point");
         String teamId = (String) in.get("teamId");
 
+
+
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
         Team team = null;
@@ -86,6 +88,7 @@ public class TaskBusinessService implements ITaskBusinessService {
         try {
             point = Double.parseDouble(pointStr);
         } catch (Exception ex) {
+            //s
             throw new Exception("20002");
         }
 
@@ -711,6 +714,45 @@ public class TaskBusinessService implements ITaskBusinessService {
         }
 
         iTaskService.deleteTask(taskId);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void transferTask(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String pointStr=(String) in.get("point");
+        String detail=in.get("detail").toString();
+        String taskId=in.get("taskId").toString();
+
+        Double point = null;
+        try {
+            point = Double.parseDouble(pointStr);
+        } catch (Exception ex) {
+            throw new Exception("20002");
+        }
+
+        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+
+        Task task=iCommonBusinessService.getTaskByTaskId(taskId);
+
+        Task newTask=new Task();
+
+        newTask.setPoint(point);
+        newTask.setDetail(detail);
+        newTask.setPrevTaskId(taskId);
+        newTask.setTaskId(GogoTools.UUID().toString());
+        newTask.setCreateTime(new Date());
+        newTask.setStatus(GogoStatus.GRABBING.toString());
+        newTask.setCreateUserId(userInfo.getUserId());
+        newTask.setEndTime(task.getEndTime());
+        newTask.setTeamId(task.getTeamId());
+        newTask.setTitle(task.getTitle());
+        iTaskService.createTask(newTask);
+
+        //把原来的任务改成已转移状态
+        task.setStatus(GogoStatus.TRANSFERRED.toString());
+        iTaskService.updateTaskStatus(task);
+
     }
 
     private Integer totalTaskPartyA(String userId) throws Exception {

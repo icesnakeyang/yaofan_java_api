@@ -9,5 +9,6 @@ public class WxRequest {
     private String iv;
     private String phone;
     private String os;
+    private String avatarUrl;
 
 }

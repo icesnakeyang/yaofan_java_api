@@ -114,6 +114,7 @@ public class CommonBusinessService implements ICommonBusinessService {
     public boolean isDuplicateTask(Task task) throws Exception {
         /**
          * 如果createUserId相同，title相同，detail相同，status=GRABBING，teamId相同，即可判断为重复
+         * 再加上point相同
          */
 
         Map qIn = new HashMap();
@@ -121,6 +122,7 @@ public class CommonBusinessService implements ICommonBusinessService {
         qIn.put("detail", task.getDetail());
         qIn.put("createUserId", task.getCreateUserId());
         qIn.put("status", GogoStatus.GRABBING.toString());
+        qIn.put("point", task.getPoint());
 
         Integer cc = iTaskService.totalTaskDuplicate(qIn);
         if (cc > 0) {

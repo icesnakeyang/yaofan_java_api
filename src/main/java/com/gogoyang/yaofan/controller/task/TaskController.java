@@ -90,10 +90,10 @@ public class TaskController {
         try {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
-            logMap.put("GogoActType", GogoActType.UPDATE_TASK.toString());
             in.put("detail", request.getDetail());
-            logMap.put("title", request.getTitle());
             in.put("title", request.getTitle());
+            logMap.put("GogoActType", GogoActType.UPDATE_TASK.toString());
+            logMap.put("title", request.getTitle());
             String endDateStr = (String) request.getEndDateWx();
             String endTimeStr = (String) request.getEndTimeWx();
             if (endDateStr != null && endTimeStr != null) {

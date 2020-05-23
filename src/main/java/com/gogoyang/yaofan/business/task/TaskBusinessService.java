@@ -13,6 +13,7 @@ import com.gogoyang.yaofan.meta.team.service.ITeamService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
 import com.gogoyang.yaofan.meta.user.service.IUserInfoService;
 import com.gogoyang.yaofan.utility.GogoActType;
+import com.gogoyang.yaofan.utility.GogoRole;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
@@ -64,7 +65,6 @@ public class TaskBusinessService implements ITaskBusinessService {
         String teamId = (String) in.get("teamId");
 
 
-
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
         Team team = null;
@@ -114,7 +114,7 @@ public class TaskBusinessService implements ITaskBusinessService {
         }
         iTaskService.createTask(task);
 
-        Map out=new HashMap();
+        Map out = new HashMap();
         out.put("taskId", task.getTaskId());
 
         return out;
@@ -283,6 +283,7 @@ public class TaskBusinessService implements ITaskBusinessService {
 
     /**
      * 抢单
+     *
      * @param in
      * @throws Exception
      */
@@ -332,7 +333,7 @@ public class TaskBusinessService implements ITaskBusinessService {
         iPointService.createPointLedger(pointLedger);
 
         //甲方出账
-        PointLedger pointLedgerA=new PointLedger();
+        PointLedger pointLedgerA = new PointLedger();
         pointLedgerA.setActType(GogoActType.DEAL.toString());
         pointLedgerA.setCreateTime(new Date());
         pointLedgerA.setPointOut(task.getPoint());
@@ -688,13 +689,14 @@ public class TaskBusinessService implements ITaskBusinessService {
 
     /**
      * 用户删除一个任务
+     *
      * @param in
      * @throws Exception
      */
     @Override
     public void deleteTask(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String taskId=in.get("taskId").toString();
+        String token = in.get("token").toString();
+        String taskId = in.get("taskId").toString();
 
         /**
          * 1、读取用户
@@ -702,14 +704,14 @@ public class TaskBusinessService implements ITaskBusinessService {
          * 3、检查任务是否Grab
          * 4、是就删除
          */
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
-        Task task=iCommonBusinessService.getTaskByTaskId(taskId);
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+        Task task = iCommonBusinessService.getTaskByTaskId(taskId);
 
-        if(!task.getStatus().equals(GogoStatus.GRABBING.toString())){
+        if (!task.getStatus().equals(GogoStatus.GRABBING.toString())) {
             throw new Exception("20015");
         }
 
-        if(!task.getCreateUserId().equals(userInfo.getUserId())){
+        if (!task.getCreateUserId().equals(userInfo.getUserId())) {
             throw new Exception("20016");
         }
 
@@ -719,10 +721,10 @@ public class TaskBusinessService implements ITaskBusinessService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void transferTask(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String pointStr=(String) in.get("point");
-        String detail=in.get("detail").toString();
-        String taskId=in.get("taskId").toString();
+        String token = in.get("token").toString();
+        String pointStr = (String) in.get("point");
+        String detail = in.get("detail").toString();
+        String taskId = in.get("taskId").toString();
 
         Double point = null;
         try {
@@ -731,11 +733,11 @@ public class TaskBusinessService implements ITaskBusinessService {
             throw new Exception("20002");
         }
 
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        Task task=iCommonBusinessService.getTaskByTaskId(taskId);
+        Task task = iCommonBusinessService.getTaskByTaskId(taskId);
 
-        Task newTask=new Task();
+        Task newTask = new Task();
 
         newTask.setPoint(point);
         newTask.setDetail(detail);
@@ -752,6 +754,44 @@ public class TaskBusinessService implements ITaskBusinessService {
         //把原来的任务改成已转移状态
         task.setStatus(GogoStatus.TRANSFERRED.toString());
         iTaskService.updateTaskStatus(task);
+
+    }
+
+    @Override
+    public Map listMyObserveTask(Map in) throws Exception {
+        String token = in.get("token").toString();
+        Integer pageIndex = (Integer) in.get("pageIndex");
+        Integer pageSize = (Integer) in.get("pageSize");
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        /**
+         * 1、读取用户team，且type为观察者
+         * 2、读取所有team的所有任务
+         */
+
+        Map qIn = new HashMap();
+        qIn.put("userId", userInfo.getUserId());
+//        qIn.put("memberType", GogoRole.TEAM_OBSERVER.toString());
+        ArrayList<TeamUser> teamUsers = iTeamService.listTeamUser(qIn);
+
+        Integer offset = (pageIndex - 1) * pageSize;
+        qIn.put("offset", offset);
+        qIn.put("size", pageSize);
+
+        ArrayList<String> teamList = new ArrayList<>();
+        for (int i = 0; i < teamUsers.size(); i++) {
+            teamList.add(teamUsers.get(i).getTeamId());
+        }
+        if (teamList.size() > 0) {
+            qIn.put("teamList", teamList);
+        }
+        ArrayList<Task> tasks = iTaskService.listTask(qIn);
+
+        Map out = new HashMap();
+        out.put("tasks", tasks);
+
+        return out;
 
     }
 

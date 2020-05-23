@@ -567,4 +567,50 @@ public class TaskController {
         }
         return response;
     }
+
+    /**
+     * 观察者用户查看所有团队成员的任务
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/listMyObserveTask")
+    public Response listMyObserveTask(@RequestBody TaskRequest request,
+                                      HttpServletRequest httpServletRequest){
+        Response response=new Response();
+        Map in=new HashMap();
+        Map logMap=new HashMap();
+        Map memoMap=new HashMap();
+        try {
+            String token=httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("pageIndex", request.getPageIndex());
+            in.put("pageSize", request.getPageSize());
+
+            logMap.put("GogoActType", GogoActType.LIST_OBSERVE_TASK);
+            logMap.put("token", token);
+
+            Map out=iTaskBusinessService.listMyObserveTask(in);
+            response.setData(out);
+
+            logMap.put("result", GogoStatus.SUCCESS);
+        }catch (Exception ex){
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            }catch (Exception ex2){
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            logMap.put("result", GogoStatus.FAILED);
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        }catch (Exception ex3){
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
 }

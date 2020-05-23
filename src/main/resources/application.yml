@@ -14,3 +14,8 @@ wechat:
   appid: "wxaaceff5dd77419f7"
   secret: "9da02665a9c331b74cb170fba60ea5fd"
   user_url: "https://api.weixin.qq.com/sns/jscode2session"
+
+cbs:
+  imagesPath: C:/smartYou/img/
+domain:
+  name: https://www.wegou1688.com:6060

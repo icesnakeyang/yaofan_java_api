@@ -162,6 +162,9 @@ public interface ITeamService {
      * @param qIn teamId
      *            userId
      *            status
+     *            memberType
+     *            offset
+     *            size
      * @return
      */
     ArrayList<TeamUser> listTeamUser(Map qIn) throws Exception;
@@ -194,26 +197,26 @@ public interface ITeamService {
 
     /**
      * 处理团队申请
-     * @param qIn
-     * status
-     * processTime
-     * processUserId
-     * processRemark
+     *
+     * @param qIn status
+     *            processTime
+     *            processUserId
+     *            processRemark
      */
     void processTeamQuitLog(Map qIn);
 
     /**
      * 统计我申请加入的团队申请总数
-     * @param qIn
-     * userId
+     *
+     * @param qIn userId
      * @return
      */
     Integer totalTeamApplyLogMyApply(Map qIn);
 
     /**
      * 统计申请加入我的团队的申请总数
-     * @param qIn
-     * teamList
+     *
+     * @param qIn teamList
      * @return
      */
     Integer totalTeamApplyLogMyTeam(Map qIn);

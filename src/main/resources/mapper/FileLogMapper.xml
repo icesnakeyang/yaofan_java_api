@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gogoyang.yaofan.meta.fileLog.dao.FileLogDao">
+
+    <resultMap id="fileLogMap" type="com.gogoyang.yaofan.meta.fileLog.entity.FileLog">
+        <result property="fileLogId" column="file_log_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <!--创建一个新文件上传日志-->
+    <insert id="createFileLog"
+            useGeneratedKeys="true"
+            keyProperty="ids"
+            parameterType="com.gogoyang.yaofan.meta.fileLog.entity.FileLog">
+      insert into file_log
+      (file_log_id, user_id, filename, create_time, url)
+      values
+      (#{fileLogId}, #{userId}, #{filename}, #{createTime}, #{url})
+    </insert>
+</mapper>

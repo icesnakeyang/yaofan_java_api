@@ -2,6 +2,8 @@ package com.gogoyang.yaofan.utility.common;
 
 import com.gogoyang.yaofan.meta.admin.entity.AdminInfo;
 import com.gogoyang.yaofan.meta.admin.service.IAdminInfoService;
+import com.gogoyang.yaofan.meta.fileLog.entity.FileLog;
+import com.gogoyang.yaofan.meta.fileLog.service.IFileLogService;
 import com.gogoyang.yaofan.meta.task.entity.Task;
 import com.gogoyang.yaofan.meta.task.service.ITaskService;
 import com.gogoyang.yaofan.meta.team.entity.Team;
@@ -16,6 +18,7 @@ import com.gogoyang.yaofan.meta.volunteer.task.entity.VolunteerTask;
 import com.gogoyang.yaofan.utility.GogoActType;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,19 +35,22 @@ public class CommonBusinessService implements ICommonBusinessService {
     private final ITeamService iTeamService;
     private final IVolunteerService iVolunteerService;
     private final IAdminInfoService iAdminInfoService;
+    private final IFileLogService iFileLogService;
 
     public CommonBusinessService(IUserActLogService iUserActLogService,
                                  IUserInfoService iUserInfoService,
                                  ITaskService iTaskService,
                                  ITeamService iTeamService,
                                  IVolunteerService iVolunteerService,
-                                 IAdminInfoService iAdminInfoService) {
+                                 IAdminInfoService iAdminInfoService,
+                                 IFileLogService iFileLogService) {
         this.iUserActLogService = iUserActLogService;
         this.iUserInfoService = iUserInfoService;
         this.iTaskService = iTaskService;
         this.iTeamService = iTeamService;
         this.iVolunteerService = iVolunteerService;
         this.iAdminInfoService = iAdminInfoService;
+        this.iFileLogService = iFileLogService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -207,6 +213,42 @@ public class CommonBusinessService implements ICommonBusinessService {
             throw new Exception("20020");
         }
         return volunteerTask;
+    }
+
+    /**
+     * 创建一个上传文件日志
+     * 保存上传文件url地址
+     * @param in
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map createFileLog(Map in) throws Exception {
+        String token=in.get("token").toString();
+        String fileName=in.get("fileName").toString();
+        String url=in.get("url").toString();
+
+        /**
+         * 获取用户
+         * 这里用户可能是普通用户或者管理员
+         * 首先查询UserInfo,如果没有，再查询AdminInfo
+         */
+        UserInfo userInfo=getUserByToken(token);
+
+        FileLog fileLog=new FileLog();
+        fileLog.setCreateTime(new Date());
+        fileLog.setFileLogId(GogoTools.UUID().toString());
+        fileLog.setFilename(fileName);
+        fileLog.setUserId(userInfo.getUserId());
+        fileLog.setUrl(url);
+
+        iFileLogService.createFileLog(fileLog);
+
+        Map out=new HashMap();
+        out.put("fileLogId", fileLog.getFileLogId());
+        out.put("url", fileLog.getUrl());
+
+        return out;
     }
 
     public UserInfo getUserByUserId(String userId) throws Exception {

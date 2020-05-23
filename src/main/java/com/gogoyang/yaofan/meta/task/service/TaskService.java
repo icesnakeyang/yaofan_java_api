@@ -160,6 +160,18 @@ public class TaskService implements ITaskService {
     }
 
     /**
+     * 读取多个任务列表
+     * @param qIn
+     * teamList
+     * @return
+     */
+    @Override
+    public ArrayList<Task> listTask(Map qIn) {
+        ArrayList<Task> tasks=taskDao.listTask(qIn);
+        return tasks;
+    }
+
+    /**
      * 统计我的任务总是（我是甲方或者我是乙方）
      *
      * @param qIn partyAId

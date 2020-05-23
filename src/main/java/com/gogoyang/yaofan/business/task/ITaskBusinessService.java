@@ -58,4 +58,6 @@ public interface ITaskBusinessService {
     void deleteTask(Map in) throws Exception;
 
     void transferTask(Map in) throws Exception;
+
+    Map listMyObserveTask(Map in) throws Exception;
 }

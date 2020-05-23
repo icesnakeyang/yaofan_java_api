@@ -32,6 +32,7 @@ public interface ICommonBusinessService {
 
     /**
      * 检查用户是否甲方或者乙方
+     *
      * @param user
      * @param task
      * @throws Exception
@@ -39,4 +40,6 @@ public interface ICommonBusinessService {
     void checkTaskMember(UserInfo user, Task task) throws Exception;
 
     VolunteerTask getVolunteerTask(String volunteerTaskId) throws Exception;
+
+    Map createFileLog(Map in) throws Exception;
 }

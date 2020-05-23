@@ -20,6 +20,9 @@ public interface TeamUserDao {
      * teamId
      * userId
      * status
+     * memberType
+     * offset
+     * size
      * @return
      */
     ArrayList<TeamUser> listTeamUser(Map qIn);

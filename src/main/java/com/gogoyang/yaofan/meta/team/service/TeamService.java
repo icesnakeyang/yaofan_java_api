@@ -221,6 +221,9 @@ public class TeamService implements ITeamService {
      * @param qIn teamId
      *            userId
      *            status
+     *            memberType
+     *            offset
+     *            size
      * @return
      */
     @Override
@@ -256,6 +259,7 @@ public class TeamService implements ITeamService {
 
     /**
      * 查询退团日志详情
+     *
      * @param qIn teamQuitLogId
      * @return
      * @throws Exception
@@ -268,10 +272,10 @@ public class TeamService implements ITeamService {
 
     /**
      * 处理团队申请
-     * @param qIn
-     * status
-     * processTime
-     * processUserId
+     *
+     * @param qIn status
+     *            processTime
+     *            processUserId
      */
     @Override
     public void processTeamQuitLog(Map qIn) {
@@ -280,25 +284,25 @@ public class TeamService implements ITeamService {
 
     /**
      * 统计我申请加入的团队申请总数
-     * @param qIn
-     * userId
+     *
+     * @param qIn userId
      * @return
      */
     @Override
     public Integer totalTeamApplyLogMyApply(Map qIn) {
-        Integer total=teamApplyLogDao.totalTeamApplyLogMyApply(qIn);
+        Integer total = teamApplyLogDao.totalTeamApplyLogMyApply(qIn);
         return total;
     }
 
     /**
      * 统计申请加入我的团队的申请总数
-     * @param qIn
-     * teamList
+     *
+     * @param qIn teamList
      * @return
      */
     @Override
     public Integer totalTeamApplyLogMyTeam(Map qIn) {
-        Integer total=teamApplyLogDao.totalTeamApplyLogMyTeam(qIn);
+        Integer total = teamApplyLogDao.totalTeamApplyLogMyTeam(qIn);
         return total;
     }
 }

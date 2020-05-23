@@ -9,49 +9,62 @@
         <result property="managerName" column="manager_name"/>
         <result property="creatorName" column="creator_name"/>
         <result property="status" column="status"/>
+        <result property="memberType" column="member_type"/>
     </resultMap>
 
     <!--创建一个新的团队用户链接-->
     <insert id="createTeamUser"
             parameterType="com.gogoyang.yaofan.meta.team.entity.TeamUser">
         insert into team_user
-        (user_id, team_id, status, create_time)
+        (user_id, team_id, status, create_time, member_type)
         values
-        (#{userId}, #{teamId}, #{status}, #{createTime})
+        (#{userId}, #{teamId}, #{status}, #{createTime}, #{memberType})
     </insert>
 
     <!--查询团队成员列表-->
     <select id="listTeamUser" parameterType="map" resultMap="teamUserMap">
         select
-            team_user.ids,
-            team_user.user_id,
-            team_user.team_id,
-            team.name as team_name,
-            me.name as my_name,
-            manager.name as manager_name,
-            creator.name as creator_name,
-            team_user.status,
-        description
-            from (((team_user
-            inner join team on team_user.team_id = team.team_id)
-            inner join user_info me on team_user.user_id = me.user_id)
-            inner join user_info manager on team.manager_id = manager.user_id)
-            inner join user_info creator on team.create_user_id = creator.user_id
+        team_user.ids,
+        team_user.user_id,
+        team_user.team_id,
+        team.name as team_name,
+        me.name as my_name,
+        manager.name as manager_name,
+        creator.name as creator_name,
+        team_user.status,
+        description,
+        member_type
+        from (((team_user
+        inner join team on team_user.team_id = team.team_id)
+        inner join user_info me on team_user.user_id = me.user_id)
+        inner join user_info manager on team.manager_id = manager.user_id)
+        inner join user_info creator on team.create_user_id = creator.user_id
         where 1=1
-            <choose>
-                <when test="status!=null">
-                    and team_user.status=#{status}
-                </when>
-            </choose>
-            <choose>
-                <when test="userId!=null">
-                    and team_user.user_id=#{userId}
-                </when>
-            </choose>
-            <choose>
-                <when test="teamId!=null">
-                    and team_user.team_id=#{teamId}
-                </when>
-            </choose>
+        <choose>
+            <when test="status!=null">
+                and team_user.status=#{status}
+            </when>
+        </choose>
+        <choose>
+            <when test="userId!=null">
+                and team_user.user_id=#{userId}
+            </when>
+        </choose>
+        <choose>
+            <when test="teamId!=null">
+                and team_user.team_id=#{teamId}
+            </when>
+        </choose>
+        <choose>
+            <when test="memberType!=null">
+                and member_type=#{memberType}
+            </when>
+        </choose>
+        order by ids desc
+        <choose>
+            <when test="offset!=null">
+                limit #{offset}, #{size}
+            </when>
+        </choose>
     </select>
 </mapper>

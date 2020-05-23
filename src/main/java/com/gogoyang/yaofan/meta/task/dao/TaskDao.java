@@ -11,10 +11,27 @@ public interface TaskDao {
 
     void createTask(Task task);
 
+    /**
+     * 读取所有我可以抢单的任务，包括所有我加入的团队的任务
+     * @param qIn
+     * userId
+     * teamList
+     * @return
+     */
     ArrayList<Task> listBiddingTasks(Map qIn);
 
+    /**
+     * 通过taskId读取一个任务详情
+     * @param taskId
+     * @return
+     */
     Task getTaskByTaskId(String taskId);
 
+    /**
+     * 统计重复的任务数量
+     * @param qIn
+     * @return
+     */
     Integer totalTaskDuplicate(Map qIn);
 
     /**
@@ -34,6 +51,10 @@ public interface TaskDao {
      */
     ArrayList<Task> listMyTasks(Map qIn);
 
+    /**
+     * 直接根据taskId修改任务状态
+     * @param task
+     */
     void updateTaskStatus(Task task);
 
     /**
@@ -73,6 +94,15 @@ public interface TaskDao {
      */
     ArrayList<Task> listMyTasksDetailPartyAOrB(Map qIn);
 
+    /**
+     * 增量修改任务
+     * @param task
+     * point
+     * title
+     * detail
+     * endTime
+     * teamId
+     */
     void updateTask(Task task);
 
     /**
@@ -98,4 +128,12 @@ public interface TaskDao {
      * @param taskId
      */
     void deleteTask(String taskId);
+
+    /**
+     * 读取多个任务列表
+     * @param qIn
+     * teamList
+     * @return
+     */
+    ArrayList<Task> listTask(Map qIn);
 }

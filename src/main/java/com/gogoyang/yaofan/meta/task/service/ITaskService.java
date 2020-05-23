@@ -99,4 +99,12 @@ public interface ITaskService {
      * @param taskId
      */
     void deleteTask(String taskId);
+
+    /**
+     * 读取多个任务列表
+     * @param qIn
+     * teamList
+     * @return
+     */
+    ArrayList<Task> listTask(Map qIn);
 }

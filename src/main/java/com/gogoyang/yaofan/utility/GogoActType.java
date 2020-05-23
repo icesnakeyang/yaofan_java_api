@@ -54,5 +54,9 @@ public enum GogoActType {
     REJECT_VOLUNTEER_APPLY,
     AGREE_VOLUNTEER_APPLY,
     STOP_VOLUNTEER_TASK,
-    TRANSFER_TASK
+    TRANSFER_TASK,
+    /**
+     * 观察者查看所有团队成员任务
+     */
+    LIST_OBSERVE_TASK
 }

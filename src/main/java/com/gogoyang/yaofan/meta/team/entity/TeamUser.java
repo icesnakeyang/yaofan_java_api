@@ -13,6 +13,12 @@ public class TeamUser {
     private String userId;
     private String teamId;
     private Date createTime;
+    /**
+     * 用户在团队里的角色类型
+     */
+    private String memberType;
+
+
     private String teamName;
     private String userName;
     private String managerName;

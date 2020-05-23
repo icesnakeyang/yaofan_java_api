@@ -5,6 +5,10 @@ spring:
     url: jdbc:mysql://rm-wz9v8xc42t1go7ptc0o.mysql.rds.aliyuncs.com:3306/yaofan?useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai
     username: root
     password: 112233ccddEE
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
 mybatis:
   mapper-locations: classpath:mapper/*.xml
 logging:

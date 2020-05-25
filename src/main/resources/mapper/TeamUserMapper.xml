@@ -8,8 +8,11 @@
         <result property="userName" column="my_name"/>
         <result property="managerName" column="manager_name"/>
         <result property="creatorName" column="creator_name"/>
-        <result property="status" column="status"/>
+        <result property="status" column="team_status"/>
         <result property="memberType" column="member_type"/>
+        <result property="managerId" column="manager_id"/>
+        <result property="teamCreateTime" column="team_create_time"/>
+        <result property="createTime" column="create_time"/>
     </resultMap>
 
     <!--创建一个新的团队用户链接-->
@@ -29,17 +32,33 @@
         team_user.team_id,
         team.name as team_name,
         me.name as my_name,
+        manager_id,
         manager.name as manager_name,
         creator.name as creator_name,
-        team_user.status,
+        team.status as team_status,
         description,
-        member_type
+        member_type,
+        team.create_time as team_create_time,
+        team_user.create_time
         from (((team_user
         inner join team on team_user.team_id = team.team_id)
         inner join user_info me on team_user.user_id = me.user_id)
         inner join user_info manager on team.manager_id = manager.user_id)
         inner join user_info creator on team.create_user_id = creator.user_id
         where 1=1
+        <choose>
+            <when test="history!=null">
+                <![CDATA[
+            and team.status<>'ACTIVE'
+            ]]>
+            </when>
+            <otherwise>
+                and team.status='ACTIVE'
+            </otherwise>
+        </choose>
+        <if test="managerId!=null">
+            and manager_id=#{managerId}
+        </if>
         <choose>
             <when test="status!=null">
                 and team_user.status=#{status}
@@ -67,4 +86,15 @@
             </when>
         </choose>
     </select>
+
+    <!--修改用户在团队的信息-->
+    <update id="updateTeamUser" parameterType="map">
+        update team_user
+        <set>
+            <if test="status!=null">
+                status=#{status}
+            </if>
+        </set>
+        where ids=#{ids}
+    </update>
 </mapper>

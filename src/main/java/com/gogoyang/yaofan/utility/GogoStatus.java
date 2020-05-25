@@ -13,6 +13,9 @@ public enum  GogoStatus {
     CANCEL,
     ACCEPT,
     STOP,
-    TRANSFERRED
+    TRANSFERRED,
+    DELETE,
+    EXCEPTION,
+    RESIGN
 
 }

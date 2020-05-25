@@ -13,6 +13,7 @@ public class TeamUser {
     private String userId;
     private String teamId;
     private Date createTime;
+    private String status;
     /**
      * 用户在团队里的角色类型
      */
@@ -21,8 +22,9 @@ public class TeamUser {
 
     private String teamName;
     private String userName;
+    private String managerId;
     private String managerName;
     private String creatorName;
-    private String status;
     private String description;
+    private Date teamCreateTime;
 }

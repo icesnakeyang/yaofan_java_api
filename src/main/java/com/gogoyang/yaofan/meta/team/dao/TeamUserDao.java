@@ -17,6 +17,8 @@ public interface TeamUserDao {
     /**
      * 查询团队成员列表
      * @param qIn
+     * managerId
+     * history
      * teamId
      * userId
      * status
@@ -26,4 +28,12 @@ public interface TeamUserDao {
      * @return
      */
     ArrayList<TeamUser> listTeamUser(Map qIn);
+
+    /**
+     * 修改用户在团队的信息
+     * @param qIn
+     * status
+     * ids
+     */
+    void updateTeamUser(Map qIn);
 }

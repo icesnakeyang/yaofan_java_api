@@ -13,4 +13,6 @@ public class TeamRequest {
 
     private String teamApplyLogId;
     private String teamQuitLogId;
+
+    private String userId;
 }

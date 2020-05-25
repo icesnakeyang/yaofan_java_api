@@ -51,4 +51,14 @@ public interface TeamDao {
      * @param teamId
      */
     void deleteTeam(String teamId);
+
+    /**
+     * 设置团队状态
+     * @param qIn
+     * status
+     * teamId
+     * lastUpdateTime
+     * lastUpdateUserId
+     */
+    void setTeamStatus(Map qIn);
 }

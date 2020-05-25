@@ -159,7 +159,10 @@ public interface ITeamService {
     /**
      * 查询一个团队用户信息
      *
-     * @param qIn teamId
+     * @param qIn
+     * managerId
+     * history
+     * teamId
      *            userId
      *            status
      *            memberType
@@ -203,7 +206,7 @@ public interface ITeamService {
      *            processUserId
      *            processRemark
      */
-    void processTeamQuitLog(Map qIn);
+    void processTeamQuitLog(Map qIn) throws Exception;
 
     /**
      * 统计我申请加入的团队申请总数
@@ -211,7 +214,7 @@ public interface ITeamService {
      * @param qIn userId
      * @return
      */
-    Integer totalTeamApplyLogMyApply(Map qIn);
+    Integer totalTeamApplyLogMyApply(Map qIn) throws Exception;
 
     /**
      * 统计申请加入我的团队的申请总数
@@ -219,5 +222,24 @@ public interface ITeamService {
      * @param qIn teamList
      * @return
      */
-    Integer totalTeamApplyLogMyTeam(Map qIn);
+    Integer totalTeamApplyLogMyTeam(Map qIn) throws Exception;
+
+    /**
+     * 设置团队状态
+     * @param qIn
+     * status
+     * teamId
+     * lastUpdateTime
+     * lastUpdateUserId
+     * @throws Exception
+     */
+    void setTeamStatus(Map qIn) throws Exception;
+
+    /**
+     * 修改用户在团队的信息
+     * @param qIn
+     * status
+     * ids
+     */
+    void updateTeamUser(Map qIn);
 }

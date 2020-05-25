@@ -31,4 +31,8 @@ public class Team {
      * 当前状态
      */
     private String status;
+
+    private Date lastUpdateTime;
+    private String lastUpdateUserId;
+    private String lastUpdateUserName;
 }

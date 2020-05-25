@@ -72,4 +72,14 @@ public interface ITeamBusinessService {
     Map getTeamQuitLog(Map in) throws Exception;
 
     void cancelTeamQuitLog(Map in) throws Exception;
+
+    Map listMyHistoryTeam(Map in) throws Exception;
+
+    void rollbackTeam(Map in) throws Exception;
+
+    Map listMyTeamMember(Map in) throws Exception;
+
+    Map getMemberProfile(Map in) throws Exception;
+
+    void ResignMember(Map in) throws Exception;
 }

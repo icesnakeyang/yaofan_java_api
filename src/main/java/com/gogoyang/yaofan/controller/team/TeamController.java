@@ -480,7 +480,7 @@ public class TeamController {
             String token = httpServletRequest.getHeader("token");
             in.put("token", token);
             logMap.put("token", token);
-            logMap.put("GogoActType", GogoActType.DELETE_TEAM.toString());
+            logMap.put("GogoActType", GogoActType.DELETE_TEAM);
             in.put("teamId", request.getTeamId());
             iTeamBusinessService.deleteMyTeam(in);
             logMap.put("result", GogoStatus.SUCCESS);
@@ -788,5 +788,242 @@ public class TeamController {
         return response;
     }
 
+    /**
+     * 读取我的历史团队列表
+     * 我创建的团队
+     * 团队当前状态不是有效
+     *
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/listMyHistoryTeam")
+    public Response listMyHistoryTeam(@RequestBody TeamRequest request,
+                                      HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("pageIndex", request.getPageIndex());
+            in.put("pageSize", request.getPageSize());
+
+            logMap.put("GogoActType", GogoActType.LIST_HISTORY_TEAM);
+            logMap.put("token", token);
+
+            Map out = iTeamBusinessService.listMyHistoryTeam(in);
+            response.setData(out);
+
+            logMap.put("result", GogoStatus.SUCCESS);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            logMap.put("result", GogoStatus.FAILED);
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * 恢复删除的团队
+     *
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/rollbackTeam")
+    public Response rollbackTeam(@RequestBody TeamRequest request,
+                                 HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("teamId", request.getTeamId());
+
+            logMap.put("GogoActType", GogoActType.ROLLBACK_TEAM);
+            logMap.put("token", token);
+            memoMap.put("teamId", request.getTeamId());
+
+            iTeamBusinessService.rollbackTeam(in);
+
+            logMap.put("result", GogoStatus.SUCCESS);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            logMap.put("result", GogoStatus.FAILED);
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * 用户读取团队的成员列表信息
+     *
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/listMyTeamMember")
+    public Response listMyTeamMember(@RequestBody TeamRequest request,
+                                     HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("teamId", request.getTeamId());
+
+            logMap.put("GogoActType", GogoActType.LIST_TEAM_MEMBER);
+            logMap.put("token", token);
+            memoMap.put("teamId", request.getTeamId());
+
+            Map out = iTeamBusinessService.listMyTeamMember(in);
+            response.setData(out);
+
+            logMap.put("result", GogoStatus.SUCCESS);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            logMap.put("result", GogoStatus.FAILED);
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * 用户读取团队成员详情
+     *
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/getMemberProfile")
+    public Response getMemberProfile(@RequestBody TeamRequest request,
+                                     HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("userId", request.getUserId());
+
+            logMap.put("GogoActType", GogoActType.GET_TEAM_MEMBER);
+            logMap.put("token", token);
+            memoMap.put("userId", request.getUserId());
+
+            Map out = iTeamBusinessService.getMemberProfile(in);
+            response.setData(out);
+
+            logMap.put("result", GogoStatus.SUCCESS);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            logMap.put("result", GogoStatus.FAILED);
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
+
+    /**
+     * 解除一个团队成员
+     * 可以是管理员解除团队成员，也可以是团队成员解除自己
+     * @param request
+     * @param httpServletRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/resignMember")
+    public Response ResignMember(@RequestBody TeamRequest request,
+                                 HttpServletRequest httpServletRequest) {
+        Response response = new Response();
+        Map in = new HashMap();
+        Map logMap = new HashMap();
+        Map memoMap = new HashMap();
+        try {
+            String token = httpServletRequest.getHeader("token");
+            in.put("token", token);
+            in.put("userId", request.getUserId());
+            in.put("teamId", request.getTeamId());
+
+            logMap.put("GogoActType", GogoActType.RESIGN_MEMBER);
+            logMap.put("token", token);
+            memoMap.put("userId", request.getUserId());
+            memoMap.put("teamId", request.getTeamId());
+
+            iTeamBusinessService.ResignMember(in);
+
+            logMap.put("result", GogoStatus.SUCCESS);
+        } catch (Exception ex) {
+            try {
+                response.setCode(Integer.parseInt(ex.getMessage()));
+            } catch (Exception ex2) {
+                response.setCode(10001);
+                logger.error(ex.getMessage());
+            }
+            logMap.put("result", GogoStatus.FAILED);
+            memoMap.put("error", ex.getMessage());
+        }
+        try {
+            logMap.put("memo", memoMap);
+            iCommonBusinessService.createUserActLog(logMap);
+        } catch (Exception ex3) {
+            logger.error(ex3.getMessage());
+        }
+        return response;
+    }
 
 }

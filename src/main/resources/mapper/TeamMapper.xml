@@ -10,6 +10,9 @@
         <result property="createTime" column="create_time"/>
         <result property="managerId" column="manager_id"/>
         <result property="managerName" column="manager_name"/>
+        <result property="lastUpdateTime" column="last_update_time"/>
+        <result property="lastUpdateUserId" column="last_update_user_id"/>
+        <result property="lastUpdateUserName" column="last_update_user_name"/>
     </resultMap>
 
     <!--创建一个团队-->
@@ -26,19 +29,23 @@
     <!--根据teamId读取团队详情-->
     <select id="getTeam" parameterType="map" resultMap="teamMap">
         select team.ids,
-           team_id,
-           team.name as team_name,
-           description,
-           team.create_time,
-           create_user_id,
-           creator.name as create_user_name,
-           team.status,
-           manager_id,
-           manager.name as manager_name
-        from (team
-        left join user_info creator on create_user_id=user_id)
-        left join user_info manager on manager_id=manager.user_id
-        where 1=1
+        team_id,
+        team.name        as team_name,
+        description,
+        team.create_time,
+        create_user_id,
+        creator.name     as create_user_name,
+        team.status,
+        manager_id,
+        manager.name     as manager_name,
+        last_update_time,
+        last_update_user_id,
+        last_update.name as last_update_user_name
+        from team
+        left join user_info creator on create_user_id = user_id
+        left join user_info manager on manager_id = manager.user_id
+        left join user_info last_update on last_update_user_id = last_update.user_id
+        where 1 = 1
         <choose>
             <when test="teamId!=null">
                 and team_id=#{teamId}
@@ -67,6 +74,7 @@
         left join user_info creator on create_user_id=user_id)
         left join user_info manager on manager_id=manager.user_id
         where 1=1
+        and team.status='ACTIVE'
         <choose>
             <when test="createUserId!=null">
                 and create_user_id=#{createUserId}
@@ -120,4 +128,13 @@
         delete from team
         where team_id=#{teamId}
     </delete>
+
+    <!--设置团队状态-->
+    <update id="setTeamStatus" parameterType="map">
+        update team set
+        status=#{status},
+        last_update_time=#{lastUpdateTime},
+        last_update_user_id=#{lastUpdateUserId}
+        where team_id=#{teamId}
+    </update>
 </mapper>

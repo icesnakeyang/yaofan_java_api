@@ -58,5 +58,13 @@ public enum GogoActType {
     /**
      * 观察者查看所有团队成员任务
      */
-    LIST_OBSERVE_TASK
+    LIST_OBSERVE_TASK,
+    LIST_HISTORY_TEAM,
+    /**
+     * 恢复删除的团队
+     */
+    ROLLBACK_TEAM,
+    LIST_TEAM_MEMBER,
+    GET_TEAM_MEMBER,
+    RESIGN_MEMBER
 }

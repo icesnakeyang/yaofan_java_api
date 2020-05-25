@@ -5,11 +5,9 @@ import com.gogoyang.yaofan.meta.team.dao.TeamDao;
 import com.gogoyang.yaofan.meta.team.dao.TeamQuitDao;
 import com.gogoyang.yaofan.meta.team.dao.TeamUserDao;
 import com.gogoyang.yaofan.meta.team.entity.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -219,6 +217,8 @@ public class TeamService implements ITeamService {
      * 查询一个团队用户信息
      *
      * @param qIn teamId
+     *            managerId
+     *            history
      *            userId
      *            status
      *            memberType
@@ -304,5 +304,30 @@ public class TeamService implements ITeamService {
     public Integer totalTeamApplyLogMyTeam(Map qIn) {
         Integer total = teamApplyLogDao.totalTeamApplyLogMyTeam(qIn);
         return total;
+    }
+
+    /**
+     * 把团队设置为失效状态
+     * 假删除
+     * @param qIn
+     * status
+     * teamId
+     * lastUpdateTime
+     * lastUpdateUserId
+     * @throws Exception
+     */
+    @Override
+    public void setTeamStatus(Map qIn) throws Exception {
+        teamDao.setTeamStatus(qIn);
+    }
+
+    /**
+     *
+     * @param qIn
+     * status
+     */
+    @Override
+    public void updateTeamUser(Map qIn) {
+        teamUserDao.updateTeamUser(qIn);
     }
 }

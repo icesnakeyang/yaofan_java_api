@@ -77,11 +77,14 @@ public class CompleteBusinessService implements ICompleteBusinessService {
         /**
          * 设置阅读时间
          */
-        Map qIn2 = new HashMap();
-        qIn2.put("readTime", new Date());
-        qIn2.put("taskId", taskId);
-        qIn2.put("readUserId", userInfo.getUserId());
-        iTaskCompleteService.setTaskCompleteReadTime(qIn2);
+        if (userInfo.getUserId().equals(task.getCreateUserId()) ||
+                userInfo.getUserId().equals(task.getPartyBId())) {
+            Map qIn2 = new HashMap();
+            qIn2.put("readTime", new Date());
+            qIn2.put("taskId", taskId);
+            qIn2.put("readUserId", userInfo.getUserId());
+            iTaskCompleteService.setTaskCompleteReadTime(qIn2);
+        }
 
         return out;
     }
@@ -141,21 +144,21 @@ public class CompleteBusinessService implements ICompleteBusinessService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void rejectComplete(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String taskId=in.get("taskId").toString();
-        String content=in.get("content").toString();
+        String token = in.get("token").toString();
+        String taskId = in.get("taskId").toString();
+        String content = in.get("content").toString();
 
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        Task task=iCommonBusinessService.getTaskByTaskId(taskId);
+        Task task = iCommonBusinessService.getTaskByTaskId(taskId);
 
-        if(!task.getCreateUserId().equals(userInfo.getUserId())){
+        if (!task.getCreateUserId().equals(userInfo.getUserId())) {
             //不是甲方，不能拒绝
             throw new Exception("20011");
         }
 
-        TaskComplete taskComplete=iTaskCompleteService.getTaskCompleteUnProcess(taskId);
-        if(taskComplete==null){
+        TaskComplete taskComplete = iTaskCompleteService.getTaskCompleteUnProcess(taskId);
+        if (taskComplete == null) {
             throw new Exception("20010");
         }
         taskComplete.setProcessRemark(content);
@@ -170,27 +173,28 @@ public class CompleteBusinessService implements ICompleteBusinessService {
 
     /**
      * 同意任务验收
+     *
      * @param in
      * @throws Exception
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void acceptComplete(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String taskId=in.get("taskId").toString();
-        String content=in.get("content").toString();
+        String token = in.get("token").toString();
+        String taskId = in.get("taskId").toString();
+        String content = in.get("content").toString();
 
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        Task task=iCommonBusinessService.getTaskByTaskId(taskId);
+        Task task = iCommonBusinessService.getTaskByTaskId(taskId);
 
-        if(!task.getCreateUserId().equals(userInfo.getUserId())){
+        if (!task.getCreateUserId().equals(userInfo.getUserId())) {
             //不是甲方，不能验收
             throw new Exception("20019");
         }
 
-        TaskComplete taskComplete=iTaskCompleteService.getTaskCompleteUnProcess(taskId);
-        if(taskComplete==null){
+        TaskComplete taskComplete = iTaskCompleteService.getTaskCompleteUnProcess(taskId);
+        if (taskComplete == null) {
             throw new Exception("20010");
         }
         taskComplete.setProcessRemark(content);

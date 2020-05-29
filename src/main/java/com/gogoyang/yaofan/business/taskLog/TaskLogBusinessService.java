@@ -27,6 +27,7 @@ public class TaskLogBusinessService implements ITaskLogBusinessService {
 
     /**
      * 创建任务日志
+     *
      * @param in
      * @throws Exception
      */
@@ -71,30 +72,35 @@ public class TaskLogBusinessService implements ITaskLogBusinessService {
 
         /**
          * 设置日志的阅读时间
+         * 如果当前用户是甲方，或者乙方，设置阅读时间
          */
-        Map qIn2 = new HashMap();
-        qIn2.put("readTime", new Date());
-        qIn2.put("taskId", taskId);
-        qIn2.put("readUserId", userInfo.getUserId());
-        iTaskLogService.setTaskLogReadTime(qIn2);
+        if (userInfo.getUserId().equals(task.getPartyBId()) ||
+                userInfo.getUserId().equals(task.getCreateUserId())) {
+            Map qIn2 = new HashMap();
+            qIn2.put("readTime", new Date());
+            qIn2.put("taskId", taskId);
+            qIn2.put("readUserId", userInfo.getUserId());
+            iTaskLogService.setTaskLogReadTime(qIn2);
+        }
 
         return out;
     }
 
     /**
      * 删除任务日志
+     *
      * @param in
      * @throws Exception
      */
     @Override
     public void deleteTaskLog(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String taskLogId=in.get("taskLogId").toString();
+        String token = in.get("token").toString();
+        String taskLogId = in.get("taskLogId").toString();
 
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        TaskLog taskLog=iTaskLogService.getTaskLogByLogId(taskLogId);
-        if(!taskLog.getCreateUserId().equals(userInfo.getUserId())){
+        TaskLog taskLog = iTaskLogService.getTaskLogByLogId(taskLogId);
+        if (!taskLog.getCreateUserId().equals(userInfo.getUserId())) {
             //只能删除自己创建的日志
             throw new Exception("20018");
         }

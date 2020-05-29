@@ -16,6 +16,7 @@ import com.gogoyang.yaofan.meta.userActLog.service.IUserActLogService;
 import com.gogoyang.yaofan.meta.volunteer.IVolunteerService;
 import com.gogoyang.yaofan.meta.volunteer.task.entity.VolunteerTask;
 import com.gogoyang.yaofan.utility.GogoActType;
+import com.gogoyang.yaofan.utility.GogoRole;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -190,13 +191,35 @@ public class CommonBusinessService implements ICommonBusinessService {
     public void checkTaskMember(UserInfo user, Task task) throws Exception {
         int cc = 0;
         if (user.getUserId().equals(task.getCreateUserId())) {
+            //任务创建人，甲方
             cc++;
         }
         if (user.getUserId().equals(task.getPartyBId())) {
+            //任务承接人，乙方
             cc++;
         }
+
         if (cc == 0) {
-            throw new Exception("10020");
+            /**
+             * 如果既不是甲方，也不是一方，就检查是否为该任务团队的观察者，
+             * 或者用户是团队管理员
+             */
+            Map qIn=new HashMap();
+            qIn.put("teamId", task.getTeamId());
+            Team team=iTeamService.getTeam(qIn);
+            if(!team.getManagerId().equals(user.getUserId())){
+                qIn=new HashMap();
+                qIn.put("teamId", task.getTeamId());
+                qIn.put("userId", user.getUserId());
+                ArrayList<TeamUser> teamUsers=iTeamService.listTeamUser(qIn);
+                if(teamUsers.size()==1){
+                    if(!teamUsers.get(0).getMemberType().equals(GogoRole.TEAM_OBSERVER.toString())){
+                        throw new Exception("10020");
+                    }
+                }else {
+                    throw new Exception("10020");
+                }
+            }
         }
     }
 

@@ -789,7 +789,21 @@ public class TaskBusinessService implements ITaskBusinessService {
         ArrayList<Task> tasks = iTaskService.listTask(qIn);
 
         Map out = new HashMap();
-        out.put("tasks", tasks);
+
+        ArrayList list=new ArrayList();
+        for(int i=0;i<tasks.size();i++){
+            Map map=new HashMap();
+            map.put("task", tasks.get(i));
+            list.add(map);
+        }
+
+        /**
+         * 统计观察者任务的总数
+         */
+        Integer totalTask=iTaskService.totalTask(qIn);
+        out.put("totalTasks", totalTask);
+
+        out.put("tasks", list);
 
         return out;
 

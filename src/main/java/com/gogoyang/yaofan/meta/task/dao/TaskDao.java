@@ -136,4 +136,6 @@ public interface TaskDao {
      * @return
      */
     ArrayList<Task> listTask(Map qIn);
+
+    Integer totalTask(Map qIn);
 }

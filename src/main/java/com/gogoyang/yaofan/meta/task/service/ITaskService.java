@@ -107,4 +107,6 @@ public interface ITaskService {
      * @return
      */
     ArrayList<Task> listTask(Map qIn);
+
+    Integer totalTask(Map qIn);
 }

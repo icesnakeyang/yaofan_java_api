@@ -171,6 +171,12 @@ public class TaskService implements ITaskService {
         return tasks;
     }
 
+    @Override
+    public Integer totalTask(Map qIn) {
+        Integer total=taskDao.totalTask(qIn);
+        return total;
+    }
+
     /**
      * 统计我的任务总是（我是甲方或者我是乙方）
      *

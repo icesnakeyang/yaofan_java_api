@@ -325,6 +325,8 @@ public class TeamService implements ITeamService {
      *
      * @param qIn
      * status
+     * ids
+     * memberType
      */
     @Override
     public void updateTeamUser(Map qIn) {

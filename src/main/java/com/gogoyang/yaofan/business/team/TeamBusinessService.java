@@ -5,6 +5,7 @@ import com.gogoyang.yaofan.meta.task.service.ITaskService;
 import com.gogoyang.yaofan.meta.team.entity.*;
 import com.gogoyang.yaofan.meta.team.service.ITeamService;
 import com.gogoyang.yaofan.meta.user.entity.UserInfo;
+import com.gogoyang.yaofan.utility.GogoRole;
 import com.gogoyang.yaofan.utility.GogoStatus;
 import com.gogoyang.yaofan.utility.GogoTools;
 import com.gogoyang.yaofan.utility.common.ICommonBusinessService;
@@ -77,6 +78,7 @@ public class TeamBusinessService implements ITeamBusinessService {
         teamUser.setTeamId(team.getTeamId());
         teamUser.setUserId(userInfo.getUserId());
         teamUser.setCreateTime(new Date());
+        teamUser.setMemberType(GogoRole.TEAM_MANAGER.toString());
         iTeamService.createTeamUser(teamUser);
 
         Map out = new HashMap();
@@ -462,6 +464,7 @@ public class TeamBusinessService implements ITeamBusinessService {
         teamUser.setStatus(GogoStatus.ACTIVE.toString());
         teamUser.setTeamId(teamApplyLog.getTeamId());
         teamUser.setUserId(teamApplyLog.getApplyUserId());
+        teamUser.setMemberType(GogoRole.NORMAL.toString());
         iTeamService.createTeamUser(teamUser);
     }
 
@@ -884,6 +887,7 @@ public class TeamBusinessService implements ITeamBusinessService {
     public Map getMemberProfile(Map in) throws Exception {
         String token = in.get("token").toString();
         String userId = in.get("userId").toString();
+        String teamId = in.get("teamId").toString();
 
         UserInfo loginUser = iCommonBusinessService.getUserByToken(token);
 
@@ -898,6 +902,18 @@ public class TeamBusinessService implements ITeamBusinessService {
 
         out.put("userInfo", checkUser);
 
+        /**
+         * user的团队角色
+         */
+        Map qIn = new HashMap();
+        qIn.put("teamId", teamId);
+        qIn.put("userId", checkUser.getUserId());
+        ArrayList<TeamUser> teamUsers = iTeamService.listTeamUser(qIn);
+        if (teamUsers.size() == 0) {
+            throw new Exception("10017");
+        }
+        out.put("memberType", teamUsers.get(0).getMemberType());
+
         return out;
 
 
@@ -905,34 +921,34 @@ public class TeamBusinessService implements ITeamBusinessService {
 
     @Override
     public void ResignMember(Map in) throws Exception {
-        String token=in.get("token").toString();
-        String userId=in.get("userId").toString();
-        String teamId=in.get("teamId").toString();
+        String token = in.get("token").toString();
+        String userId = in.get("userId").toString();
+        String teamId = in.get("teamId").toString();
 
-        UserInfo userInfo=iCommonBusinessService.getUserByToken(token);
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
-        UserInfo resignUser=iCommonBusinessService.getUserByUserId(userId);
+        UserInfo resignUser = iCommonBusinessService.getUserByUserId(userId);
 
         /**
          * 只有团队管理员才能解除团队成员
          */
-        Map qIn=new HashMap();
+        Map qIn = new HashMap();
         qIn.put("teamId", teamId);
-        Team team=iTeamService.getTeam(qIn);
-        if(team==null){
+        Team team = iTeamService.getTeam(qIn);
+        if (team == null) {
             throw new Exception("10014");
         }
-        if(!team.getManagerId().equals(userInfo.getUserId())){
+        if (!team.getManagerId().equals(userInfo.getUserId())) {
             throw new Exception("10009");
         }
 
         /**
          * 检查任务
          */
-        qIn=new HashMap();
+        qIn = new HashMap();
         qIn.put("userId", resignUser.getUserId());
         qIn.put("status", GogoStatus.PROGRESS.toString());
-        ArrayList<Task> tasks=iTaskService.listMyTasks(qIn);
+        ArrayList<Task> tasks = iTaskService.listMyTasks(qIn);
 
 //        if(tasks.size()>0){
 //            //用户还存在正在进行中的任务，设置状态为异常
@@ -949,20 +965,90 @@ public class TeamBusinessService implements ITeamBusinessService {
         /**
          * 把当前用户在当前团队里设置为RESIGN状态
          */
-        qIn=new HashMap();
+        qIn = new HashMap();
         qIn.put("userId", userId);
         qIn.put("teamId", teamId);
         qIn.put("status", GogoStatus.ACTIVE.toString());
-        ArrayList<TeamUser> teamUsers=iTeamService.listTeamUser(qIn);
-        if(teamUsers.size()==1){
-            qIn=new HashMap();
+        ArrayList<TeamUser> teamUsers = iTeamService.listTeamUser(qIn);
+        if (teamUsers.size() == 1) {
+            qIn = new HashMap();
             qIn.put("ids", teamUsers.get(0).getIds());
             qIn.put("status", GogoStatus.RESIGN);
             iTeamService.updateTeamUser(qIn);
-        }else {
+        } else {
             //用户重复
             throw new Exception("20026");
         }
 
+    }
+
+    @Override
+    public void setObserver(Map in) throws Exception {
+        String token = in.get("token").toString();
+        String userId = in.get("userId").toString();
+        String teamId = in.get("teamId").toString();
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        UserInfo observer = iCommonBusinessService.getUserByUserId(userId);
+
+        Team team = iCommonBusinessService.getTeamById(teamId);
+
+        /**
+         * 1、检查登录用户是否为团队管理员
+         * 2、检查观察者是否为团队成员
+         * 3、修改观察者的团队角色memberType=TEAM_OBSERVER
+         */
+
+        if (!team.getManagerId().equals(userInfo.getUserId())) {
+            //你不是团队管理员
+            throw new Exception("10009");
+        }
+        Map qIn = new HashMap();
+        qIn.put("teamId", teamId);
+        qIn.put("userId", observer.getUserId());
+        ArrayList<TeamUser> teamUsers = iTeamService.listTeamUser(qIn);
+        if (teamUsers.size() == 0) {
+            throw new Exception("20027");
+        }
+        qIn = new HashMap();
+        qIn.put("ids", teamUsers.get(0).getIds());
+        qIn.put("memberType", GogoRole.TEAM_OBSERVER);
+        iTeamService.updateTeamUser(qIn);
+    }
+
+    @Override
+    public void relieveObserver(Map in) throws Exception {
+        String token = in.get("token").toString();
+        String userId = in.get("userId").toString();
+        String teamId = in.get("teamId").toString();
+
+        UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
+
+        UserInfo observer = iCommonBusinessService.getUserByUserId(userId);
+
+        Team team = iCommonBusinessService.getTeamById(teamId);
+
+        /**
+         * 1、检查登录用户是否为团队管理员
+         * 2、检查观察者是否为团队成员
+         * 3、修改观察者的团队角色memberType=TEAM_OBSERVER
+         */
+
+        if (!team.getManagerId().equals(userInfo.getUserId())) {
+            //你不是团队管理员
+            throw new Exception("10009");
+        }
+        Map qIn = new HashMap();
+        qIn.put("teamId", teamId);
+        qIn.put("userId", observer.getUserId());
+        ArrayList<TeamUser> teamUsers = iTeamService.listTeamUser(qIn);
+        if (teamUsers.size() == 0) {
+            throw new Exception("20027");
+        }
+        qIn = new HashMap();
+        qIn.put("ids", teamUsers.get(0).getIds());
+        qIn.put("memberType", GogoRole.NORMAL);
+        iTeamService.updateTeamUser(qIn);
     }
 }

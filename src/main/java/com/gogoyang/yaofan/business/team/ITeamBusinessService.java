@@ -82,4 +82,8 @@ public interface ITeamBusinessService {
     Map getMemberProfile(Map in) throws Exception;
 
     void ResignMember(Map in) throws Exception;
+
+    void setObserver(Map in) throws Exception;
+
+    void relieveObserver(Map in) throws Exception;
 }

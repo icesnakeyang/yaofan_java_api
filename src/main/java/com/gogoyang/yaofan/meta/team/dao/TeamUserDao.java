@@ -34,6 +34,7 @@ public interface TeamUserDao {
      * @param qIn
      * status
      * ids
+     * memberType
      */
     void updateTeamUser(Map qIn);
 }

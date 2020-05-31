@@ -92,7 +92,10 @@
         update team_user
         <set>
             <if test="status!=null">
-                status=#{status}
+                status=#{status},
+            </if>
+            <if test="memberType!=null">
+                member_type=#{memberType}
             </if>
         </set>
         where ids=#{ids}

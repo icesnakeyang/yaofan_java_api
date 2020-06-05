@@ -68,6 +68,15 @@ public class PointBusinessService implements IPointBusinessService {
         String token = in.get("token").toString();
         Integer pageIndex = (Integer) in.get("pageIndex");
         Integer pageSize = (Integer) in.get("pageSize");
+        Date startDate=(Date)in.get("startDate");
+        Date endDate=(Date)in.get("endDate");
+
+        if(startDate!=null) {
+            startDate = GogoTools.setDateTimeTo0(startDate);
+        }
+        if(endDate!=null) {
+            endDate = GogoTools.setDateTimeEndNext(endDate);
+        }
 
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
@@ -76,10 +85,24 @@ public class PointBusinessService implements IPointBusinessService {
         Integer offset = (pageIndex - 1) * pageSize;
         qIn.put("offset", offset);
         qIn.put("size", pageSize);
+        if(startDate!=null) {
+            qIn.put("startDate", startDate);
+        }
+        if(endDate!=null) {
+            qIn.put("endDate", endDate);
+        }
         ArrayList<PointLedger> pointLedgers = iPointService.listMyPointLedger(qIn);
+
+        Integer total=iPointService.totalMyPointLedger(qIn);
+        Integer totalPage=total/pageSize;
+        if(total%pageSize>0){
+            totalPage++;
+        }
 
         Map out = new HashMap();
         out.put("pointLedgers", pointLedgers);
+        out.put("pointLedgerTotal", total);
+        out.put("pointLedgerTotalPage", totalPage);
 
         return out;
     }

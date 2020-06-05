@@ -70,6 +70,9 @@ public class PointController {
             in.put("token", token);
             in.put("pageIndex", request.getPageIndex());
             in.put("pageSize", request.getPageSize());
+            in.put("startDate", request.getStartDate());
+            in.put("endDate", request.getEndDate());
+
             logMap.put("token", token);
             logMap.put("GogoActType", GogoActType.LIST_MY_POINT);
             Map out = iPointBusinessService.listMyPointLedger(in);

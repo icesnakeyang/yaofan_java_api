@@ -24,6 +24,9 @@ public interface IPointService {
      * 读取我的积分账户列表
      * @param qIn
      * userId
+     * userId
+     * startDate
+     * endDate
      * offset
      * size
      * @return
@@ -37,5 +40,15 @@ public interface IPointService {
      * @return
      */
     Double totalPointAccept(Map qIn);
+
+    /**
+     * 统计我的积分账户列表总数
+     * @param qIn
+     * userId
+     * startDate
+     * endDate
+     * @return
+     */
+    Integer totalMyPointLedger(Map qIn);
 
 }

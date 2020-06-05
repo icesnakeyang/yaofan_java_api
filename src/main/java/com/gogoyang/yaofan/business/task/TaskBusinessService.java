@@ -632,6 +632,22 @@ public class TaskBusinessService implements ITaskBusinessService {
         }
         Map out = new HashMap();
         out.put("tasks", list);
+
+        //task总数
+        qIn = new HashMap();
+        qIn.put("partyBId", userInfo.getUserId());
+        Integer totalTasks = iTaskService.totalMyTasksPartyAOrB(qIn);
+        out.put("totalTasks", totalTasks);
+
+        //task总页数
+        Integer totalPage = totalTasks / pageSize;
+        Integer modPage = totalTasks % pageSize;
+        if (modPage > 0) {
+            totalPage++;
+        }
+        out.put("totalPage", totalPage);
+
+
         return out;
     }
 
@@ -790,9 +806,9 @@ public class TaskBusinessService implements ITaskBusinessService {
 
         Map out = new HashMap();
 
-        ArrayList list=new ArrayList();
-        for(int i=0;i<tasks.size();i++){
-            Map map=new HashMap();
+        ArrayList list = new ArrayList();
+        for (int i = 0; i < tasks.size(); i++) {
+            Map map = new HashMap();
             map.put("task", tasks.get(i));
             list.add(map);
         }
@@ -800,9 +816,13 @@ public class TaskBusinessService implements ITaskBusinessService {
         /**
          * 统计观察者任务的总数
          */
-        Integer totalTask=iTaskService.totalTask(qIn);
+        Integer totalTask = iTaskService.totalTask(qIn);
         out.put("totalTasks", totalTask);
-
+        Integer totalTaskPage = totalTask / pageSize;
+        if(totalTask % pageSize>0){
+            totalTaskPage++;
+        }
+        out.put("totalTaskPage", totalTaskPage);
         out.put("tasks", list);
 
         return out;

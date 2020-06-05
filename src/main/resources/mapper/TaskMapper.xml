@@ -229,6 +229,16 @@ left join team on task.team_id=team.team_id
         left join team on task.team_id=team.team_id
         where 1 = 1
         <choose>
+            <when test="history!=null">
+                <![CDATA[
+                and team.status<>'ACTIVE'
+                ]]>
+            </when>
+            <otherwise>
+                and team.status='ACTIVE'
+            </otherwise>
+        </choose>
+        <choose>
             <when test="partyAId!=null">
                 and task.create_user_id = #{partyAId}
             </when>
@@ -246,10 +256,21 @@ left join team on task.team_id=team.team_id
     <select id="totalMyTasksPartyAOrB" parameterType="map" resultType="java.lang.Integer">
         select count(*) as total
         from task
+        left join team on task.team_id=team.team_id
         where 1=1
         <choose>
+            <when test="history!=null">
+                <![CDATA[
+                and team.status<>'ACTIVE'
+                ]]>
+            </when>
+            <otherwise>
+                and team.status='ACTIVE'
+            </otherwise>
+        </choose>
+        <choose>
             <when test="partyAId!=null">
-                and create_user_id=#{partyAId}
+                and task.create_user_id=#{partyAId}
             </when>
         </choose>
         <choose>
@@ -259,7 +280,7 @@ left join team on task.team_id=team.team_id
         </choose>
         <choose>
             <when test="status!=null">
-                and status=#{status}
+                and task.status=#{status}
             </when>
         </choose>
     </select>

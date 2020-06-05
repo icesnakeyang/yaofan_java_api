@@ -65,4 +65,18 @@ public class PointService implements IPointService {
         Double point=pointDao.totalPointAccept(qIn);
         return point;
     }
+
+    /**
+     * 统计我的积分账户列表总数
+     * @param qIn
+     * userId
+     * startDate
+     * endDate
+     * @return
+     */
+    @Override
+    public Integer totalMyPointLedger(Map qIn) {
+        Integer total=pointDao.totalMyPointLedger(qIn);
+        return total;
+    }
 }

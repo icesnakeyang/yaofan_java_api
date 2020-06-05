@@ -578,6 +578,7 @@ public class GogoTools {
 
     /**
      * 把一个日期的小时、分、秒部分设置为0
+     *
      * @param date
      * @return
      * @throws Exception
@@ -588,6 +589,22 @@ public class GogoTools {
         calendar.set(Calendar.HOUR, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
+        Date date1 = calendar.getTime();
+        return date1;
+    }
+
+    /**
+     * 把一个日期设置为第二天凌晨0点
+     * 即设置该日期的查询终止时间
+     *
+     * @param date
+     * @return
+     * @throws Exception
+     */
+    public static Date setDateTimeEndNext(Date date) throws Exception {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
         Date date1 = calendar.getTime();
         return date1;
     }

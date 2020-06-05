@@ -47,18 +47,22 @@
         inner join user_info creator on team.create_user_id = creator.user_id
         where 1=1
         <choose>
-            <when test="history!=null">
+            <when test="teamStatusNot!=null">
                 <![CDATA[
-            and team.status<>'ACTIVE'
+            and team.status<>#{teamStatusNot}
             ]]>
             </when>
-            <otherwise>
-                and team.status='ACTIVE'
-            </otherwise>
         </choose>
-        <if test="managerId!=null">
-            and manager_id=#{managerId}
-        </if>
+        <choose>
+            <when test="teamStatus!=null">
+                and team.status=#{teamStatus}
+            </when>
+        </choose>
+        <choose>
+            <when test="managerId!=null">
+                and manager_id=#{managerId}
+            </when>
+        </choose>
         <choose>
             <when test="status!=null">
                 and team_user.status=#{status}

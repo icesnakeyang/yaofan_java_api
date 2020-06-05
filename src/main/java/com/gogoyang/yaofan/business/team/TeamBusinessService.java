@@ -826,7 +826,7 @@ public class TeamBusinessService implements ITeamBusinessService {
 
         Map qIn = new HashMap();
         qIn.put("managerId", userInfo.getUserId());
-        qIn.put("history", true);
+        qIn.put("teamStatusNot", GogoStatus.ACTIVE.toString());
         qIn.put("userId", userInfo.getUserId());
         ArrayList<TeamUser> teamUsers = iTeamService.listTeamUser(qIn);
 

@@ -514,6 +514,9 @@ public class TaskBusinessService implements ITaskBusinessService {
         Integer pageIndex = (Integer) in.get("pageIndex");
         Integer pageSize = (Integer) in.get("pageSize");
 
+        ArrayList teamList = new ArrayList();
+        Map out = new HashMap();
+
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
         //读取我的团队集合
@@ -523,7 +526,7 @@ public class TaskBusinessService implements ITaskBusinessService {
         if (teamUsers.size() == 0) {
             throw new Exception("20005");
         }
-        ArrayList teamList = new ArrayList();
+
         for (int i = 0; i < teamUsers.size(); i++) {
             teamList.add(teamUsers.get(i).getTeamId());
         }
@@ -532,8 +535,6 @@ public class TaskBusinessService implements ITaskBusinessService {
         qIn.put("teamList", teamList);
         ArrayList<Task> tasks = iTaskService.listTaskGrabbingTeam(qIn);
 
-
-        Map out = new HashMap();
         out.put("tasks", tasks);
         return out;
     }
@@ -779,6 +780,8 @@ public class TaskBusinessService implements ITaskBusinessService {
         Integer pageIndex = (Integer) in.get("pageIndex");
         Integer pageSize = (Integer) in.get("pageSize");
 
+        Map out = new HashMap();
+
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
         /**
@@ -799,31 +802,35 @@ public class TaskBusinessService implements ITaskBusinessService {
         for (int i = 0; i < teamUsers.size(); i++) {
             teamList.add(teamUsers.get(i).getTeamId());
         }
+        ArrayList<Task> tasks=new ArrayList<>();
         if (teamList.size() > 0) {
             qIn.put("teamList", teamList);
-        }
-        ArrayList<Task> tasks = iTaskService.listTask(qIn);
+            tasks = iTaskService.listTask(qIn);
 
-        Map out = new HashMap();
 
-        ArrayList list = new ArrayList();
-        for (int i = 0; i < tasks.size(); i++) {
-            Map map = new HashMap();
-            map.put("task", tasks.get(i));
-            list.add(map);
-        }
 
-        /**
-         * 统计观察者任务的总数
-         */
-        Integer totalTask = iTaskService.totalTask(qIn);
-        out.put("totalTasks", totalTask);
-        Integer totalTaskPage = totalTask / pageSize;
-        if(totalTask % pageSize>0){
-            totalTaskPage++;
+            ArrayList list = new ArrayList();
+            for (int i = 0; i < tasks.size(); i++) {
+                Map map = new HashMap();
+                map.put("task", tasks.get(i));
+                list.add(map);
+            }
+
+            /**
+             * 统计观察者任务的总数
+             */
+            Integer totalTask = iTaskService.totalTask(qIn);
+            out.put("totalTasks", totalTask);
+            Integer totalTaskPage = totalTask / pageSize;
+            if (totalTask % pageSize > 0) {
+                totalTaskPage++;
+            }
+            out.put("totalTaskPage", totalTaskPage);
+            out.put("tasks", list);
+        }else{
+            out.put("totalTaskPage",0);
+            out.put("tasks", tasks);
         }
-        out.put("totalTaskPage", totalTaskPage);
-        out.put("tasks", list);
 
         return out;
 

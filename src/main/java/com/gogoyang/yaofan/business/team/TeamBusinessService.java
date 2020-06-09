@@ -290,6 +290,9 @@ public class TeamBusinessService implements ITeamBusinessService {
          */
         UserInfo userInfo = iCommonBusinessService.getUserByToken(token);
 
+        ArrayList<TeamApplyLog> applyTeams = new ArrayList<>();
+        Map out=new HashMap();
+
         Map qIn = new HashMap();
         qIn.put("managerId", userInfo.getUserId());
 
@@ -298,8 +301,7 @@ public class TeamBusinessService implements ITeamBusinessService {
         ArrayList<Team> teams = iTeamService.listTeam(qIn);
         if (teams.size() == 0) {
             //没有团队，直接退出
-            Map out = new HashMap();
-            out.put("applyTeams", null);
+            out.put("applyTeams", applyTeams);
             return out;
         }
         ArrayList list = new ArrayList();
@@ -315,8 +317,7 @@ public class TeamBusinessService implements ITeamBusinessService {
         qIn.put("offset", offset);
         qIn.put("size", pageSize);
 //         processUserId status
-        ArrayList<TeamApplyLog> applyTeams = iTeamService.listTeamApplyLog(qIn);
-        Map out = new HashMap();
+        applyTeams = iTeamService.listTeamApplyLog(qIn);
         out.put("applyTeams", applyTeams);
         return out;
     }

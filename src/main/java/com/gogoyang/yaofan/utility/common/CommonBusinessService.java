@@ -98,6 +98,8 @@ public class CommonBusinessService implements ICommonBusinessService {
     public UserInfo getUserByToken(String token) throws Exception {
         UserInfo userInfo = iUserInfoService.getUserInfoByToken(token);
         if (userInfo == null) {
+            //给游客一个体验账号
+
             throw new Exception("10004");
         }
         return userInfo;
